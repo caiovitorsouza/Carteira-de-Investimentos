@@ -47,7 +47,9 @@ function shapePosition(r) {
   if (r.kind === 'fii' || r.kind === 'acao') {
     return {
       id: r.id, kind: r.kind, ticker: r.ticker,
-      name: r.name || r.instrument_name, segment: r.segment, logo: r.logo_url,
+      name: r.name || r.instrument_name,
+      segment: meta.segment || r.segment, // preferência: escolha do usuário
+      logo: r.logo_url,
       q: Number(r.quantity), c: Number(r.avg_price),
       a: r.price != null ? Number(r.price) : Number(r.avg_price), // cotação automática
       d: r.last_dividend != null ? Number(r.last_dividend) : (meta.d ?? 0),
@@ -103,7 +105,11 @@ export async function saveSnapshot(userId, incoming, expectedVersion) {
 function insertPosition(client, userId, p) {
   const isMarket = p.kind === 'fii' || p.kind === 'acao';
   const meta = isMarket
-    ? { t: p.t || '', rec: p.rec || 0, ...(p.d != null ? { d: p.d } : {}) }
+    ? {
+        t: p.t || '', rec: p.rec || 0,
+        ...(p.d != null ? { d: p.d } : {}),
+        ...(p.segment ? { segment: p.segment } : {}),
+      }
     : stripFixa(p);
   return client.query(
     `INSERT INTO positions

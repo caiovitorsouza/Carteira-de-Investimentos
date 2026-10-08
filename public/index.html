@@ -690,6 +690,138 @@ details.tip .tip-body p:last-child{margin:0;}
   }
   .live-dot{animation:none;}
 }
+
+/* =========================================================================
+   PERFIL + TIPOS DE ATIVO + RENDA FIXA (NOVO)
+   ========================================================================= */
+.perfil-card{
+  background: linear-gradient(135deg, var(--accent-soft), var(--surface-2));
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 22px 24px;
+  display: grid;
+  gap: 10px;
+}
+.perfil-badge{
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12.5px; font-weight: 600;
+  padding: 4px 11px; border-radius: 999px;
+  background: var(--accent); color: var(--accent-ink);
+  width: fit-content;
+}
+.perfil-name{
+  font-family: var(--f-serif); font-weight: 600;
+  font-size: 22px; letter-spacing: -0.015em;
+  margin: 2px 0 0;
+}
+.perfil-desc{color: var(--ink-2); font-size: 14.5px; margin: 0;}
+.perfil-chips{display:flex; flex-wrap:wrap; gap:6px; margin-top: 6px;}
+.perfil-chip{
+  font-size: 12px; padding: 3px 10px;
+  background: var(--surface); color: var(--ink-2);
+  border: 1px solid var(--line); border-radius: 999px;
+}
+.perfil-cta{
+  display:flex; gap:8px; align-items:center; justify-content:space-between;
+  margin-top: 8px;
+}
+.perfil-cta small{font-size:12.5px; color:var(--muted);}
+
+/* tiles para escolher tipo de ativo ao adicionar */
+.type-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;}
+.type-tile{
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  padding: 16px 14px;
+  text-align: left;
+  cursor: pointer;
+  display: grid; gap: 4px;
+  transition: border-color .15s, transform .15s;
+}
+.type-tile:hover{border-color: var(--accent); transform: translateY(-1px);}
+.type-tile .ic{
+  width: 32px; height: 32px; border-radius: 10px;
+  background: var(--accent-soft); color: var(--accent);
+  display: grid; place-items: center;
+  font-weight: 700; font-size: 13px;
+  margin-bottom: 4px;
+}
+.type-tile .ic.rf{background: color-mix(in srgb, var(--amber) 18%, transparent); color: var(--amber);}
+.type-tile .tt{font-weight: 600; font-size: 15px;}
+.type-tile .tds{font-size: 12.5px; color: var(--muted);}
+
+/* seletor de segmento para estimativa de dividendo */
+.seg-opts{display:grid; gap:6px; margin-top:8px;}
+.seg-opt{
+  display:flex; justify-content:space-between; align-items:center;
+  padding: 10px 12px; border-radius:10px;
+  background:var(--surface-2); cursor:pointer;
+  border: 1.5px solid transparent;
+}
+.seg-opt:hover{background: var(--accent-soft);}
+.seg-opt.sel{border-color: var(--accent); background: var(--accent-soft);}
+.seg-opt .nm{font-weight: 500; font-size: 14px;}
+.seg-opt .rt{font-family: var(--f-mono); font-size: 13px; color: var(--ink-2);}
+
+/* questionário - progresso */
+.quiz-head{display:flex; justify-content:space-between; align-items:baseline; margin: 4px 0 14px;}
+.quiz-pillar{font-size:12.5px; color:var(--muted); text-transform:lowercase;}
+.quiz-prog{font-size:12.5px; color:var(--muted); font-variant-numeric:tabular-nums;}
+.quiz-bar{height:4px; background:var(--line); border-radius:2px; overflow:hidden; margin-bottom:18px;}
+.quiz-bar > div{height:100%; background:var(--accent); transition:width .3s;}
+.quiz-q{font-family:var(--f-serif); font-weight:600; font-size:20px; letter-spacing:-0.01em; margin:0 0 8px;}
+.quiz-hint{color:var(--muted); font-size:14px; margin:0 0 18px;}
+.quiz-opts{display:grid; gap:10px;}
+.quiz-opt{
+  padding: 14px 16px; border-radius: 12px;
+  background: var(--surface-2); border: 1.5px solid var(--line);
+  cursor: pointer; text-align: left;
+  font-size: 14.5px; line-height: 1.4;
+  transition: border-color .15s, background .15s;
+}
+.quiz-opt:hover{border-color: var(--accent);}
+.quiz-opt.sel{border-color: var(--accent); background: var(--accent-soft); color: var(--accent);}
+.quiz-nav{display:flex; justify-content:space-between; gap:10px; margin-top:22px;}
+
+/* dicas por categoria (acionáveis) */
+details.tip.urgent{border-left: 3px solid var(--loss); background: color-mix(in srgb, var(--loss) 6%, var(--surface));}
+details.tip.action{border-left: 3px solid var(--accent);}
+details.tip .tip-tag{
+  font-size: 11px; font-weight: 700;
+  color: var(--muted); margin-left: auto;
+  margin-right: 6px;
+}
+details.tip.urgent .tip-tag{color: var(--loss);}
+details.tip.action .tip-tag{color: var(--accent);}
+
+/* badges nos cards de ativo para identificar tipo */
+.asset-kind{
+  display:inline-flex; align-items:center; gap:4px;
+  font-size: 11px; font-weight: 700;
+  color: var(--muted);
+  padding: 2px 8px; border-radius: 999px;
+  background: var(--surface-2);
+  margin-bottom: 4px;
+}
+.asset-kind.fii{color: var(--accent); background: var(--accent-soft);}
+.asset-kind.acao{color: #6B4FD4; background: color-mix(in srgb, #6B4FD4 15%, transparent);}
+.asset-kind.rf{color: var(--amber); background: color-mix(in srgb, var(--amber) 15%, transparent);}
+.asset-kind.fundo{color: #0C8599; background: color-mix(in srgb, #0C8599 15%, transparent);}
+
+/* resumo de dividendos no detalhe */
+.div-estimate{
+  background: var(--accent-soft);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin: 8px 0;
+}
+.div-estimate .vl{
+  font-family: var(--f-serif); font-weight: 600; font-size: 22px;
+  color: var(--accent); letter-spacing: -0.01em;
+}
+.div-estimate .lb{font-size:13px; color: var(--ink-2); margin-top:2px;}
+
 </style>
 </head>
 <body>
@@ -785,6 +917,17 @@ details.tip .tip-body p:last-child{margin:0;}
       <div id="assetList"></div>
     </section>
 
+    <!-- PERFIL DE INVESTIDOR (NOVO) -->
+    <section class="section" id="perfilSection">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Seu perfil</h2>
+          <p class="section-sub" id="perfilSub">Responda ao questionário para dicas personalizadas.</p>
+        </div>
+      </div>
+      <div id="perfilBox"></div>
+    </section>
+
     <!-- DICAS -->
     <section class="section">
       <div class="section-head">
@@ -808,6 +951,150 @@ details.tip .tip-body p:last-child{margin:0;}
 
 <script type="module">
 import { api } from './api.js';
+
+// =========================================================================
+// DADOS DE REFERÊNCIA (pesquisados em outubro/2026)
+// =========================================================================
+
+// DY médio por segmento de FII (fonte: Renova Invest + IFIX, jun/2026)
+// Usado quando usuário não informa o dividendo manual.
+const SEGMENT_DY = {
+  papel:        { mes: 1.00, nome: 'Papel (CRIs)',           faixa: '12-14% a.a.' },
+  tijolo_log:   { mes: 0.83, nome: 'Tijolo - Logística',     faixa: '9-11% a.a.'  },
+  tijolo_shop:  { mes: 0.75, nome: 'Tijolo - Shoppings',     faixa: '8-10% a.a.'  },
+  tijolo_laj:   { mes: 0.75, nome: 'Tijolo - Lajes',         faixa: '8-10% a.a.'  },
+  tijolo_ag:    { mes: 1.00, nome: 'Tijolo - Agências',      faixa: '11-13% a.a.' },
+  fof:          { mes: 0.92, nome: 'Fundo de Fundos (FoF)',  faixa: '10-12% a.a.' },
+  fiagro:       { mes: 1.00, nome: 'Fiagro (agronegócio)',   faixa: '11-13% a.a.' },
+  hibrido:      { mes: 0.83, nome: 'Híbrido',                faixa: '9-11% a.a.'  },
+};
+
+// Taxas de referência (atualize em "Mercado" quando precisar)
+const TAXAS = {
+  selic: 13.75,     // % a.a. - meta Copom
+  cdi:   13.65,     // % a.a. aproximado
+  ipca:  4.22,      // % a.a. 12 meses até ago/2026
+  pre_curto: 12.55, // Tesouro Prefixado 2029 em 06/10
+  pre_longo: 13.42, // Tesouro Prefixado 2032
+  ipca_longo: 6.97, // Tesouro IPCA+ 2032 (spread acima IPCA)
+};
+
+// Tabela regressiva de IR para renda fixa (dias → alíquota %)
+const IR_TABELA = [
+  { ate:  180, aliq: 22.5 },
+  { ate:  360, aliq: 20.0 },
+  { ate:  720, aliq: 17.5 },
+  { ate: 9999, aliq: 15.0 },
+];
+
+// Questionário de perfil - 4 pilares (base Anbima + comportamental)
+const PERGUNTAS = [
+  // PILAR 1: SITUAÇÃO FINANCEIRA
+  { pilar: 'Sua situação', k:'renda', q:'Qual sua situação de renda hoje?',
+    opts: [
+      { l:'Dependo da renda de uma pessoa (pais, cônjuge)', pts:{sit:0, conserv:+2} },
+      { l:'Renda variável, autônomo ou freelancer', pts:{sit:1, conserv:+1} },
+      { l:'Salário fixo CLT, pouco acima dos gastos', pts:{sit:2} },
+      { l:'Renda estável, com folga mensal', pts:{sit:3, conserv:-1} },
+      { l:'Renda alta e muito estável', pts:{sit:4, conserv:-2} },
+    ]},
+  { pilar: 'Sua situação', k:'reserva', q:'Você tem reserva de emergência?',
+    hint:'Dinheiro de fácil resgate para 6-12 meses de gastos.',
+    opts: [
+      { l:'Não tenho reserva nenhuma', pts:{reserva:0, urgent:+2} },
+      { l:'Tenho pouco (1-3 meses)', pts:{reserva:1, urgent:+1} },
+      { l:'Tenho uns 3-6 meses', pts:{reserva:2} },
+      { l:'Tenho 6+ meses tranquilo', pts:{reserva:3, conserv:-1} },
+    ]},
+  { pilar: 'Sua situação', k:'dividas', q:'Você tem dívidas com juros altos (cartão, crediário, cheque especial)?',
+    opts: [
+      { l:'Sim, está pesado', pts:{dividas:0, urgent:+3} },
+      { l:'Sim, mas controlado', pts:{dividas:1, urgent:+1} },
+      { l:'Só dívidas boas (financiamento imóvel, consignado barato)', pts:{dividas:2} },
+      { l:'Não tenho dívida', pts:{dividas:3} },
+    ]},
+
+  // PILAR 2: OBJETIVOS
+  { pilar: 'Seus objetivos', k:'objetivo', q:'Qual seu principal objetivo com os investimentos?',
+    opts: [
+      { l:'Guardar para uma compra grande em até 2 anos', pts:{obj:'curto', conserv:+2} },
+      { l:'Construir patrimônio para médio prazo (3-10 anos)', pts:{obj:'medio'} },
+      { l:'Independência financeira / aposentadoria (10+ anos)', pts:{obj:'longo', conserv:-1} },
+      { l:'Gerar renda mensal (viver de dividendos)', pts:{obj:'renda'} },
+    ]},
+  { pilar: 'Seus objetivos', k:'prazo', q:'Em quanto tempo você pretende precisar desse dinheiro?',
+    opts: [
+      { l:'Posso precisar nos próximos 12 meses', pts:{prazo:0, conserv:+3} },
+      { l:'Daqui 1 a 3 anos', pts:{prazo:1, conserv:+1} },
+      { l:'Daqui 3 a 10 anos', pts:{prazo:2} },
+      { l:'Não vou precisar tão cedo (10+ anos)', pts:{prazo:3, conserv:-2} },
+    ]},
+  { pilar: 'Seus objetivos', k:'aporte', q:'Quanto você consegue investir por mês?',
+    opts: [
+      { l:'Menos de R$ 300', pts:{aporte:0} },
+      { l:'R$ 300 a R$ 1.000', pts:{aporte:1} },
+      { l:'R$ 1.000 a R$ 3.000', pts:{aporte:2} },
+      { l:'Mais de R$ 3.000', pts:{aporte:3} },
+    ]},
+
+  // PILAR 3: CONHECIMENTO
+  { pilar: 'Seu conhecimento', k:'experiencia', q:'Há quanto tempo você investe?',
+    opts: [
+      { l:'Estou começando agora', pts:{exp:0, conserv:+1} },
+      { l:'Menos de 1 ano', pts:{exp:1} },
+      { l:'1 a 3 anos', pts:{exp:2} },
+      { l:'Mais de 3 anos', pts:{exp:3, conserv:-1} },
+    ]},
+  { pilar: 'Seu conhecimento', k:'produtos', q:'Com quais produtos você já operou?',
+    hint:'Pensa em quais você entende, não só os que tem conta.',
+    opts: [
+      { l:'Só poupança', pts:{conhec:0, conserv:+2} },
+      { l:'Poupança e CDB/Tesouro', pts:{conhec:1} },
+      { l:'FIIs, ações básicas, fundos', pts:{conhec:2} },
+      { l:'Opções, debêntures, exterior', pts:{conhec:3, conserv:-1} },
+    ]},
+  { pilar: 'Seu conhecimento', k:'escolhe_fii', q:'Como você costuma escolher um FII?',
+    opts: [
+      { l:'Sigo quem paga mais dividendo no último mês', pts:{escolha:0, yieldtrap:+2} },
+      { l:'Pela recomendação de influencers/corretora', pts:{escolha:1, yieldtrap:+1} },
+      { l:'Olho P/VP, vacância, qualidade dos imóveis', pts:{escolha:2} },
+      { l:'Ainda não investi em FII', pts:{escolha:3} },
+    ]},
+
+  // PILAR 4: COMPORTAMENTO SOB RISCO
+  { pilar: 'Como você reage', k:'queda', q:'Imagine que você investiu R$ 10.000 e, com uma crise, o valor cai para R$ 7.500 em um mês. O que faz?',
+    opts: [
+      { l:'Vendo tudo para não perder mais', pts:{reacao:0, panico:+3} },
+      { l:'Vendo uma parte para proteger', pts:{reacao:1, panico:+1} },
+      { l:'Não faço nada e espero recuperar', pts:{reacao:2} },
+      { l:'Compro mais, aproveitando preço baixo', pts:{reacao:3, conserv:-1} },
+    ]},
+  { pilar: 'Como você reage', k:'perda', q:'Qual perda máxima você aguentaria num ano sem perder o sono?',
+    opts: [
+      { l:'Nenhuma - não quero ver meu capital cair', pts:{tol:0, conserv:+2} },
+      { l:'Até 10%', pts:{tol:1, conserv:+1} },
+      { l:'Até 20%', pts:{tol:2} },
+      { l:'Mais de 30% se o retorno de longo prazo compensar', pts:{tol:3, conserv:-1} },
+    ]},
+  { pilar: 'Como você reage', k:'checagem', q:'Com que frequência você acompanha o preço dos seus investimentos?',
+    hint:'Pessoas que olham muito tendem a vender no pior momento.',
+    opts: [
+      { l:'Várias vezes ao dia', pts:{check:0, ansioso:+2} },
+      { l:'Uma vez por dia', pts:{check:1, ansioso:+1} },
+      { l:'Uma vez por semana', pts:{check:2} },
+      { l:'Mensalmente ou menos', pts:{check:3} },
+    ]},
+  { pilar: 'Como você reage', k:'liquidez', q:'Se um imprevisto grande acontecer amanhã (saúde, família), quanto do seu dinheiro investido você precisaria resgatar?',
+    opts: [
+      { l:'Mais de 50% - preciso de muita liquidez', pts:{liq:0, conserv:+2} },
+      { l:'Até 30%', pts:{liq:1} },
+      { l:'Menos de 10%, tenho reserva separada', pts:{liq:2, conserv:-1} },
+      { l:'Nada, meus investimentos são para longo prazo', pts:{liq:3, conserv:-2} },
+    ]},
+];
+
+// =========================================================================
+
 
 /* ---------------------------------------------------------------- helpers */
 const $ = (id) => document.getElementById(id);
@@ -889,15 +1176,80 @@ async function persist(){
 }
 
 /* ---------------------------------------------------------------- cálculos */
+// Enriquece posição: FII/ação OU renda fixa
 function enrich(p){
   if (p.ticker) {
     const inv = p.q * p.c;
     const atual = p.q * (p.a ?? p.c);
-    const renda = p.q * (p.d || 0);
-    return { inv, atual, ganho: atual - inv, pct: inv > 0 ? (atual - inv) / inv * 100 : 0, renda };
+    // dividendo: usa o informado OU estima pelo segmento (FII) OU 0 (ação sem info)
+    const divUnit = (p.d > 0) ? p.d : (p.kind === 'fii' ? estimarDividendoPorCota(p) : 0);
+    const renda = p.q * divUnit;
+    return { inv, atual, ganho: atual - inv, pct: inv > 0 ? (atual - inv) / inv * 100 : 0, renda, divUnit, isMarket: true };
   }
-  return { inv: p.ap || 0, atual: p.ap || 0, ganho: 0, pct: 0, renda: 0 };
+  // renda fixa / fundos
+  return calcRendaFixa(p);
 }
+
+// Estima dividendo mensal por cota com base no segmento do FII e preço atual
+function estimarDividendoPorCota(p){
+  if (p.kind !== 'fii') return 0;
+  const seg = p.segment || p.seg || 'tijolo_log';
+  const info = SEGMENT_DY[seg] || SEGMENT_DY.tijolo_log;
+  const preco = p.a ?? p.c ?? 0;
+  // mes é % do preço atual (ex: 0.83 = 0.83%/mês ≈ 10%/ano)
+  return preco * info.mes / 100;
+}
+
+// Calcula valor atual + rendimento mensal projetado para renda fixa
+function calcRendaFixa(p){
+  const inv = p.ap || 0;
+  if (inv <= 0) return { inv:0, atual:0, ganho:0, pct:0, renda:0, isMarket:false };
+  const taxaAA = taxaEfetivaAnual(p);
+  const dias = diasAplicado(p);
+  // valor bruto: capitalização diária composta
+  const bruto = inv * Math.pow(1 + taxaAA/100, dias/365);
+  // IR regressivo (não aplica LCI/LCA)
+  const isento = (p.kind === 'lci' || p.kind === 'lca');
+  const rendimento = bruto - inv;
+  const ir = isento ? 0 : rendimento * irPorDias(dias) / 100;
+  const atual = bruto - ir;
+  // renda mensal projetada: diferença entre o valor em +30d e hoje (líq.)
+  const bruto30 = inv * Math.pow(1 + taxaAA/100, (dias+30)/365);
+  const ir30 = isento ? 0 : (bruto30 - inv) * irPorDias(dias+30) / 100;
+  const atual30 = bruto30 - ir30;
+  const renda = Math.max(0, atual30 - atual);
+  return { inv, atual, ganho: atual - inv, pct: inv > 0 ? (atual - inv) / inv * 100 : 0, renda, isMarket:false, taxaAA, dias, ir };
+}
+
+// Taxa efetiva anual (%) para cada tipo de renda fixa
+function taxaEfetivaAnual(p){
+  const kind = p.kind;
+  const tx = Number(p.taxa) || 0;
+  if (kind === 'selic')  return TAXAS.selic;
+  if (kind === 'cdi')    return TAXAS.cdi * (tx/100 || 1);   // ex: 110% do CDI
+  if (kind === 'lci' || kind === 'lca') return TAXAS.cdi * (tx/100 || 0.9);
+  if (kind === 'pre')    return tx || TAXAS.pre_curto;
+  if (kind === 'ipca')   return TAXAS.ipca + (tx || TAXAS.ipca_longo);
+  if (kind === 'cdb')    return TAXAS.cdi * (tx/100 || 1);
+  if (kind === 'fundo')  return tx || 10;
+  return tx || TAXAS.selic;
+}
+
+// Dias desde a data de aplicação
+function diasAplicado(p){
+  if (!p.dt) return 1;
+  const ini = new Date(p.dt);
+  const hoje = new Date();
+  const d = Math.max(1, Math.floor((hoje - ini) / 86400000));
+  return d;
+}
+
+// Alíquota de IR regressiva pelo prazo
+function irPorDias(dias){
+  for (const t of IR_TABELA) if (dias <= t.ate) return t.aliq;
+  return 15;
+}
+
 function totals(){
   return state.positions.reduce((t, p) => {
     const r = enrich(p);
@@ -931,6 +1283,7 @@ function render(){
   $('assetsSub').textContent = n > 0 ? 'Cotações atualizadas automaticamente.' : '';
 
   renderAssets();
+  renderProfile();
   renderTips();
   $('heroUpd').textContent = n > 0 ? 'ao vivo' : '';
 }
@@ -974,6 +1327,20 @@ function buildAssetCard(p){
 
   const top = el('div', 'asset-top');
   const id = el('div', 'asset-id');
+
+  // badge de tipo
+  const kindClass = p.ticker ? (p.kind === 'acao' ? 'acao' : 'fii') :
+    (p.kind === 'fundo' ? 'fundo' : 'rf');
+  const kindLabel = p.ticker ? (p.kind === 'acao' ? 'AÇÃO' : 'FII') :
+    (p.kind === 'selic' ? 'TESOURO SELIC' :
+     p.kind === 'pre'   ? 'TESOURO PRE' :
+     p.kind === 'ipca'  ? 'TESOURO IPCA+' :
+     p.kind === 'cdb'   ? 'CDB' :
+     p.kind === 'lci'   ? 'LCI' :
+     p.kind === 'lca'   ? 'LCA' :
+     p.kind === 'fundo' ? 'FUNDO' : 'RENDA FIXA');
+  id.appendChild(el('span', 'asset-kind ' + kindClass, kindLabel));
+
   const tk = el('div', 'ticker', p.ticker || p.nome || '—');
   id.appendChild(tk);
   const name = p.name || p.nome || (p.ticker ? '' : '');
@@ -982,10 +1349,14 @@ function buildAssetCard(p){
   const val = el('div', 'asset-val');
   const v = el('div', 'v num', brl.format(r.atual));
   const d = el('div', 'd num');
-  if (p.ticker){
+  if (r.isMarket){
     d.className = 'd num ' + (r.ganho >= 0 ? 'gain' : 'loss');
     d.style.color = r.ganho >= 0 ? 'var(--gain)' : 'var(--loss)';
     d.textContent = (r.ganho>=0?'+ ':'− ') + brl.format(Math.abs(r.ganho));
+  } else if (r.ganho > 0){
+    d.className = 'd num gain';
+    d.style.color = 'var(--gain)';
+    d.textContent = '+ ' + brl.format(r.ganho);
   } else {
     d.textContent = 'aplicado';
     d.style.color = 'var(--muted)';
@@ -999,10 +1370,17 @@ function buildAssetCard(p){
   s1.appendChild(el('div', 'stat-label', 'Investido'));
   s1.appendChild(el('div', 'stat-val num', brl.format(r.inv)));
   const s2 = el('div');
-  s2.appendChild(el('div', 'stat-label', 'Rendimento projetado'));
-  const sv = el('div', 'stat-val num', r.renda > 0 ? brl.format(r.renda) + '/mês' : '—');
-  if (r.renda > 0) sv.style.color = 'var(--gain)';
-  s2.appendChild(sv);
+  if (r.isMarket){
+    s2.appendChild(el('div', 'stat-label', 'Rendimento projetado'));
+    const sv = el('div', 'stat-val num', r.renda > 0 ? brl.format(r.renda) + '/mês' : '—');
+    if (r.renda > 0) sv.style.color = 'var(--gain)';
+    s2.appendChild(sv);
+  } else {
+    s2.appendChild(el('div', 'stat-label', 'Taxa efetiva (a.a.)'));
+    const sv = el('div', 'stat-val num', r.taxaAA ? pct.format(r.taxaAA) + '%' : '—');
+    sv.style.color = 'var(--accent)';
+    s2.appendChild(sv);
+  }
   stats.appendChild(s1); stats.appendChild(s2);
   card.appendChild(stats);
 
@@ -1038,35 +1416,58 @@ function openSheet(buildBody){
 function openDetails(p){
   openSheet((body, close) => {
     const r = enrich(p);
-    const K = p.ticker ? (p.kind === 'acao' ? 'Ação' : 'Fundo imobiliário') : (p.kind === 'selic' ? 'Tesouro Selic' : p.kind === 'cdb' ? 'CDB' : 'Fundo');
+    const kindFull = (
+      p.kind === 'acao'  ? 'Ação' :
+      p.kind === 'fii'   ? 'Fundo imobiliário' :
+      p.kind === 'selic' ? 'Tesouro Selic' :
+      p.kind === 'pre'   ? 'Tesouro Prefixado' :
+      p.kind === 'ipca'  ? 'Tesouro IPCA+' :
+      p.kind === 'cdb'   ? 'CDB' :
+      p.kind === 'lci'   ? 'LCI (isento de IR)' :
+      p.kind === 'lca'   ? 'LCA (isento de IR)' :
+      p.kind === 'fundo' ? 'Fundo de investimento' : 'Ativo'
+    );
 
     const head = el('div', 'sheet-head');
     const left = el('div');
-    const tk = el('div', 'ticker', p.ticker || p.nome || K);
+    const tk = el('div', 'ticker', p.ticker || p.nome || kindFull);
     left.appendChild(tk);
-    if (p.name) left.appendChild(el('div', 'asset-name', p.name));
+    left.appendChild(el('div', 'asset-name', p.name || kindFull));
     const cb = el('button', 'close-btn'); cb.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 6l12 12M18 6L6 18"/></svg>';
     cb.onclick = close;
     head.appendChild(left); head.appendChild(cb);
     body.appendChild(head);
 
     body.appendChild(el('div', 'sheet-value num', brl.format(r.atual)));
-    if (p.ticker){
+    if (r.isMarket){
       const pill = el('span', 'pill ' + (r.ganho >= 0 ? 'gain' : 'loss'),
         (r.ganho >= 0 ? '+ ' : '− ') + brl.format(Math.abs(r.ganho)) + ' (' + pct.format(Math.abs(r.pct)) + '%)');
       body.appendChild(pill);
+    } else if (r.ganho > 0){
+      const pill = el('span', 'pill gain',
+        '+ ' + brl.format(r.ganho) + ' (' + pct.format(r.pct) + '%)');
+      body.appendChild(pill);
+    }
+
+    /* Destaque do dividendo estimado (FIIs sem dividendo informado) */
+    if (p.ticker && p.kind === 'fii' && !(p.d > 0) && r.divUnit > 0){
+      const info = SEGMENT_DY[p.segment || 'tijolo_log'];
+      const est = el('div', 'div-estimate');
+      est.appendChild(el('div', 'vl', brl.format(r.renda) + '/mês'));
+      est.appendChild(el('div', 'lb', 'estimativa com base no segmento ' + (info?.nome || p.segment) + ' (' + (info?.faixa || '') + ')'));
+      body.appendChild(est);
     }
 
     /* Comparação com Tesouro Selic (base 13,75% a.a.) */
     if (p.ticker && r.inv > 0){
-      const selicAnnual = 13.75;
+      const selicAnnual = TAXAS.selic;
       const selicProj = r.inv * selicAnnual / 100 * 0.85; // 15% IR
       const assetProj = r.renda * 12;
       const max = Math.max(assetProj, selicProj, 0.01);
 
       const sec = el('div', 'sheet-section');
       sec.appendChild(el('h3', 'sheet-section-title', 'Comparação em 12 meses'));
-      sec.appendChild(el('p', 'sheet-section-sub', 'Rendimento esperado se nada mudar. Base: Selic 13,75%, já descontado o IR.'));
+      sec.appendChild(el('p', 'sheet-section-sub', 'Rendimento esperado se nada mudar. Base: Selic ' + pct.format(selicAnnual) + '%, já descontado o IR.'));
 
       const cmp = el('div', 'compare');
       const r1 = el('div', 'compare-row');
@@ -1103,11 +1504,28 @@ function openDetails(p){
       row('Preço médio pago', brl.format(p.c));
       row('Preço atual', brl.format(p.a ?? p.c));
       if (p.d > 0) row('Último dividendo (por cota)', brl.format(p.d));
+      else if (p.kind === 'fii' && r.divUnit > 0) row('Dividendo estimado (cota)', brl.format(r.divUnit) + ' /mês');
       if (p.dy12 != null) row('Dividend Yield (12m)', pct.format(p.dy12) + '%');
       if (p.pvp != null) row('P/VP', pct.format(p.pvp));
-      if (p.segment) row('Segmento', p.segment);
+      if (p.segment) {
+        const si = SEGMENT_DY[p.segment];
+        row('Segmento', si ? si.nome : p.segment);
+      }
     } else {
+      row('Tipo', kindFull);
       row('Valor aplicado', brl.format(p.ap || 0));
+      row('Data da aplicação', p.dt ? new Date(p.dt).toLocaleDateString('pt-BR') : '—');
+      row('Dias aplicado', String(r.dias || 0));
+      row('Taxa efetiva (a.a.)', (r.taxaAA || 0).toFixed(2) + '%');
+      // mostra como foi configurado
+      if (p.kind === 'cdi' || p.kind === 'cdb') row('Rentabilidade', (p.taxa || 100) + '% do CDI');
+      else if (p.kind === 'lci' || p.kind === 'lca') row('Rentabilidade', (p.taxa || 90) + '% do CDI (isento IR)');
+      else if (p.kind === 'pre')  row('Taxa prefixada', (p.taxa || TAXAS.pre_curto) + '% a.a.');
+      else if (p.kind === 'ipca') row('IPCA +', (p.taxa || TAXAS.ipca_longo) + '% a.a.');
+      row('Rendimento bruto', brl.format(Math.max(0, (r.atual + (r.ir||0)) - r.inv)));
+      if ((r.ir || 0) > 0) row('IR estimado (' + irPorDias(r.dias) + '%)', '− ' + brl.format(r.ir));
+      row('Rendimento líquido', brl.format(r.ganho));
+      row('Rendimento diário (média)', brl.format(r.renda / 30));
     }
     tech.appendChild(kv);
     body.appendChild(tech);
@@ -1116,7 +1534,7 @@ function openDetails(p){
     const acts = el('div', 'sheet-actions');
     const rm = el('button', 'btn btn-ghost', 'Remover');
     rm.onclick = async () => {
-      if (!confirm('Remover ' + (p.ticker || p.nome) + ' da carteira?')) return;
+      if (!confirm('Remover ' + (p.ticker || p.nome || 'esse ativo') + ' da carteira?')) return;
       state.positions = state.positions.filter(x => x.id !== p.id);
       close(); render(); await persist(); toast('Ativo removido');
     };
@@ -1126,16 +1544,46 @@ function openDetails(p){
 }
 
 /* ---------------------------------------------------------------- adicionar ativo */
+function buildAddHead(body, close, title, sub){
+  const head = el('div', 'sheet-head');
+  const left = el('div');
+  left.appendChild(el('h3', 'sheet-section-title', title));
+  if (sub) left.appendChild(el('div', 'section-sub', sub));
+  const cb = el('button', 'close-btn'); cb.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+  cb.onclick = close;
+  head.appendChild(left); head.appendChild(cb);
+  body.appendChild(head);
+}
+
+// Tela inicial: 4 tipos de ativo
 function openAdd(){
   openSheet((body, close) => {
-    const head = el('div', 'sheet-head');
-    const left = el('div');
-    left.appendChild(el('h3', 'sheet-section-title', 'Adicionar ativo'));
-    left.appendChild(el('div', 'section-sub', 'Digite o código (ex: MXRF11, PETR4). O resto vem automático.'));
-    const cb = el('button', 'close-btn'); cb.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 6l12 12M18 6L6 18"/></svg>';
-    cb.onclick = close;
-    head.appendChild(left); head.appendChild(cb);
-    body.appendChild(head);
+    buildAddHead(body, close, 'O que você quer adicionar?', 'Escolha o tipo de ativo:');
+    const grid = el('div', 'type-grid');
+
+    const mkTile = (iconCls, label, desc, handler) => {
+      const t = el('button', 'type-tile');
+      const ic = el('div', 'ic' + (iconCls ? ' ' + iconCls : ''), iconCls === 'rf' ? '%' : '◆');
+      t.appendChild(ic);
+      t.appendChild(el('div', 'tt', label));
+      t.appendChild(el('div', 'tds', desc));
+      t.onclick = () => { close(); setTimeout(handler, 260); };
+      return t;
+    };
+
+    grid.appendChild(mkTile('', 'FII ou Ação', 'Fundo imobiliário ou ação da bolsa', openFiiAcaoAdd));
+    grid.appendChild(mkTile('rf', 'Tesouro Direto', 'Selic, Prefixado ou IPCA+', openTesouroAdd));
+    grid.appendChild(mkTile('rf', 'CDB, LCI ou LCA', 'Renda fixa privada de banco', openCdbAdd));
+    grid.appendChild(mkTile('', 'Fundo de investimento', 'Fundo multimercado ou de renda fixa', openFundoAdd));
+
+    body.appendChild(grid);
+  });
+}
+
+// Fluxo FII / Ação - busca por ticker com dividendo editável + estimativa por segmento
+function openFiiAcaoAdd(){
+  openSheet((body, close) => {
+    buildAddHead(body, close, 'Adicionar FII ou Ação', 'Digite o código (ex: MXRF11, PETR4). O preço vem automático.');
 
     const sb = el('div', 'search-box');
     sb.style.marginTop = '16px';
@@ -1159,7 +1607,6 @@ function openAdd(){
     body.appendChild(ok);
 
     let suggList = null, items = [], sel = -1, timer = null, chosen = null;
-
     const closeList = () => { if (suggList) suggList.remove(); suggList = null; items = []; sel = -1; };
 
     const choose = async (r) => {
@@ -1193,7 +1640,58 @@ function openAdd(){
       form.appendChild(qty); form.appendChild(prc);
       picked.appendChild(form);
 
+      // dividendo (manual OU estimado) - só para FII
+      let userSegment = 'tijolo_log';
+      let userDiv = null;
+      if (r.kind === 'fii'){
+        const divBox = el('div', 'sheet-section');
+        divBox.style.marginTop = '14px';
+        divBox.appendChild(el('h3', 'sheet-section-title', 'Dividendo mensal'));
+        divBox.appendChild(el('p', 'sheet-section-sub', 'Se você sabe o valor pago por cota, informe. Se não, estimamos pelo segmento.'));
+        const divForm = el('div', 'form-grid');
+        divForm.style.gridTemplateColumns = '1fr';
+        const divLbl = el('label', 'field');
+        divLbl.appendChild(el('span', null, 'Último dividendo pago (R$ por cota)'));
+        const divI = document.createElement('input');
+        divI.setAttribute('inputmode', 'decimal');
+        divI.placeholder = '0,10';
+        divLbl.appendChild(divI);
+        divForm.appendChild(divLbl);
+        divBox.appendChild(divForm);
+
+        const estBtn = el('button', 'btn btn-ghost', '💡 Não sei - estimar pelo segmento');
+        estBtn.style.marginTop = '10px';
+        estBtn.style.width = '100%';
+        const segBox = el('div');
+        segBox.style.display = 'none';
+        const segOpts = el('div', 'seg-opts');
+        Object.entries(SEGMENT_DY).forEach(([k, info]) => {
+          const o = el('div', 'seg-opt');
+          o.appendChild(el('div', 'nm', info.nome));
+          o.appendChild(el('div', 'rt', info.faixa));
+          o.onclick = () => {
+            segBox.querySelectorAll('.seg-opt').forEach(x => x.classList.remove('sel'));
+            o.classList.add('sel');
+            userSegment = k;
+            const preco = chosen._price || toNum(prcI.value) || 0;
+            const est = preco * info.mes / 100;
+            divI.value = est.toFixed(2).replace('.', ',');
+            userDiv = est;
+            toast('Estimativa aplicada: ' + brl.format(est) + '/cota/mês');
+          };
+          segOpts.appendChild(o);
+        });
+        segBox.appendChild(segOpts);
+        estBtn.onclick = (e) => { e.preventDefault(); segBox.style.display = segBox.style.display === 'none' ? 'block' : 'none'; };
+        divI.oninput = () => { userDiv = toNum(divI.value); };
+
+        divBox.appendChild(estBtn);
+        divBox.appendChild(segBox);
+        picked.appendChild(divBox);
+      }
+
       const prev = el('div', 'preview-note', 'Preencha quantidade e preço para ver o resumo.');
+      prev.style.marginTop = '14px';
       picked.appendChild(prev);
 
       // busca cotação
@@ -1201,6 +1699,14 @@ function openAdd(){
         const q = await api.quote(r.ticker);
         chosen._price = q.price; chosen._d = q.last_dividend; chosen._dy = q.dy_12m; chosen._pvp = q.pvp;
         price.textContent = brl.format(q.price);
+        if (q.last_dividend > 0 && r.kind === 'fii'){
+          // backend tem dividendo real — usa esse
+          const divInput = picked.querySelector('input[placeholder="0,10"]');
+          if (divInput && !divInput.value){
+            divInput.value = q.last_dividend.toFixed(2).replace('.', ',');
+            userDiv = q.last_dividend;
+          }
+        }
       } catch { price.textContent = 'preço indisponível'; price.style.fontSize = '14px'; }
 
       const upd = () => {
@@ -1209,8 +1715,11 @@ function openAdd(){
         const invested = Q * C;
         const current = Q * (chosen._price || C);
         const diff = current - invested;
-        prev.innerHTML = 'Você investiu <b>' + brl.format(invested) + '</b>. Hoje vale <b>' + brl.format(current) + '</b> ('
+        const dMes = (userDiv || chosen._d || 0) * Q;
+        let txt = 'Você investiu <b>' + brl.format(invested) + '</b>. Hoje vale <b>' + brl.format(current) + '</b> ('
           + (diff >= 0 ? '+' : '−') + brl.format(Math.abs(diff)) + ').';
+        if (dMes > 0) txt += '<br>Rendimento projetado: <b style="color:var(--gain)">' + brl.format(dMes) + '/mês</b>.';
+        prev.innerHTML = txt;
       };
       qtyI.oninput = upd; prcI.oninput = upd;
       setTimeout(() => qtyI.focus(), 50);
@@ -1224,8 +1733,10 @@ function openAdd(){
           id: crypto.randomUUID(),
           kind: chosen.kind === 'acao' ? 'acao' : 'fii',
           ticker: chosen.ticker, name: chosen.name,
-          q: Q, c: C, a: chosen._price ?? C, d: chosen._d ?? 0,
+          q: Q, c: C, a: chosen._price ?? C,
+          d: (userDiv != null ? userDiv : (chosen._d ?? 0)),
           dy12: chosen._dy ?? null, pvp: chosen._pvp ?? null,
+          segment: chosen.kind === 'fii' ? userSegment : null,
         });
         close(); render(); countUpHero(); toast('Ativo adicionado'); await persist();
       };
@@ -1274,6 +1785,244 @@ function openAdd(){
   });
 }
 
+// Fluxo Tesouro Direto - 3 subtipos (Selic/Pre/IPCA+)
+function openTesouroAdd(){
+  openSheet((body, close) => {
+    buildAddHead(body, close, 'Tesouro Direto', 'Títulos públicos emitidos pelo Governo. Garantidos pelo Tesouro Nacional.');
+
+    const grid = el('div', 'type-grid');
+    grid.style.gridTemplateColumns = '1fr';
+
+    const mkTipo = (k, label, desc, taxaDefault) => {
+      const t = el('button', 'type-tile');
+      const ic = el('div', 'ic rf', '%');
+      t.appendChild(ic);
+      t.appendChild(el('div', 'tt', label));
+      t.appendChild(el('div', 'tds', desc));
+      t.onclick = () => { close(); setTimeout(() => tesouroForm(k, label, taxaDefault), 260); };
+      return t;
+    };
+
+    grid.appendChild(mkTipo('selic', 'Tesouro Selic',
+      'Acompanha a Selic (' + TAXAS.selic + '% a.a.). Ideal para reserva.', TAXAS.selic));
+    grid.appendChild(mkTipo('pre',   'Tesouro Prefixado',
+      'Taxa fixa (~' + TAXAS.pre_curto + '% a.a. hoje). Travamos a rentabilidade.', TAXAS.pre_curto));
+    grid.appendChild(mkTipo('ipca',  'Tesouro IPCA+',
+      'IPCA (' + TAXAS.ipca + '%) + ' + TAXAS.ipca_longo + '% real a.a. Protege da inflação.', TAXAS.ipca_longo));
+
+    body.appendChild(grid);
+  });
+}
+
+function tesouroForm(kind, label, taxaDefault){
+  openSheet((body, close) => {
+    buildAddHead(body, close, label, 'Informe o valor aplicado e quando investiu.');
+
+    const form = el('div', 'form-grid');
+    const vl = el('label', 'field'); vl.appendChild(el('span', null, 'Valor aplicado (R$)'));
+    const vlI = document.createElement('input'); vlI.setAttribute('inputmode', 'decimal'); vlI.placeholder = '1.000,00'; vl.appendChild(vlI);
+    const dt = el('label', 'field'); dt.appendChild(el('span', null, 'Data da aplicação'));
+    const dtI = document.createElement('input'); dtI.type = 'date'; dtI.value = new Date().toISOString().slice(0,10); dt.appendChild(dtI);
+    form.appendChild(vl); form.appendChild(dt);
+
+    if (kind === 'pre' || kind === 'ipca'){
+      const tx = el('label', 'field');
+      tx.appendChild(el('span', null, kind === 'pre' ? 'Taxa contratada (% a.a.)' : 'Juros real contratado (% a.a.)'));
+      const txI = document.createElement('input'); txI.setAttribute('inputmode', 'decimal');
+      txI.placeholder = String(taxaDefault).replace('.', ',');
+      txI.value = String(taxaDefault).replace('.', ',');
+      tx.appendChild(txI);
+      form.appendChild(tx);
+      form.style.gridTemplateColumns = '1fr';
+      body.appendChild(form);
+
+      const prev = el('div', 'preview-note'); prev.style.marginTop = '14px';
+      prev.textContent = 'Preencha o valor para ver a projeção.';
+      body.appendChild(prev);
+
+      const upd = () => {
+        const V = toNum(vlI.value); if (V<=0) { prev.textContent = 'Preencha o valor para ver a projeção.'; return; }
+        const taxa = toNum(txI.value) || taxaDefault;
+        const efetiva = kind === 'ipca' ? (TAXAS.ipca + taxa) : taxa;
+        const em1ano = V * Math.pow(1 + efetiva/100, 1);
+        const liq = em1ano - (em1ano - V) * 0.15;
+        prev.innerHTML = 'Em 1 ano: <b>' + brl.format(liq) + '</b> (líq. IR 15%). Taxa efetiva: <b>' + pct.format(efetiva) + '% a.a.</b>';
+      };
+      vlI.oninput = upd; txI.oninput = upd;
+
+      const ok = el('button', 'btn btn-full', 'Adicionar à carteira'); ok.style.marginTop = '20px';
+      ok.onclick = async () => {
+        const V = toNum(vlI.value); if (V<=0) return toast('Informe o valor');
+        state.positions.push({
+          id: crypto.randomUUID(),
+          kind, nome: label, name: label,
+          ap: V, dt: dtI.value, taxa: toNum(txI.value) || taxaDefault,
+        });
+        close(); render(); countUpHero(); toast('Ativo adicionado'); await persist();
+      };
+      body.appendChild(ok);
+    } else {
+      form.style.gridTemplateColumns = '1fr';
+      body.appendChild(form);
+
+      const prev = el('div', 'preview-note'); prev.style.marginTop = '14px';
+      prev.textContent = 'Preencha o valor para ver a projeção.';
+      body.appendChild(prev);
+
+      vlI.oninput = () => {
+        const V = toNum(vlI.value); if (V<=0) { prev.textContent = 'Preencha o valor para ver a projeção.'; return; }
+        const em1ano = V * Math.pow(1 + TAXAS.selic/100, 1);
+        const liq = em1ano - (em1ano - V) * 0.15;
+        prev.innerHTML = 'Em 1 ano: <b>' + brl.format(liq) + '</b> (líq. IR 15%). Rende quase a Selic cheia.';
+      };
+
+      const ok = el('button', 'btn btn-full', 'Adicionar à carteira'); ok.style.marginTop = '20px';
+      ok.onclick = async () => {
+        const V = toNum(vlI.value); if (V<=0) return toast('Informe o valor');
+        state.positions.push({
+          id: crypto.randomUUID(),
+          kind: 'selic', nome: label, name: label,
+          ap: V, dt: dtI.value, taxa: TAXAS.selic,
+        });
+        close(); render(); countUpHero(); toast('Ativo adicionado'); await persist();
+      };
+      body.appendChild(ok);
+    }
+  });
+}
+
+// Fluxo CDB / LCI / LCA
+function openCdbAdd(){
+  openSheet((body, close) => {
+    buildAddHead(body, close, 'CDB, LCI ou LCA', 'Renda fixa emitida por bancos. Garantida pelo FGC até R$ 250 mil.');
+
+    const grid = el('div', 'type-grid');
+    grid.style.gridTemplateColumns = '1fr';
+
+    const mkTipo = (k, label, desc) => {
+      const t = el('button', 'type-tile');
+      t.appendChild(el('div', 'ic rf', '%'));
+      t.appendChild(el('div', 'tt', label));
+      t.appendChild(el('div', 'tds', desc));
+      t.onclick = () => { close(); setTimeout(() => cdbForm(k, label), 260); };
+      return t;
+    };
+
+    grid.appendChild(mkTipo('cdb',  'CDB',   'Paga % do CDI. Tem IR regressivo.'));
+    grid.appendChild(mkTipo('lci',  'LCI',   'Lastro imobiliário. 100% ISENTO de IR.'));
+    grid.appendChild(mkTipo('lca',  'LCA',   'Lastro do agronegócio. 100% ISENTO de IR.'));
+    grid.appendChild(mkTipo('pre',  'CDB Prefixado', 'Taxa fixa combinada. IR regressivo.'));
+
+    body.appendChild(grid);
+  });
+}
+
+function cdbForm(kind, label){
+  openSheet((body, close) => {
+    const sub = kind === 'lci' || kind === 'lca'
+      ? 'Isento de IR. Dica: só vale a pena acima de 85% do CDI.'
+      : kind === 'pre'
+        ? 'Taxa travada. Se a Selic cair, você ganha; se subir muito, perde.'
+        : 'Procure CDBs que paguem acima de 100% do CDI em grandes bancos.';
+    buildAddHead(body, close, label, sub);
+
+    const form = el('div', 'form-grid');
+    form.style.gridTemplateColumns = '1fr';
+    const vl = el('label', 'field'); vl.appendChild(el('span', null, 'Valor aplicado (R$)'));
+    const vlI = document.createElement('input'); vlI.setAttribute('inputmode', 'decimal'); vlI.placeholder = '1.000,00'; vl.appendChild(vlI);
+    const dt = el('label', 'field'); dt.appendChild(el('span', null, 'Data da aplicação'));
+    const dtI = document.createElement('input'); dtI.type = 'date'; dtI.value = new Date().toISOString().slice(0,10); dt.appendChild(dtI);
+    const tx = el('label', 'field');
+    const defVal = kind === 'pre' ? '13,00' : (kind === 'lci' || kind === 'lca') ? '95' : '110';
+    tx.appendChild(el('span', null, kind === 'pre' ? 'Taxa prefixada (% a.a.)' : 'Rentabilidade (% do CDI)'));
+    const txI = document.createElement('input'); txI.setAttribute('inputmode', 'decimal'); txI.placeholder = defVal; txI.value = defVal; tx.appendChild(txI);
+    form.appendChild(vl); form.appendChild(dt); form.appendChild(tx);
+    body.appendChild(form);
+
+    const prev = el('div', 'preview-note'); prev.style.marginTop = '14px';
+    prev.textContent = 'Preencha o valor para ver a projeção.';
+    body.appendChild(prev);
+
+    const upd = () => {
+      const V = toNum(vlI.value); if (V<=0) { prev.textContent = 'Preencha o valor para ver a projeção.'; return; }
+      const taxaUser = toNum(txI.value) || toNum(defVal);
+      let efetiva;
+      if (kind === 'pre') efetiva = taxaUser;
+      else if (kind === 'lci' || kind === 'lca') efetiva = TAXAS.cdi * taxaUser/100;
+      else efetiva = TAXAS.cdi * taxaUser/100;
+      const em1ano = V * Math.pow(1 + efetiva/100, 1);
+      const isento = (kind === 'lci' || kind === 'lca');
+      const liq = isento ? em1ano : em1ano - (em1ano - V) * 0.15;
+      let txt = 'Em 1 ano: <b>' + brl.format(liq) + '</b>';
+      if (isento) txt += ' <b style="color:var(--accent)">(isento de IR)</b>';
+      else txt += ' (líq. IR 15% após 2 anos)';
+      txt += '. Rende <b>' + pct.format(efetiva) + '% a.a.</b>';
+      prev.innerHTML = txt;
+    };
+    vlI.oninput = upd; txI.oninput = upd;
+
+    const ok = el('button', 'btn btn-full', 'Adicionar à carteira'); ok.style.marginTop = '20px';
+    ok.onclick = async () => {
+      const V = toNum(vlI.value); if (V<=0) return toast('Informe o valor');
+      state.positions.push({
+        id: crypto.randomUUID(),
+        kind, nome: label, name: label,
+        ap: V, dt: dtI.value, taxa: toNum(txI.value) || toNum(defVal),
+      });
+      close(); render(); countUpHero(); toast('Ativo adicionado'); await persist();
+    };
+    body.appendChild(ok);
+  });
+}
+
+// Fluxo Fundo de investimento
+function openFundoAdd(){
+  openSheet((body, close) => {
+    buildAddHead(body, close, 'Fundo de investimento', 'Multimercado, renda fixa, ações. Informe a rentabilidade projetada.');
+
+    const form = el('div', 'form-grid');
+    form.style.gridTemplateColumns = '1fr';
+    const nm = el('label', 'field'); nm.appendChild(el('span', null, 'Nome do fundo'));
+    const nmI = document.createElement('input'); nmI.placeholder = 'Ex: Trend Multimercado'; nm.appendChild(nmI);
+    const vl = el('label', 'field'); vl.appendChild(el('span', null, 'Valor aplicado (R$)'));
+    const vlI = document.createElement('input'); vlI.setAttribute('inputmode', 'decimal'); vlI.placeholder = '1.000,00'; vl.appendChild(vlI);
+    const dt = el('label', 'field'); dt.appendChild(el('span', null, 'Data da aplicação'));
+    const dtI = document.createElement('input'); dtI.type = 'date'; dtI.value = new Date().toISOString().slice(0,10); dt.appendChild(dtI);
+    const tx = el('label', 'field');
+    tx.appendChild(el('span', null, 'Rentabilidade esperada (% a.a.)'));
+    const txI = document.createElement('input'); txI.setAttribute('inputmode', 'decimal'); txI.placeholder = '10,00'; tx.appendChild(txI);
+    form.appendChild(nm); form.appendChild(vl); form.appendChild(dt); form.appendChild(tx);
+    body.appendChild(form);
+
+    const prev = el('div', 'preview-note'); prev.style.marginTop = '14px';
+    prev.textContent = 'Preencha os campos para ver a projeção.';
+    body.appendChild(prev);
+
+    const upd = () => {
+      const V = toNum(vlI.value); const T = toNum(txI.value);
+      if (V<=0 || T<=0) { prev.textContent = 'Preencha os campos para ver a projeção.'; return; }
+      const em1ano = V * Math.pow(1 + T/100, 1);
+      prev.innerHTML = 'Em 1 ano: <b>' + brl.format(em1ano) + '</b> (bruto). IR varia por tempo de aplicação.';
+    };
+    vlI.oninput = upd; txI.oninput = upd;
+
+    const ok = el('button', 'btn btn-full', 'Adicionar à carteira'); ok.style.marginTop = '20px';
+    ok.onclick = async () => {
+      const V = toNum(vlI.value); const T = toNum(txI.value); const N = nmI.value.trim();
+      if (!N) return toast('Informe o nome do fundo');
+      if (V<=0) return toast('Informe o valor');
+      if (T<=0) return toast('Informe a rentabilidade');
+      state.positions.push({
+        id: crypto.randomUUID(),
+        kind: 'fundo', nome: N, name: N,
+        ap: V, dt: dtI.value, taxa: T,
+      });
+      close(); render(); countUpHero(); toast('Fundo adicionado'); await persist();
+    };
+    body.appendChild(ok);
+  });
+}
+
 $('addBtn').onclick = openAdd;
 
 /* ---------------------------------------------------------------- refresh */
@@ -1301,34 +2050,350 @@ function tipAcc(title, cls, bodyHtml){
   return d;
 }
 
+// =========================================================================
+// PERFIL DE INVESTIDOR
+// =========================================================================
+
+// Agrega as respostas em um perfil + score
+function computeProfile(answers){
+  // Soma pontos de "conserv" - quanto maior, mais conservador o perfil deve ser
+  let conserv = 0;
+  let urgent = 0, yieldtrap = 0, panico = 0, ansioso = 0;
+  const pts = {};
+  for (const [k, idx] of Object.entries(answers)){
+    const q = PERGUNTAS.find(p => p.k === k);
+    if (!q || q.opts[idx] == null) continue;
+    const p = q.opts[idx].pts || {};
+    for (const [key, val] of Object.entries(p)){
+      if (typeof val === 'number') pts[key] = (pts[key] || 0) + val;
+      else pts[key] = val;
+    }
+    if (typeof p.conserv === 'number') conserv += p.conserv;
+    if (typeof p.urgent === 'number') urgent += p.urgent;
+    if (typeof p.yieldtrap === 'number') yieldtrap += p.yieldtrap;
+    if (typeof p.panico === 'number') panico += p.panico;
+    if (typeof p.ansioso === 'number') ansioso += p.ansioso;
+  }
+  let perfil, nome, desc;
+  if (conserv >= 4){
+    perfil = 'conservador';
+    nome = 'Conservador';
+    desc = 'Prioriza preservar capital e dormir tranquilo. Renda fixa deve ser a base.';
+  } else if (conserv >= -2){
+    perfil = 'moderado';
+    nome = 'Moderado';
+    desc = 'Aceita algum risco em troca de melhor rendimento. Mix equilibrado FII + renda fixa.';
+  } else {
+    perfil = 'arrojado';
+    nome = 'Arrojado';
+    desc = 'Confortável com oscilações para buscar mais retorno. Exposição maior em FII/ações.';
+  }
+  return { perfil, nome, desc, pts, conserv, urgent, yieldtrap, panico, ansioso, answers };
+}
+
+// Renderiza o card de perfil (resumo ou call-to-action)
+function renderProfile(){
+  const box = $('perfilBox');
+  const sub = $('perfilSub');
+  if (!box) return;
+  box.innerHTML = '';
+  const profile = state.profile;
+
+  if (!profile || !profile.perfil){
+    sub.textContent = 'Responda ao questionário para dicas personalizadas.';
+    const card = el('div', 'perfil-card');
+    card.appendChild(el('div', 'perfil-badge', '✨ 13 perguntas · 2 minutos'));
+    card.appendChild(el('h3', 'perfil-name', 'Descubra seu perfil de investidor'));
+    card.appendChild(el('p', 'perfil-desc',
+      'A gente usa suas respostas para dar dicas sob medida: ' +
+      'sugestão de reserva de emergência, se vale manter FII caro, quando trocar para Tesouro. ' +
+      'Suas respostas ficam só na sua conta.'));
+    const cta = el('div', 'perfil-cta');
+    const btn = el('button', 'btn', 'Começar questionário');
+    btn.onclick = openProfileSheet;
+    cta.appendChild(btn);
+    cta.appendChild(el('small', null, 'Pode refazer quando quiser.'));
+    card.appendChild(cta);
+    box.appendChild(card);
+    return;
+  }
+
+  sub.textContent = 'Suas dicas abaixo são baseadas nesse perfil.';
+  const card = el('div', 'perfil-card');
+  card.appendChild(el('div', 'perfil-badge', '✓ Seu perfil'));
+  card.appendChild(el('h3', 'perfil-name', profile.nome));
+  card.appendChild(el('p', 'perfil-desc', profile.desc));
+
+  const chips = el('div', 'perfil-chips');
+  const addChip = (txt) => chips.appendChild(el('span', 'perfil-chip', txt));
+  if (profile.urgent >= 2) addChip('⚠ situação apertada');
+  if (profile.pts.reserva === 0) addChip('sem reserva');
+  if (profile.panico >= 2) addChip('reage em quedas');
+  if (profile.ansioso >= 2) addChip('acompanha muito');
+  if (profile.yieldtrap >= 1) addChip('risco yield trap');
+  if (profile.pts.exp >= 2) addChip('experiente');
+  if (profile.pts.obj === 'renda') addChip('foco em renda');
+  if (profile.pts.obj === 'longo') addChip('horizonte longo');
+  if (chips.children.length) card.appendChild(chips);
+
+  const cta = el('div', 'perfil-cta');
+  const btn = el('button', 'btn btn-ghost', 'Refazer');
+  btn.onclick = openProfileSheet;
+  cta.appendChild(btn);
+  cta.appendChild(el('small', null, 'Atualize se sua vida mudar.'));
+  card.appendChild(cta);
+  box.appendChild(card);
+}
+
+// Questionário em sheet com progresso e navegação
+function openProfileSheet(){
+  const answers = (state.profile && state.profile.answers) ? {...state.profile.answers} : {};
+  let i = 0;
+
+  openSheet((body, close) => {
+    const render = () => {
+      body.innerHTML = '';
+      buildAddHead(body, close, 'Seu perfil de investidor', 'Suas respostas moldam todas as dicas.');
+
+      const q = PERGUNTAS[i];
+      const head = el('div', 'quiz-head');
+      head.appendChild(el('div', 'quiz-pillar', q.pilar));
+      head.appendChild(el('div', 'quiz-prog', (i+1) + ' de ' + PERGUNTAS.length));
+      body.appendChild(head);
+
+      const bar = el('div', 'quiz-bar');
+      const barF = el('div'); barF.style.width = ((i+1) / PERGUNTAS.length * 100) + '%';
+      bar.appendChild(barF);
+      body.appendChild(bar);
+
+      body.appendChild(el('h3', 'quiz-q', q.q));
+      if (q.hint) body.appendChild(el('p', 'quiz-hint', q.hint));
+
+      const opts = el('div', 'quiz-opts');
+      q.opts.forEach((o, oi) => {
+        const btn = el('button', 'quiz-opt' + (answers[q.k] === oi ? ' sel' : ''), o.l);
+        btn.onclick = () => {
+          answers[q.k] = oi;
+          // avança sozinho pra fluir melhor
+          if (i < PERGUNTAS.length - 1){ i++; render(); }
+          else { finish(); }
+        };
+        opts.appendChild(btn);
+      });
+      body.appendChild(opts);
+
+      const nav = el('div', 'quiz-nav');
+      const back = el('button', 'btn btn-ghost', '← Anterior');
+      back.disabled = i === 0;
+      back.onclick = () => { i--; render(); };
+      const next = el('button', 'btn', i === PERGUNTAS.length-1 ? 'Ver meu perfil' : 'Pular →');
+      next.disabled = answers[q.k] == null && i < PERGUNTAS.length-1;
+      next.onclick = () => {
+        if (i < PERGUNTAS.length-1){ i++; render(); }
+        else finish();
+      };
+      nav.appendChild(back); nav.appendChild(next);
+      body.appendChild(nav);
+    };
+
+    const finish = async () => {
+      // precisa responder ao menos 8 pra ter perfil
+      const n = Object.keys(answers).length;
+      if (n < 8){
+        toast('Responda ao menos 8 perguntas pra gerar seu perfil (' + n + '/' + PERGUNTAS.length + ')');
+        return;
+      }
+      const prof = computeProfile(answers);
+      state.profile = prof;
+      close();
+      renderProfile();
+      renderTips();
+      toast('Perfil: ' + prof.nome);
+      await persist();
+    };
+
+    render();
+  });
+}
+
+
+// =========================================================================
+// DICAS DINÂMICAS - mescla perfil + posições + mercado
+// =========================================================================
+
+function tipAccTag(title, cls, tag, bodyHtml){
+  const d = document.createElement('details');
+  d.className = 'tip' + (cls ? ' ' + cls : '');
+  const sum = el('summary');
+  sum.appendChild(el('span', 'tip-dot'));
+  sum.appendChild(el('span', null, title));
+  if (tag) sum.appendChild(el('span', 'tip-tag', tag));
+  const chev = el('span', 'chev');
+  chev.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>';
+  sum.appendChild(chev);
+  d.appendChild(sum);
+  const b = el('div', 'tip-body'); b.innerHTML = bodyHtml;
+  d.appendChild(b);
+  return d;
+}
+
 function renderTips(){
   const box = $('tips'); box.innerHTML = '';
   const t = totals();
-  const alerts = [];
+  const n = state.positions.length;
+  const profile = state.profile;
+  const tips = [];
 
-  // alertas personalizados primeiro
+  // ------- URGENTES (ação imediata) -------
+  if (profile && profile.urgent >= 2){
+    tips.push(tipAccTag(
+      'Pague suas dívidas de juros alto antes de investir',
+      'urgent', 'URGENTE',
+      '<p>Suas respostas mostram que você tem dívidas pesando. Cartão de crédito e cheque especial cobram <b>mais de 300% ao ano</b> — nenhum investimento rende isso.</p>' +
+      '<p><b>Ordem recomendada:</b></p><ol>' +
+      '<li>Negociar e quitar dívidas de cartão/cheque especial</li>' +
+      '<li>Fazer reserva de emergência (6 meses de gastos no Tesouro Selic)</li>' +
+      '<li>Só depois começar com FII e ações</li></ol>' +
+      '<p>Investir com dívida cara é como abastecer um balde furado.</p>'
+    ));
+  }
+
+  if (profile && profile.pts.reserva === 0 && n > 0){
+    tips.push(tipAccTag(
+      'Você investe mas não tem reserva de emergência',
+      'urgent', 'URGENTE',
+      '<p>Reserva de emergência = dinheiro de resgate rápido pra cobrir <b>6 a 12 meses</b> dos seus gastos. Sem ela, qualquer imprevisto obriga você a vender ativo em prejuízo.</p>' +
+      '<p><b>Onde fica:</b> Tesouro Selic ou CDB de liquidez diária em bancos grandes. Rende quase a Selic cheia (' + TAXAS.selic + '% a.a.) e você resgata em 1 dia útil.</p>' +
+      '<p><b>Não serve:</b> FII, ação, Tesouro Prefixado, Tesouro IPCA — todos oscilam.</p>'
+    ));
+  }
+
+  // ------- AÇÕES DA CARTEIRA -------
   state.positions.forEach(p => {
-    if (p.pvp && p.pvp > 1.10) alerts.push(tipAcc(
-      p.ticker + ' está com P/VP alto',
-      'warn',
-      '<p>O P/VP de <b>' + pct.format(p.pvp) + '</b> indica que você está pagando acima do valor patrimonial do fundo.</p><p>Para fundos de tijolo, um P/VP acima de 1,10 costuma significar um ágio alto. Nem sempre é problema, mas vale verificar se os imóveis justificam o preço.</p>'
-    ));
-    if (p.dy12 && p.dy12 > 15) alerts.push(tipAcc(
-      p.ticker + ' tem rendimento muito alto',
-      'warn',
-      '<p>Rendimento de <b>' + pct.format(p.dy12) + '% ao ano</b> está bem acima da média. Pode ser oportunidade — ou pode ser o que o mercado chama de <i>yield trap</i>: um fundo que paga muito porque tem risco maior.</p><p>Vale olhar o relatório gerencial do fundo antes de aumentar a posição.</p>'
-    ));
-    if (t.atual > 0){
-      const r = enrich(p);
-      if (r.atual / t.atual > 0.25) alerts.push(tipAcc(
-        p.ticker + ' concentra sua carteira',
-        'warn',
-        '<p>Esse ativo representa <b>' + pct.format(r.atual/t.atual*100) + '%</b> do seu patrimônio.</p><p>A diversificação costuma ficar entre 10% e 15% por ativo. Se algo der errado com esse fundo, uma parte grande da carteira sente.</p>'
+    const r = enrich(p);
+
+    // yield trap: DY muito alto
+    if (p.ticker && p.dy12 && p.dy12 > 15){
+      tips.push(tipAccTag(
+        p.ticker + ' pode ser yield trap',
+        'warn', 'INVESTIGAR',
+        '<p>Rendimento de <b>' + pct.format(p.dy12) + '% ao ano</b> está muito acima da média (FII bom paga 8-12%).</p>' +
+        '<p><b>Yield trap</b> = o fundo paga muito porque o mercado tem medo de algo. Pode ser:</p>' +
+        '<ul><li>Imóveis vagos ou com inquilino problemático</li><li>CRIs com risco de calote</li>' +
+        '<li>Distribuição extraordinária que não vai se repetir</li></ul>' +
+        '<p><b>Antes de aumentar a posição:</b> leia o relatório gerencial e veja se o DY vem só do aluguel/juros ou de ganho de capital pontual.</p>'
+      ));
+    }
+
+    // P/VP alto
+    if (p.ticker && p.pvp && p.pvp > 1.15){
+      tips.push(tipAccTag(
+        p.ticker + ' está pagando ágio (P/VP alto)',
+        'warn', 'ATENÇÃO',
+        '<p>P/VP de <b>' + pct.format(p.pvp) + '</b>: você paga ' + pct.format((p.pvp-1)*100) + '% a mais do que o patrimônio do fundo vale.</p>' +
+        '<p>Para fundos de tijolo, isso costuma ser agressivo. Se o fundo tiver uma emissão nova, você provavelmente conseguirá a mesma cota mais barata.</p>' +
+        '<p><b>Dica:</b> acompanhe os comunicados do fundo. Em emissões, o preço de referência costuma trazer o P/VP para perto de 1,00.</p>'
+      ));
+    }
+
+    // Concentração
+    if (p.ticker && t.atual > 0 && r.atual / t.atual > 0.25){
+      tips.push(tipAccTag(
+        p.ticker + ' concentra ' + pct.format(r.atual/t.atual*100) + '% da sua carteira',
+        'action', 'DIVERSIFICAR',
+        '<p>Você tem <b>' + pct.format(r.atual/t.atual*100) + '%</b> em um único ativo. Se algo der errado com ele (gestão, inadimplência, vacância), o estrago é grande.</p>' +
+        '<p><b>Referência saudável:</b> no máximo 10-15% por ativo.</p>' +
+        '<p><b>Como diversificar:</b> aporte novo em outros ativos até balancear. Vender só pra equilibrar costuma gerar imposto e corretagem desnecessários.</p>'
+      ));
+    }
+
+    // Renda fixa com Prefixado longo e perfil conservador
+    if (p.kind === 'pre' && profile && profile.perfil === 'conservador'){
+      tips.push(tipAccTag(
+        'Tesouro Prefixado tem risco pro seu perfil',
+        'warn', 'ATENÇÃO',
+        '<p>Prefixado <b>trava a taxa</b>. Se a Selic subir, você perde — porque fica preso num rendimento menor que o novo CDI.</p>' +
+        '<p>Se precisar resgatar antes do vencimento, pode receber menos que investiu (marcação a mercado).</p>' +
+        '<p><b>Alternativa pro conservador:</b> Tesouro Selic acompanha os juros em tempo real, sem surpresa.</p>'
       ));
     }
   });
 
-  // conceitos (sempre)
+  // ------- CARTEIRA GERAL -------
+
+  // Carteira só FII sem renda fixa
+  const temFii = state.positions.some(p => p.kind === 'fii');
+  const temRf  = state.positions.some(p => ['selic','pre','ipca','cdb','lci','lca'].includes(p.kind));
+  if (temFii && !temRf && n >= 2){
+    tips.push(tipAccTag(
+      'Sua carteira só tem FII',
+      'action', 'EQUILIBRAR',
+      '<p>FII é uma ótima classe, mas <b>oscila</b> com o mercado. Em crises, o preço da cota pode cair 20-30% em meses.</p>' +
+      '<p><b>Base de renda fixa</b> (Tesouro Selic ou CDB) traz:</p>' +
+      '<ul><li>Previsibilidade: você sabe quanto vai render</li>' +
+      '<li>Liquidez: resgate em 1 dia</li>' +
+      '<li>Oportunidade: dinheiro para comprar FII quando cair</li></ul>' +
+      '<p>Mesmo pros arrojados, uma reserva de 20-30% em renda fixa é o padrão.</p>'
+    ));
+  }
+
+  // Poucos ativos
+  if (n > 0 && n < 5){
+    tips.push(tipAccTag(
+      'Você tem só ' + n + ' ' + (n===1?'ativo':'ativos') + ' — diversifique mais',
+      'action', 'DIVERSIFICAR',
+      '<p>Carteiras com 1-4 ativos ficam muito expostas a problemas específicos. O ideal:</p>' +
+      '<ul><li><b>FII:</b> ao menos 6-8 ativos, misturando papel (CRI) e tijolo (imóveis)</li>' +
+      '<li><b>Ações:</b> 10-15 empresas de setores diferentes</li>' +
+      '<li><b>Renda fixa:</b> Tesouro + 1-2 CDBs/LCIs</li></ul>' +
+      '<p>Não precisa comprar tudo hoje. Acrescente aos poucos conforme aporta.</p>'
+    ));
+  }
+
+  // Perfil ansioso + muitos ativos de risco
+  if (profile && profile.ansioso >= 2 && temFii){
+    tips.push(tipAccTag(
+      'Diminua a frequência que olha o preço',
+      'info', 'HÁBITO',
+      '<p>Você respondeu que olha preço todo dia. Isso <b>aumenta a chance de vender errado</b> — no vermelho, por emoção, no fundo do poço.</p>' +
+      '<p><b>Prática que funciona:</b></p>' +
+      '<ul><li>Olhar a carteira só no dia do aporte mensal</li>' +
+      '<li>Agendar uma revisão trimestral (planilha + leitura dos relatórios)</li>' +
+      '<li>Tirar o app da tela inicial do celular</li></ul>' +
+      '<p>Preço oscila sempre. O que vale é o rendimento acumulado em anos.</p>'
+    ));
+  }
+
+  // Perfil pânico
+  if (profile && profile.panico >= 3){
+    tips.push(tipAccTag(
+      'Prepare-se mentalmente para quedas',
+      'info', 'MINDSET',
+      '<p>Suas respostas mostram que você venderia tudo numa queda de 25%. Isso é o pior erro de longo prazo: você <b>congela</b> o prejuízo.</p>' +
+      '<p><b>Realidade histórica do Ibovespa:</b></p>' +
+      '<ul><li>Queda de 20%+ acontece uns 3-4 anos em cada 10</li>' +
+      '<li>Em todos os crashes, o mercado recuperou em 2-5 anos</li>' +
+      '<li>Quem vendeu no fundo transformou perda temporária em perda real</li></ul>' +
+      '<p><b>Regra:</b> só invista em FII/ação o que você <b>consegue não olhar por 5 anos</b>. O resto fica em Selic.</p>'
+    ));
+  }
+
+  // Objetivo renda + sem FII
+  if (profile && profile.pts.obj === 'renda' && !temFii){
+    tips.push(tipAccTag(
+      'Seu objetivo é renda — considere FII',
+      'action', 'OPORTUNIDADE',
+      '<p>Você quer gerar renda mensal, mas não tem FII. Fundos imobiliários pagam dividendos <b>mensais</b> e são a classe mais popular pra viver de renda.</p>' +
+      '<p><b>Começar sem erro:</b></p>' +
+      '<ul><li>Mix 50% papel (CRI) + 50% tijolo (imóveis)</li>' +
+      '<li>Papel: liquidez e DY alto (12-14% a.a.). Ex: KNCR11, RBRR11, HGCR11</li>' +
+      '<li>Tijolo logística: contratos longos. Ex: HGLG11, VILG11, BTLG11</li>' +
+      '<li>Shopping/laje: mais cíclico mas potencial de valorização. Ex: XPML11, HGRE11</li></ul>' +
+      '<p>Não é indicação de compra — é referência pra pesquisar.</p>'
+    ));
+  }
+
+  // ------- CONCEITOS SEMPRE PRESENTES -------
   const concepts = [
     ['O que é Dividend Yield (DY)?',
      '<p>É quanto um ativo paga de rendimentos em relação ao preço da cota, nos últimos 12 meses.</p>' +
@@ -1342,13 +2407,23 @@ function renderTips(){
      '<p><b>Tijolo</b>: investe em imóveis físicos (shoppings, galpões, lajes). O ganho vem do aluguel.</p>' +
      '<p><b>Papel</b>: investe em títulos de dívida ligados a imóveis (CRIs). O ganho vem dos juros.</p>' +
      '<p>Carteira equilibrada costuma ter os dois: tijolo dá exposição a imóveis reais, papel costuma pagar mais rendimento no curto prazo.</p>'],
+    ['IR em renda fixa: por que varia?',
+     '<p>Imposto segue tabela regressiva — quanto mais tempo você deixa, menos paga:</p>' +
+     '<ul><li>Até 180 dias: 22,5%</li><li>181 a 360 dias: 20%</li>' +
+     '<li>361 a 720 dias: 17,5%</li><li>Acima de 720 dias (2 anos): 15%</li></ul>' +
+     '<p>Por isso Tesouro e CDB rendem mais quando você segura por mais de 2 anos.</p>' +
+     '<p><b>Exceções:</b> LCI, LCA, debêntures incentivadas e poupança são isentos de IR.</p>'],
+    ['Tesouro Selic vs. Prefixado vs. IPCA+',
+     '<p><b>Selic:</b> acompanha os juros em tempo real. Nunca perde. Ideal pra reserva.</p>' +
+     '<p><b>Prefixado:</b> taxa travada (hoje ~' + TAXAS.pre_curto + '%). Ganha se juros caírem, perde se subirem. Pode marcar prejuízo se resgatar antes.</p>' +
+     '<p><b>IPCA+:</b> paga IPCA + taxa real (~' + TAXAS.ipca_longo + '%). Protege do aumento de preços. Bom pra longo prazo.</p>'],
     ['Por que a cotação muda sem eu fazer nada?',
      '<p>O preço do ativo é definido pelo mercado — por quanto as pessoas estão comprando e vendendo naquele momento.</p>' +
      '<p>Nosso sistema atualiza automaticamente a cada 5 minutos durante o pregão (10h às 18h). Fora desse horário, o preço fica congelado no último fechamento.</p>'],
   ];
-  concepts.forEach(([t, b]) => alerts.push(tipAcc(t, 'info', b)));
+  concepts.forEach(([t, b]) => tips.push(tipAccTag(t, 'info', 'CONCEITO', b)));
 
-  alerts.forEach(a => box.appendChild(a));
+  tips.forEach(a => box.appendChild(a));
 }
 
 /* ---------------------------------------------------------------- start */
