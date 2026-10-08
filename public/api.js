@@ -27,6 +27,7 @@ export const api = {
   // --- mercado ---
   search:   (q) => api._req('GET', '/api/market/search?q=' + encodeURIComponent(q)),
   quote:    (t) => api._req('GET', '/api/market/quote/' + encodeURIComponent(t)),
+  rates:    () => api._req('GET', '/api/market/rates'),
 
   // --- carteira ---
   getPortfolio:  () => api._req('GET', '/api/portfolio'),

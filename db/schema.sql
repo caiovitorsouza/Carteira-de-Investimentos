@@ -117,3 +117,24 @@ CREATE TABLE IF NOT EXISTS refresh_runs (
   failed       integer,
   note         text
 );
+
+-- 5) TAXAS DE MERCADO (cache global de Selic/CDI/IPCA, atualizado do BCB) ---
+CREATE TABLE IF NOT EXISTS market_rates (
+  key         text PRIMARY KEY,                     -- 'selic','cdi','ipca','pre_curto','pre_longo','ipca_longo'
+  value       numeric(10,4) NOT NULL,               -- % ao ano
+  source      text,                                 -- 'bcb','manual','fallback'
+  updated_at  timestamptz NOT NULL DEFAULT now()
+);
+
+-- MIGRAÇÕES IDEMPOTENTES ----------------------------------------------------
+-- Permitir novos tipos de renda fixa (pre, ipca, lci, lca) no esquema de posições.
+-- As ALTER TABLE abaixo são idempotentes: só rodam se o constraint existir.
+ALTER TABLE positions DROP CONSTRAINT IF EXISTS positions_kind_check;
+ALTER TABLE positions ADD CONSTRAINT positions_kind_check
+  CHECK (kind IN ('fii','acao','selic','cdb','pre','ipca','lci','lca','fundo'));
+
+ALTER TABLE positions DROP CONSTRAINT IF EXISTS positions_shape;
+ALTER TABLE positions ADD CONSTRAINT positions_shape CHECK (
+    (kind IN ('fii','acao') AND ticker IS NOT NULL AND quantity IS NOT NULL AND avg_price IS NOT NULL)
+ OR (kind IN ('selic','cdb','pre','ipca','lci','lca','fundo') AND ticker IS NULL AND invested_amount IS NOT NULL)
+);

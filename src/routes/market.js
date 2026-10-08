@@ -3,9 +3,27 @@ import { Router } from 'express';
 import { query } from '../lib/db.js';
 import { requireAuth } from '../middleware/requireAuth.js';
 import { refreshTickers } from '../services/quotes.js';
+import { loadRates, refreshRates } from '../services/rates.js';
 
 export const marketRouter = Router();
 marketRouter.use(requireAuth);
+
+// GET /api/market/rates -> taxas macroeconômicas (Selic, CDI, IPCA + ref. Tesouro)
+marketRouter.get('/rates', async (_req, res, next) => {
+  try {
+    const rates = await loadRates();
+    res.json(rates);
+  } catch (err) { next(err); }
+});
+
+// POST /api/market/rates/refresh -> força atualização a partir do Banco Central
+marketRouter.post('/rates/refresh', async (_req, res, next) => {
+  try {
+    const r = await refreshRates();
+    const rates = await loadRates();
+    res.json({ ...r, rates });
+  } catch (err) { next(err); }
+});
 
 // GET /api/market/search?q=mxrf  -> autocompletar por ticker ou nome.
 marketRouter.get('/search', async (req, res, next) => {
