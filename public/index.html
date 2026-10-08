@@ -847,14 +847,16 @@ details.tip.action .tip-tag{color: var(--accent);}
   background: var(--surface-2); border-radius: 12px;
   color: var(--muted); font-size: 13px;
 }
-.hist-chart .hc-proj{
+/* Link discreto do simulador - visível sempre, fora do chart */
+.hc-proj{
   display: block; width: 100%;
   background: transparent; border: none; cursor: pointer;
   color: var(--muted); font-size: 12.5px; font-family: inherit;
-  padding: 10px 0 2px; margin-top: 4px;
+  padding: 14px 0 4px; margin-top: 8px;
   transition: color .15s;
+  text-align: center;
 }
-.hist-chart .hc-proj:hover{color: var(--accent);}
+.hc-proj:hover{color: var(--accent);}
 
 /* Simulador */
 .sim-result{
@@ -967,6 +969,8 @@ details.tip.action .tip-tag{color: var(--accent);}
       </div>
       <!-- Gráfico de evolução do patrimônio (preenchido pelo JS) -->
       <div id="histChart" class="hist-chart" hidden></div>
+      <!-- Link do simulador - aparece sempre (fora do chart) -->
+      <button class="hc-proj" id="simBtn">💭 Projetar com aportes mensais →</button>
     </section>
 
     <!-- ATIVOS -->
@@ -1451,13 +1455,10 @@ function renderHistChart(){
       <text class="hc-lbl" x="${PAD_L}" y="${H-2}">${new Date(data[0].d).toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit'})}</text>
       <text class="hc-lbl" x="${W-PAD_R}" y="${H-2}" text-anchor="end">hoje</text>
     </svg>
-    <button class="hc-proj" id="projBtn">💭 Projetar com aportes mensais →</button>
   `;
   host.querySelectorAll('.hc-tab').forEach(b => {
     b.onclick = () => { _histRange = Number(b.dataset.r); renderHistChart(); };
   });
-  const pb = host.querySelector('#projBtn');
-  if (pb) pb.onclick = openSimulatorSheet;
 }
 
 // =========================================================================
@@ -2688,6 +2689,7 @@ function openFundoAdd(){
 }
 
 $('addBtn').onclick = openAdd;
+$('simBtn').onclick = openSimulatorSheet;
 
 /* ---------------------------------------------------------------- refresh */
 $('refreshBtn').onclick = async () => {
