@@ -1,5 +1,4 @@
-// Cliente da Brapi (brapi.dev): cotações, busca de tickers e indicadores de FII.
-// Doc: https://brapi.dev/docs
+// Cliente da Brapi (brapi.dev) — versão com logs para diagnóstico
 import { config, brapiHasFundamentals } from '../lib/config.js';
 
 const { baseUrl, token, plan } = config.brapi;
@@ -7,9 +6,12 @@ const canDividends = plan === 'startup' || plan === 'pro';
 const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
 async function getJson(url) {
+  const safeUrl = url.replace(/token=[^&]+/, 'token=REDACTED');
+  console.log('[brapi] GET', safeUrl, 'headers:', Object.keys(headers));
   const res = await fetch(url, { headers });
   if (!res.ok) {
     const body = await res.text().catch(() => '');
+    console.error('[brapi] HTTP', res.status, body.slice(0, 300));
     throw new Error(`brapi ${res.status}: ${body.slice(0, 200)}`);
   }
   return res.json();
@@ -34,17 +36,21 @@ function mapQuote(r) {
 export async function fetchQuotes(tickers) {
   if (!tickers.length) return [];
   const symbols = tickers.join(',');
-  // No plano gratuito, não pedir dividendos (403). Só preço, variação, volume.
-  const divParam = canDividends ? '?dividends=true' : '';
-  const url = `${baseUrl}/api/quote/${encodeURIComponent(symbols)}${divParam}`;
+  const params = [];
+  if (canDividends) params.push('dividends=true');
+  if (token) params.push(`token=${encodeURIComponent(token)}`);
+  const url = `${baseUrl}/api/quote/${encodeURIComponent(symbols)}${params.length ? '?' + params.join('&') : ''}`;
   const data = await getJson(url);
-  return (data.results || []).filter((r) => r && r.symbol).map(mapQuote);
+  const quotes = (data.results || []).filter((r) => r && r.symbol).map(mapQuote);
+  console.log('[brapi] parsed', quotes.length, 'quotes - first:', JSON.stringify(quotes[0]));
+  return quotes;
 }
 
 export async function fetchFiiIndicators(tickers) {
   if (!brapiHasFundamentals || !tickers.length) return {};
   const symbols = tickers.join(',');
-  const url = `${baseUrl}/api/v2/fii/indicators?symbols=${encodeURIComponent(symbols)}`;
+  const tokenParam = token ? `&token=${encodeURIComponent(token)}` : '';
+  const url = `${baseUrl}/api/v2/fii/indicators?symbols=${encodeURIComponent(symbols)}${tokenParam}`;
   try {
     const data = await getJson(url);
     const out = {};
@@ -63,7 +69,7 @@ export async function fetchFiiIndicators(tickers) {
 }
 
 export async function fetchInstrumentList() {
-  const url = `${baseUrl}/api/quote/list`;
+  const url = `${baseUrl}/api/quote/list${token ? '?token=' + encodeURIComponent(token) : ''}`;
   const data = await getJson(url);
   const kindOf = (t) => {
     const s = (t || '').toLowerCase();
