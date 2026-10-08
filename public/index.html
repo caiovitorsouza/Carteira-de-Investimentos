@@ -847,6 +847,48 @@ details.tip.action .tip-tag{color: var(--accent);}
   background: var(--surface-2); border-radius: 12px;
   color: var(--muted); font-size: 13px;
 }
+.hist-chart .hc-proj{
+  display: block; width: 100%;
+  background: transparent; border: none; cursor: pointer;
+  color: var(--muted); font-size: 12.5px; font-family: inherit;
+  padding: 10px 0 2px; margin-top: 4px;
+  transition: color .15s;
+}
+.hist-chart .hc-proj:hover{color: var(--accent);}
+
+/* Simulador */
+.sim-result{
+  background: linear-gradient(135deg, var(--accent-soft), var(--surface-2));
+  border-radius: 16px; padding: 20px;
+  text-align: center;
+}
+.sim-big{
+  font-family: var(--f-serif); font-weight: 600;
+  font-size: 36px; color: var(--accent);
+  letter-spacing: -0.015em; line-height: 1;
+}
+.sim-sub{color: var(--muted); font-size: 13px; margin-top: 4px;}
+.sim-split{
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; margin-top: 16px;
+  text-align: left;
+}
+.sim-split > div{
+  background: var(--surface); border-radius: 10px; padding: 10px 12px;
+}
+.sim-split span{display:block; font-size: 11.5px; color: var(--muted); margin-bottom: 2px;}
+.sim-split b{font-family: var(--f-mono); font-size: 15px;}
+.sim-inv{fill: none; stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 4 3;}
+.sim-leg{
+  display: flex; gap: 14px; justify-content: center;
+  font-size: 11.5px; color: var(--muted); margin-top: 6px;
+}
+.sim-leg .dot{
+  display: inline-block; width: 8px; height: 8px; border-radius: 2px;
+  margin-right: 4px; vertical-align: middle;
+}
+.sim-leg .dot.verde{background: var(--accent);}
+.sim-leg .dot.cinza{background: var(--muted);}
 
 </style>
 </head>
@@ -1409,9 +1451,224 @@ function renderHistChart(){
       <text class="hc-lbl" x="${PAD_L}" y="${H-2}">${new Date(data[0].d).toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit'})}</text>
       <text class="hc-lbl" x="${W-PAD_R}" y="${H-2}" text-anchor="end">hoje</text>
     </svg>
+    <button class="hc-proj" id="projBtn">💭 Projetar com aportes mensais →</button>
   `;
   host.querySelectorAll('.hc-tab').forEach(b => {
     b.onclick = () => { _histRange = Number(b.dataset.r); renderHistChart(); };
+  });
+  const pb = host.querySelector('#projBtn');
+  if (pb) pb.onclick = openSimulatorSheet;
+}
+
+// =========================================================================
+// SIMULADOR DE APORTES MENSAIS (juros compostos)
+// Entrada discreta embaixo do gráfico. Mostra "quanto você terá" se investir
+// X todo mês por N anos a Y% ao ano.
+// =========================================================================
+function openSimulatorSheet(){
+  openSheet((body, close) => {
+    buildAddHead(body, close, 'Simulador de aportes',
+      'Veja o poder dos juros compostos no seu patrimônio.');
+
+    // Pré-preenchimento inteligente
+    const t = totals();
+    const inicialDefault = Math.round(t.atual) || 1000;
+    const aporteDefault = 500;
+    const anosDefault = 10;
+    const taxaDefault = 10;
+
+    const form = el('div', 'form-grid');
+    form.style.gridTemplateColumns = '1fr 1fr';
+    const mkField = (label, placeholder, defVal) => {
+      const f = el('label', 'field');
+      f.appendChild(el('span', null, label));
+      const i = document.createElement('input');
+      i.setAttribute('inputmode', 'decimal');
+      i.placeholder = placeholder;
+      i.value = String(defVal).replace('.', ',');
+      f.appendChild(i);
+      form.appendChild(f);
+      return i;
+    };
+    const iInicial = mkField('Capital inicial (R$)', '1.000,00', inicialDefault);
+    const iAporte  = mkField('Aporte mensal (R$)',   '500,00',   aporteDefault);
+    const iAnos    = mkField('Prazo (anos)',         '10',       anosDefault);
+    const iTaxa    = mkField('Rendimento (% a.a.)',  '10,00',    taxaDefault);
+    body.appendChild(form);
+
+    // Projeção textual + gráfico
+    const prev = el('div');
+    prev.style.marginTop = '16px';
+    body.appendChild(prev);
+
+    const chart = el('div');
+    chart.style.marginTop = '14px';
+    body.appendChild(chart);
+
+    const dicasBox = el('div');
+    dicasBox.style.marginTop = '14px';
+    dicasBox.style.display = 'grid';
+    dicasBox.style.gap = '8px';
+    body.appendChild(dicasBox);
+
+    const upd = () => {
+      const V0 = toNum(iInicial.value);
+      const A  = toNum(iAporte.value);
+      const N  = Math.max(1, Math.min(60, Math.round(toNum(iAnos.value))));
+      const i  = toNum(iTaxa.value) / 100;
+      const im = Math.pow(1 + i, 1/12) - 1;      // taxa mensal equivalente
+      const meses = N * 12;
+
+      // Fórmula de juros compostos com aporte periódico (ordinário):
+      // FV = V0*(1+im)^n + A * ( (1+im)^n - 1 ) / im
+      const fatMes = Math.pow(1 + im, meses);
+      const fv = V0 * fatMes + (im > 0 ? A * (fatMes - 1) / im : A * meses);
+      const investido = V0 + A * meses;
+      const rendimento = fv - investido;
+
+      // Projeção ano a ano para o gráfico
+      const pontos = [];
+      for (let y = 0; y <= N; y++){
+        const mY = y * 12;
+        const fatY = Math.pow(1 + im, mY);
+        const vY = V0 * fatY + (im > 0 ? A * (fatY - 1) / im : A * mY);
+        pontos.push({ ano: y, valor: vY });
+      }
+
+      prev.innerHTML = `
+        <div class="sim-result">
+          <div class="sim-big num">${brl.format(fv)}</div>
+          <div class="sim-sub">em ${N} ${N===1?'ano':'anos'}</div>
+          <div class="sim-split">
+            <div><span>Você vai investir</span><b class="num">${brl.format(investido)}</b></div>
+            <div><span>Juros vão render</span><b class="num" style="color:var(--gain)">${brl.format(rendimento)}</b></div>
+          </div>
+        </div>
+      `;
+
+      // mini SVG do crescimento
+      const W = 600, H = 160, PAD_L = 44, PAD_R = 8, PAD_T = 8, PAD_B = 20;
+      const plotW = W - PAD_L - PAD_R, plotH = H - PAD_T - PAD_B;
+      const maxV = pontos[pontos.length-1].valor || 1;
+      const xP = (y) => PAD_L + (y / N) * plotW;
+      const yP = (v) => PAD_T + (1 - v / maxV) * plotH;
+
+      let path = '', area = '', invArea = '';
+      pontos.forEach((p, idx) => {
+        const px = xP(p.ano), py = yP(p.valor);
+        path += (idx === 0 ? 'M' : 'L') + px.toFixed(1) + ',' + py.toFixed(1) + ' ';
+        area += (idx === 0 ? 'M' : 'L') + px.toFixed(1) + ',' + py.toFixed(1) + ' ';
+      });
+      area += `L${xP(N).toFixed(1)},${(PAD_T+plotH).toFixed(1)} L${PAD_L},${(PAD_T+plotH).toFixed(1)} Z`;
+
+      // linha do "só o que investiu" (comparação)
+      let invLine = '';
+      for (let y = 0; y <= N; y++){
+        const px = xP(y), py = yP(V0 + A * y * 12);
+        invLine += (y === 0 ? 'M' : 'L') + px.toFixed(1) + ',' + py.toFixed(1) + ' ';
+      }
+
+      const fmt = (v) => v >= 1_000_000 ? 'R$' + (v/1_000_000).toFixed(1) + 'M' : v >= 1000 ? 'R$' + (v/1000).toFixed(0) + 'k' : 'R$' + v.toFixed(0);
+      chart.innerHTML = `
+        <div class="hist-chart" style="margin-top:0">
+          <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">
+            <path class="hc-area" d="${area}"/>
+            <path class="sim-inv" d="${invLine}"/>
+            <path class="hc-line" d="${path}"/>
+            <text class="hc-lbl" x="${PAD_L-6}" y="${(PAD_T+10).toFixed(1)}" text-anchor="end">${fmt(maxV)}</text>
+            <text class="hc-lbl" x="${PAD_L-6}" y="${(PAD_T+plotH).toFixed(1)}" text-anchor="end">${fmt(V0)}</text>
+            <text class="hc-lbl" x="${PAD_L}" y="${H-4}">hoje</text>
+            <text class="hc-lbl" x="${xP(N/2).toFixed(1)}" y="${H-4}" text-anchor="middle">${Math.round(N/2)}a</text>
+            <text class="hc-lbl" x="${W-PAD_R}" y="${H-4}" text-anchor="end">${N}a</text>
+          </svg>
+          <div class="sim-leg">
+            <span><span class="dot verde"></span>Com juros compostos</span>
+            <span><span class="dot cinza"></span>Só o que você aportou</span>
+          </div>
+        </div>
+      `;
+
+      // Dicas contextuais
+      dicasBox.innerHTML = '';
+      const mkDica = (title, kind, html) => {
+        const d = document.createElement('details');
+        d.className = 'tip ' + kind;
+        const sum = el('summary');
+        sum.appendChild(el('span', 'tip-dot'));
+        sum.appendChild(el('span', null, title));
+        const chev = el('span', 'chev');
+        chev.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>';
+        sum.appendChild(chev);
+        d.appendChild(sum);
+        const b = el('div', 'tip-body'); b.innerHTML = html;
+        d.appendChild(b);
+        return d;
+      };
+
+      // Dica 1: proporção juros vs aporte
+      if (rendimento > 0){
+        const prop = rendimento / fv * 100;
+        if (prop > 50){
+          dicasBox.appendChild(mkDica('Os juros rendem mais que você', 'info',
+            '<p>Dos ' + brl.format(fv) + ' finais, <b>' + pct.format(prop) + '%</b> vem dos juros, e só <b>' + pct.format(100-prop) + '%</b> do dinheiro que você botou.</p>' +
+            '<p>Isso é o <b>poder dos juros compostos</b>: depois de um certo ponto, seu dinheiro trabalha mais do que você.</p>'
+          ));
+        }
+      }
+
+      // Dica 2: comparação com Selic
+      if (i > TAXAS.selic / 100){
+        const fvSelic = V0 * Math.pow(1 + TAXAS.selic/100, N) + (A > 0 ? A * (Math.pow(1 + Math.pow(1+TAXAS.selic/100, 1/12)-1, meses) - 1) / (Math.pow(1+TAXAS.selic/100, 1/12)-1) : 0);
+        const diff = fv - fvSelic;
+        dicasBox.appendChild(mkDica('Comparado ao Tesouro Selic', 'info',
+          '<p>Se o mesmo dinheiro ficasse no Tesouro Selic (' + pct.format(TAXAS.selic) + '% a.a.), em ' + N + ' anos você teria <b>' + brl.format(fvSelic) + '</b>.</p>' +
+          '<p>Diferença: <b style="color:var(--gain)">' + brl.format(diff) + '</b> a mais pelo rendimento que você projetou.</p>' +
+          '<p>Lembra que a Selic é previsível e sem risco de capital — rendimentos maiores vêm com oscilação (FIIs, ações).</p>'
+        ));
+      }
+
+      // Dica 3: inflação (IPCA)
+      if (TAXAS.ipca > 0 && N >= 5){
+        const real = ((1 + i) / (1 + TAXAS.ipca/100)) - 1;
+        const fvReal = V0 * Math.pow(1 + real, N) + (A > 0 && real > 0 ? A * 12 * (Math.pow(1 + real, N) - 1) / real : A * 12 * N);
+        dicasBox.appendChild(mkDica('O que isso vale "em dinheiro de hoje"', 'info',
+          '<p>Com IPCA de ' + pct.format(TAXAS.ipca) + '% ao ano, o poder de compra do dinheiro cai no tempo.</p>' +
+          '<p>Rendimento real (acima da inflação): <b>' + pct.format(real*100) + '% a.a.</b></p>' +
+          '<p>Em dinheiro de hoje, seus <b>' + brl.format(fv) + '</b> daqui a ' + N + ' anos equivalem a cerca de <b>' + brl.format(fvReal) + '</b>.</p>' +
+          '<p>Ainda assim, muito melhor do que deixar na poupança ou embaixo do colchão.</p>'
+        ));
+      }
+
+      // Dica 4: aporte alto demais vs renda
+      if (A > 0 && A >= 3000 && V0 < A * 24){
+        dicasBox.appendChild(mkDica('Confere se o aporte cabe no orçamento', 'warn',
+          '<p>Aporte de <b>' + brl.format(A) + '/mês</b> é alto. Pra não quebrar a projeção, essa quantia tem que ser o que <b>sobra</b> depois de gastos essenciais + reserva de emergência pronta.</p>' +
+          '<p>Investidor consistente é melhor que investidor agressivo. É melhor botar 500 todo mês por 20 anos do que 3000 nos primeiros 6 meses e parar.</p>'
+        ));
+      }
+
+      // Dica 5: muito tempo
+      if (N >= 20 && A > 0){
+        dicasBox.appendChild(mkDica('Jovem + tempo = fórmula imbatível', 'info',
+          '<p>Como você tá começando cedo, cada ano a mais faz diferença gigante. Compare:</p>' +
+          '<ul><li>Começar aos 18, parar aos 38, deixar render até os 60 → mesmo sem botar mais nada depois dos 38, o dinheiro continua crescendo</li>' +
+          '<li>Começar aos 30 e aportar até os 60 → acaba com <b>menos</b> dinheiro, mesmo tendo contribuído por mais tempo</li></ul>' +
+          '<p>A matemática premia quem começa cedo. Você tá fazendo certo.</p>'
+        ));
+      }
+    };
+
+    iInicial.oninput = upd;
+    iAporte.oninput = upd;
+    iAnos.oninput = upd;
+    iTaxa.oninput = upd;
+    upd();
+
+    // Botão de fechar
+    const closeBtn = el('button', 'btn btn-full btn-ghost', 'Fechar');
+    closeBtn.style.marginTop = '20px';
+    closeBtn.onclick = close;
+    body.appendChild(closeBtn);
   });
 }
 
@@ -1659,7 +1916,12 @@ function openDetails(p){
 
     /* Ações */
     const acts = el('div', 'sheet-actions');
-    const rm = el('button', 'btn btn-ghost', 'Remover');
+    // Botão "Vender/Resgatar" - só aparece se faz sentido
+    const sellLabel = p.ticker ? 'Vender cotas' : 'Resgatar parcial';
+    const sell = el('button', 'btn', sellLabel);
+    sell.onclick = () => { close(); setTimeout(() => openSellSheet(p), 260); };
+    acts.appendChild(sell);
+    const rm = el('button', 'btn btn-ghost', 'Remover tudo');
     rm.onclick = async () => {
       if (!confirm('Remover ' + (p.ticker || p.nome || 'esse ativo') + ' da carteira?')) return;
       state.positions = state.positions.filter(x => x.id !== p.id);
@@ -1667,6 +1929,244 @@ function openDetails(p){
     };
     acts.appendChild(rm);
     body.appendChild(acts);
+  });
+}
+
+/* ---------------------------------------------------------------- vender / resgatar */
+function openSellSheet(p){
+  openSheet((body, close) => {
+    const isMarket = p.ticker;
+    const r = enrich(p);
+    buildAddHead(body, close,
+      isMarket ? ('Vender ' + p.ticker) : ('Resgate parcial — ' + (p.nome || 'ativo')),
+      isMarket ? 'Informe quantas cotas você vendeu e por qual preço.'
+               : 'Informe quanto você resgatou dessa aplicação.');
+
+    // Resumo atual
+    const resumo = el('div', 'sheet-section');
+    resumo.appendChild(el('h3', 'sheet-section-title', 'Posição atual'));
+    const kv = el('div', 'kv-list');
+    const row = (k, v) => { const d = el('div'); d.appendChild(el('span', null, k)); d.appendChild(el('b', 'num', v)); kv.appendChild(d); };
+    if (isMarket){
+      row('Cotas', String(p.q));
+      row('Preço médio pago', brl.format(p.c));
+      row('Preço atual', brl.format(p.a ?? p.c));
+      row('Valor investido', brl.format(r.inv));
+      row('Valor hoje', brl.format(r.atual));
+    } else {
+      row('Valor aplicado', brl.format(p.ap || 0));
+      row('Valor hoje (líquido)', brl.format(r.atual));
+      if (r.dias) row('Dias aplicado', String(r.dias));
+    }
+    resumo.appendChild(kv);
+    body.appendChild(resumo);
+
+    // Formulário
+    const form = el('div', 'form-grid');
+    form.style.gridTemplateColumns = isMarket ? '1fr 1fr' : '1fr';
+    form.style.marginTop = '14px';
+    let qtyI = null, prcI = null, valI = null;
+
+    if (isMarket){
+      const qty = el('label', 'field');
+      qty.appendChild(el('span', null, 'Cotas vendidas'));
+      qtyI = document.createElement('input');
+      qtyI.setAttribute('inputmode', 'decimal');
+      qtyI.placeholder = String(Math.min(p.q, Math.round(p.q/2))) || '0';
+      qty.appendChild(qtyI);
+      const prc = el('label', 'field');
+      prc.appendChild(el('span', null, 'Preço de venda (R$)'));
+      prcI = document.createElement('input');
+      prcI.setAttribute('inputmode', 'decimal');
+      prcI.value = (p.a ?? p.c).toFixed(2).replace('.', ',');
+      prc.appendChild(prcI);
+      form.appendChild(qty); form.appendChild(prc);
+    } else {
+      const vl = el('label', 'field');
+      vl.appendChild(el('span', null, 'Valor resgatado (R$)'));
+      valI = document.createElement('input');
+      valI.setAttribute('inputmode', 'decimal');
+      valI.placeholder = (p.ap || 0).toFixed(2).replace('.', ',');
+      vl.appendChild(valI);
+      form.appendChild(vl);
+    }
+    body.appendChild(form);
+
+    // Preview + dicas em tempo real
+    const prev = el('div', 'preview-note');
+    prev.style.marginTop = '14px';
+    prev.textContent = 'Preencha para ver o resultado.';
+    body.appendChild(prev);
+
+    const tipsBox = el('div');
+    tipsBox.style.marginTop = '12px';
+    tipsBox.style.display = 'grid';
+    tipsBox.style.gap = '8px';
+    body.appendChild(tipsBox);
+
+    const err = el('p', 'err');
+    body.appendChild(err);
+
+    // Dica inline estilizada
+    const mkDica = (title, kind, html) => {
+      const d = document.createElement('details');
+      d.className = 'tip ' + kind;
+      d.open = true;
+      const sum = el('summary');
+      sum.appendChild(el('span', 'tip-dot'));
+      sum.appendChild(el('span', null, title));
+      const chev = el('span', 'chev');
+      chev.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>';
+      sum.appendChild(chev);
+      d.appendChild(sum);
+      const b = el('div', 'tip-body'); b.innerHTML = html;
+      d.appendChild(b);
+      return d;
+    };
+
+    const upd = () => {
+      tipsBox.innerHTML = '';
+      if (isMarket){
+        const Q = toNum(qtyI.value), P = toNum(prcI.value);
+        if (Q <= 0 || P <= 0){ prev.textContent = 'Preencha cotas e preço para ver o resultado.'; return; }
+        if (Q > p.q){ prev.innerHTML = '<b style="color:var(--loss)">Você tem só ' + p.q + ' cotas.</b> Reduza a quantidade.'; return; }
+        const recebido = Q * P;
+        const custo = Q * p.c;
+        const lucro = recebido - custo;
+        const restantes = p.q - Q;
+        const totalVendido = Q === p.q;
+        let txt = 'Vai receber <b>' + brl.format(recebido) + '</b> ' +
+          '(' + (lucro >= 0 ? '<b style="color:var(--gain)">+' + brl.format(lucro) : '<b style="color:var(--loss)">−' + brl.format(Math.abs(lucro))) + ' de ' + (lucro>=0?'lucro':'prejuízo') + '</b>).';
+        if (totalVendido) txt += '<br><b>Você vai zerar a posição.</b>';
+        else txt += '<br>Vão sobrar <b>' + restantes + ' cotas</b> ao preço médio de ' + brl.format(p.c) + '.';
+        prev.innerHTML = txt;
+
+        // DICAS CONTEXTUAIS
+        if (lucro < 0){
+          tipsBox.appendChild(mkDica('Está realizando prejuízo', 'warn',
+            '<p>Com essa venda você <b>realiza</b> R$ ' + Math.abs(lucro).toFixed(2) + ' de prejuízo (até agora era só "no papel").</p>' +
+            '<p><b>Pergunta pra si antes de confirmar:</b></p>' +
+            '<ul><li>Mudou algo nos fundamentos do ativo, ou só a cotação caiu?</li>' +
+            '<li>Você precisa do dinheiro agora, ou tá vendendo por emoção?</li>' +
+            '<li>O prejuízo em FII pode ser abatido de lucros futuros em FII (guarda a nota pra IR).</li></ul>'
+          ));
+        }
+        if (lucro > 0 && p.kind === 'fii'){
+          const ir = lucro * 0.20;
+          tipsBox.appendChild(mkDica('IR de 20% sobre o lucro', 'warn',
+            '<p>Em FII, venda com lucro tem <b>20% de IR SEMPRE</b> — não existe isenção abaixo de R$ 20 mil como em ação.</p>' +
+            '<p>Lucro bruto: <b>' + brl.format(lucro) + '</b></p>' +
+            '<p>IR estimado: <b style="color:var(--loss)">R$ ' + ir.toFixed(2) + '</b></p>' +
+            '<p>Lucro líquido: <b style="color:var(--gain)">R$ ' + (lucro - ir).toFixed(2) + '</b></p>' +
+            '<p>Você mesmo paga via DARF (código 6015) até o último dia útil do mês seguinte.</p>'
+          ));
+        }
+        if (lucro > 0 && p.kind === 'acao'){
+          tipsBox.appendChild(mkDica('Isenção até R$ 20k vendidos no mês', 'info',
+            '<p>Em ação <b>comum</b>: se o total que você vender no mês (somando todas as ações) ficar até R$ 20.000, o lucro é isento de IR.</p>' +
+            '<p>Se passar de R$ 20.000 em vendas no mês, aí 15% de IR sobre o lucro — você paga via DARF (código 6015).</p>' +
+            '<p><b>Day trade</b> (mesma ação comprada e vendida no mesmo dia) tem 20% de IR sem isenção.</p>'
+          ));
+        }
+        if (p.d > 0 || (p.kind === 'fii' && r.divUnit > 0)){
+          const divMensal = (p.d > 0 ? p.d : r.divUnit) * Q;
+          if (divMensal > 0){
+            tipsBox.appendChild(mkDica('Vai perder renda mensal', 'info',
+              '<p>Essas ' + Q + ' cotas estavam gerando cerca de <b>' + brl.format(divMensal) + '/mês</b> de dividendo.</p>' +
+              '<p>Em 1 ano, é um custo de oportunidade de <b>' + brl.format(divMensal * 12) + '</b> em renda que você deixa de receber.</p>' +
+              '<p>Vale a pena só se o dinheiro vai render mais em outro lugar, ou se você precisa dele mesmo.</p>'
+            ));
+          }
+        }
+        if (p.dy12 && p.dy12 > 15 && lucro < 0){
+          tipsBox.appendChild(mkDica('Pode ser hora certa de sair', 'info',
+            '<p>Esse ativo tinha DY alto (' + pct.format(p.dy12) + '% a.a.) e caiu de preço — comportamento clássico de <b>yield trap</b> saindo da fase de valorização.</p>' +
+            '<p>Se você já tava desconfortável com os fundamentos, essa pode ser a saída que faz sentido.</p>'
+          ));
+        }
+      } else {
+        // Renda fixa: resgate parcial
+        const V = toNum(valI.value);
+        if (V <= 0){ prev.textContent = 'Preencha o valor resgatado.'; return; }
+        if (V > r.atual){ prev.innerHTML = '<b style="color:var(--loss)">Valor maior do que o resgatável (' + brl.format(r.atual) + ').</b>'; return; }
+        const restante = p.ap - (V / r.atual * p.ap); // proporção aplicada original restante
+        const total = V === r.atual || V >= r.atual - 0.01;
+        prev.innerHTML = total
+          ? 'Vai zerar essa aplicação. Receberá <b>' + brl.format(V) + '</b> no banco.'
+          : 'Após o resgate, sobra aproximadamente <b>' + brl.format(restante) + '</b> aplicado (base nova de capital).';
+
+        // DICAS
+        if (p.kind === 'lci' || p.kind === 'lca'){
+          tipsBox.appendChild(mkDica('Confira a carência antes de resgatar', 'warn',
+            '<p>LCI e LCA quase sempre têm <b>carência mínima</b> — geralmente 90 dias ou mais a partir da aplicação.</p>' +
+            '<p>Se você tentar resgatar antes, o banco pode recusar ou pagar um valor bem menor. Confere o contrato ou com o seu banco antes de confirmar aqui.</p>' +
+            '<p>Lado bom: LCI/LCA são isentos de IR, então o que você resgata é integralmente seu.</p>'
+          ));
+        }
+        if (p.kind === 'pre' || p.kind === 'ipca'){
+          tipsBox.appendChild(mkDica('Marcação a mercado pode te surpreender', 'warn',
+            '<p>Prefixado e IPCA+ só pagam a taxa combinada <b>se você segurar até o vencimento</b>. Resgate antes disso é feito a preço de mercado.</p>' +
+            '<p>Se a Selic subiu desde quando você comprou, o preço de mercado está <b>menor</b> que o valor investido corrigido. Pode receber menos do que esperava.</p>' +
+            '<p>Confere o valor líquido na área do Tesouro Direto do seu banco antes de dar o resgate.</p>'
+          ));
+        }
+        if (p.kind === 'selic' || p.kind === 'cdb'){
+          const dias = r.dias || 0;
+          const aliq = irPorDias(dias);
+          tipsBox.appendChild(mkDica('IR regressivo: ' + aliq + '% hoje', 'info',
+            '<p>Com ' + dias + ' dias aplicados, o IR sobre o rendimento desse resgate é de <b>' + aliq + '%</b>.</p>' +
+            '<ul><li>Até 180 dias: 22,5%</li><li>181 a 360 dias: 20%</li>' +
+            '<li>361 a 720 dias: 17,5%</li><li>Mais de 720 dias (2 anos): 15%</li></ul>' +
+            (aliq > 15 ? '<p>Se puder esperar completar 2 anos, o IR cai pra 15% (' + (aliq - 15) + ' pontos a menos).</p>' : '')
+          ));
+        }
+        if (!total){
+          tipsBox.appendChild(mkDica('Resgate parcial e IR: regra FIFO', 'info',
+            '<p>Em renda fixa, o IR respeita a regra FIFO (<i>first in, first out</i>): resgate parcial é tratado como se você estivesse tirando primeiro o dinheiro mais antigo.</p>' +
+            '<p>Como o site considera essa aplicação como um bloco único (data de aplicação única), a estimativa de IR fica próxima do real.</p>'
+          ));
+        }
+      }
+    };
+    if (qtyI) qtyI.oninput = upd;
+    if (prcI) prcI.oninput = upd;
+    if (valI) valI.oninput = upd;
+    upd();
+
+    const ok = el('button', 'btn btn-full', isMarket ? 'Confirmar venda' : 'Confirmar resgate');
+    ok.style.marginTop = '20px';
+    ok.onclick = async () => {
+      if (isMarket){
+        const Q = toNum(qtyI.value);
+        if (Q <= 0){ err.textContent = 'Informe as cotas vendidas.'; return; }
+        if (Q > p.q){ err.textContent = 'Você tem só ' + p.q + ' cotas.'; return; }
+        const alvo = state.positions.find(x => x.id === p.id);
+        if (!alvo) return;
+        if (Q === p.q){
+          state.positions = state.positions.filter(x => x.id !== p.id);
+          close(); render(); countUpHero(); toast('Posição zerada'); await persist();
+        } else {
+          alvo.q = p.q - Q;
+          // preço médio pago NÃO muda com venda
+          close(); render(); countUpHero(); toast('Venda de ' + Q + ' cotas registrada'); await persist();
+        }
+      } else {
+        const V = toNum(valI.value);
+        if (V <= 0){ err.textContent = 'Informe o valor resgatado.'; return; }
+        if (V > r.atual + 0.01){ err.textContent = 'Valor maior do que o resgatável.'; return; }
+        const alvo = state.positions.find(x => x.id === p.id);
+        if (!alvo) return;
+        if (V >= r.atual - 0.01){
+          state.positions = state.positions.filter(x => x.id !== p.id);
+          close(); render(); countUpHero(); toast('Aplicação resgatada por inteiro'); await persist();
+        } else {
+          // novo capital proporcional à parte não resgatada
+          alvo.ap = Number((p.ap * (1 - V / r.atual)).toFixed(2));
+          close(); render(); countUpHero(); toast('Resgate de ' + brl.format(V) + ' registrado'); await persist();
+        }
+      }
+    };
+    body.appendChild(ok);
   });
 }
 
