@@ -2223,9 +2223,14 @@ function openDetails(p){
 
     /* Ações */
     const acts = el('div', 'sheet-actions');
-    // Botão "Vender/Resgatar" - só aparece se faz sentido
+    // Botão "Aportar" (comprar mais) / Reforçar aplicação - primário, ação positiva
+    const buyLabel = p.ticker ? 'Aportar mais' : 'Reforçar aplicação';
+    const buy = el('button', 'btn', buyLabel);
+    buy.onclick = () => { close(); setTimeout(() => openAporteSheet(p), 260); };
+    acts.appendChild(buy);
+    // Botão "Vender/Resgatar"
     const sellLabel = p.ticker ? 'Vender cotas' : 'Resgatar parcial';
-    const sell = el('button', 'btn', sellLabel);
+    const sell = el('button', 'btn btn-ghost', sellLabel);
     sell.onclick = () => { close(); setTimeout(() => openSellSheet(p), 260); };
     acts.appendChild(sell);
     const rm = el('button', 'btn btn-ghost', 'Remover tudo');
@@ -2236,6 +2241,132 @@ function openDetails(p){
     };
     acts.appendChild(rm);
     body.appendChild(acts);
+  });
+}
+
+/* ---------------------------------------------------------------- aportar direto */
+// Abre tela de aporte direto, sem precisar pesquisar o ativo. Funciona tanto
+// pra FII/ação (adiciona cotas, recalcula preço médio ponderado) como pra renda
+// fixa (soma mais capital à aplicação, mantém a data original — o IR já conta
+// os dias desde a primeira).
+function openAporteSheet(p){
+  openSheet((body, close) => {
+    const isMarket = !!p.ticker;
+    const r = enrich(p);
+    const titulo = isMarket ? ('Aportar mais em ' + p.ticker) : ('Reforçar — ' + (p.nome || 'aplicação'));
+    const sub = isMarket
+      ? 'A gente calcula o novo preço médio ponderado automaticamente.'
+      : 'Soma o novo valor à aplicação atual. A data original é preservada para o IR.';
+    buildAddHead(body, close, titulo, sub);
+
+    // Resumo da posição atual
+    const resumo = el('div', 'sheet-section');
+    resumo.appendChild(el('h3', 'sheet-section-title', 'Posição atual'));
+    const kv = el('div', 'kv-list');
+    const row = (k, v) => { const d = el('div'); d.appendChild(el('span', null, k)); d.appendChild(el('b', 'num', v)); kv.appendChild(d); };
+    if (isMarket){
+      row('Cotas', String(p.q));
+      row('Preço médio pago', brl.format(p.c));
+      row('Preço atual', brl.format(p.a ?? p.c));
+      row('Investido', brl.format(r.inv));
+    } else {
+      row('Valor aplicado', brl.format(p.ap || 0));
+      if (r.dias) row('Dias aplicado', String(r.dias));
+      if (r.taxaAA) row('Taxa efetiva (a.a.)', pct.format(r.taxaAA) + '%');
+    }
+    resumo.appendChild(kv);
+    body.appendChild(resumo);
+
+    // Formulário
+    const form = el('div', 'form-grid');
+    form.style.gridTemplateColumns = isMarket ? '1fr 1fr' : '1fr';
+    form.style.marginTop = '14px';
+    let qtyI = null, prcI = null, valI = null;
+
+    if (isMarket){
+      const qty = el('label', 'field');
+      qty.appendChild(el('span', null, 'Cotas que comprou'));
+      qtyI = document.createElement('input');
+      qtyI.setAttribute('inputmode', 'decimal');
+      qtyI.placeholder = '10';
+      qty.appendChild(qtyI);
+      const prc = el('label', 'field');
+      prc.appendChild(el('span', null, 'Preço pago agora (R$)'));
+      prcI = document.createElement('input');
+      prcI.setAttribute('inputmode', 'decimal');
+      prcI.value = (p.a ?? p.c).toFixed(2).replace('.', ',');
+      prc.appendChild(prcI);
+      form.appendChild(qty); form.appendChild(prc);
+    } else {
+      const vl = el('label', 'field');
+      vl.appendChild(el('span', null, 'Valor adicional aplicado (R$)'));
+      valI = document.createElement('input');
+      valI.setAttribute('inputmode', 'decimal');
+      valI.placeholder = '500,00';
+      vl.appendChild(valI);
+      form.appendChild(vl);
+    }
+    body.appendChild(form);
+
+    // Preview em tempo real
+    const prev = el('div', 'preview-note');
+    prev.style.marginTop = '14px';
+    prev.textContent = 'Preencha pra ver o resultado.';
+    body.appendChild(prev);
+
+    const err = el('p', 'err');
+    body.appendChild(err);
+
+    const upd = () => {
+      if (isMarket){
+        const Q = toNum(qtyI.value), C = toNum(prcI.value);
+        if (Q <= 0 || C <= 0){ prev.textContent = 'Preencha cotas e preço pra ver o resultado.'; return; }
+        const totalCotas = p.q + Q;
+        const custoTotal = p.q * p.c + Q * C;
+        const novoPM = custoTotal / totalCotas;
+        const atualTotal = totalCotas * (p.a ?? p.c);
+        let txt = 'Após o aporte: <b>' + totalCotas + ' cotas</b> ao preço médio de <b>' + brl.format(novoPM) + '</b>';
+        if (novoPM < p.c) txt += ' (<b style="color:var(--gain)">− ' + brl.format(p.c - novoPM) + '</b> no PM — você comprou mais barato que a média)';
+        else if (novoPM > p.c) txt += ' (<b style="color:var(--loss)">+ ' + brl.format(novoPM - p.c) + '</b> no PM — você comprou acima da média)';
+        txt += '.<br>Investido total: <b>' + brl.format(custoTotal) + '</b>. Hoje vale <b>' + brl.format(atualTotal) + '</b>.';
+        prev.innerHTML = txt;
+      } else {
+        const V = toNum(valI.value);
+        if (V <= 0){ prev.textContent = 'Preencha o valor pra ver o resultado.'; return; }
+        const total = (p.ap || 0) + V;
+        prev.innerHTML = 'Nova aplicação total: <b>' + brl.format(total) + '</b>. ' +
+          'A taxa (' + pct.format(r.taxaAA || 0) + '% a.a.) e a data da aplicação original são mantidas.';
+      }
+    };
+    if (qtyI) qtyI.oninput = upd;
+    if (prcI) prcI.oninput = upd;
+    if (valI) valI.oninput = upd;
+    setTimeout(() => { if (qtyI) qtyI.focus(); if (valI) valI.focus(); }, 50);
+
+    const ok = el('button', 'btn btn-full', 'Confirmar aporte');
+    ok.style.marginTop = '20px';
+    ok.onclick = async () => {
+      const alvo = state.positions.find(x => x.id === p.id);
+      if (!alvo) { err.textContent = 'Posição não encontrada.'; return; }
+      if (isMarket){
+        const Q = toNum(qtyI.value), C = toNum(prcI.value);
+        if (Q <= 0){ err.textContent = 'Informe as cotas.'; return; }
+        if (C <= 0){ err.textContent = 'Informe o preço pago.'; return; }
+        const totalCotas = alvo.q + Q;
+        const custoTotal = alvo.q * alvo.c + Q * C;
+        alvo.q = totalCotas;
+        alvo.c = custoTotal / totalCotas;
+        // atualiza o preço atual com o mais recente (que vem automático na próxima refresh de qualquer jeito)
+        alvo.a = p.a ?? C;
+        close(); render(); countUpHero(); toast('Aporte de ' + Q + ' cotas registrado'); await persist();
+      } else {
+        const V = toNum(valI.value);
+        if (V <= 0){ err.textContent = 'Informe o valor.'; return; }
+        alvo.ap = Number(((alvo.ap || 0) + V).toFixed(2));
+        close(); render(); countUpHero(); toast('Reforço de ' + brl.format(V) + ' aplicado'); await persist();
+      }
+    };
+    body.appendChild(ok);
   });
 }
 
