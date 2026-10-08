@@ -2,8 +2,8 @@
 // Doc: https://brapi.dev/docs
 import { config, brapiHasFundamentals } from '../lib/config.js';
 
-const { baseUrl, token } = config.brapi;
-const authParam = token ? `&token=${encodeURIComponent(token)}` : '';
+const { baseUrl, token, plan } = config.brapi;
+const canDividends = plan === 'startup' || plan === 'pro';
 const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
 async function getJson(url) {
@@ -15,7 +15,6 @@ async function getJson(url) {
   return res.json();
 }
 
-// Normaliza um ticker da resposta /api/quote para o formato do nosso cache.
 function mapQuote(r) {
   const div = Array.isArray(r.dividendsData?.cashDividends)
     ? [...r.dividendsData.cashDividends].sort((a, b) => (a.paymentDate < b.paymentDate ? 1 : -1))[0]
@@ -32,21 +31,20 @@ function mapQuote(r) {
   };
 }
 
-// Cotações de vários tickers de uma vez. Pede dividendos junto (dividends=true).
 export async function fetchQuotes(tickers) {
   if (!tickers.length) return [];
   const symbols = tickers.join(',');
-  const url = `${baseUrl}/api/quote/${encodeURIComponent(symbols)}?dividends=true${authParam}`;
+  // No plano gratuito, não pedir dividendos (403). Só preço, variação, volume.
+  const divParam = canDividends ? '?dividends=true' : '';
+  const url = `${baseUrl}/api/quote/${encodeURIComponent(symbols)}${divParam}`;
   const data = await getJson(url);
   return (data.results || []).filter((r) => r && r.symbol).map(mapQuote);
 }
 
-// Indicadores de FII (P/VP, DY 12m, NAV). Só disponível no plano Pro (ou sandbox
-// com MXRF11/HGLG11). Em outros planos, retorna {} e o front usa só a cotação.
 export async function fetchFiiIndicators(tickers) {
   if (!brapiHasFundamentals || !tickers.length) return {};
   const symbols = tickers.join(',');
-  const url = `${baseUrl}/api/v2/fii/indicators?symbols=${encodeURIComponent(symbols)}${authParam}`;
+  const url = `${baseUrl}/api/v2/fii/indicators?symbols=${encodeURIComponent(symbols)}`;
   try {
     const data = await getJson(url);
     const out = {};
@@ -54,7 +52,7 @@ export async function fetchFiiIndicators(tickers) {
       out[f.symbol] = {
         pvp: f.priceToNav ?? null,
         nav_per_share: f.navPerShare ?? null,
-        dy_12m: f.dividendYield12m != null ? f.dividendYield12m * 100 : null, // fração -> %
+        dy_12m: f.dividendYield12m != null ? f.dividendYield12m * 100 : null,
       };
     }
     return out;
@@ -64,10 +62,8 @@ export async function fetchFiiIndicators(tickers) {
   }
 }
 
-// Lista completa de ativos da B3 para popular a tabela `instruments` (autocompletar).
-// /api/quote/list não exige token e aceita filtro por tipo (stock, fund/fii...).
 export async function fetchInstrumentList() {
-  const url = `${baseUrl}/api/quote/list?${token ? `token=${encodeURIComponent(token)}` : ''}`;
+  const url = `${baseUrl}/api/quote/list`;
   const data = await getJson(url);
   const kindOf = (t) => {
     const s = (t || '').toLowerCase();
