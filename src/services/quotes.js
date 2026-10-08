@@ -4,7 +4,6 @@ import { query } from '../lib/db.js';
 import { fetchQuotes, fetchFiiIndicators } from './brapi.js';
 import { allPortfolioTickers } from '../repos/portfolio.js';
 
-// Garante que o ticker existe em `instruments` antes de gravar a cotação (FK).
 async function ensureInstrument(ticker, kindHint) {
   await query(
     `INSERT INTO instruments (ticker, name, kind) VALUES ($1,$1,$2)
@@ -42,7 +41,6 @@ async function saveQuote(q, extra = {}) {
   );
 }
 
-// Atualiza um conjunto de tickers. Faz em lotes de 20 (limite confortável da API).
 export async function refreshTickers(tickers) {
   const list = [...new Set(tickers.map((t) => String(t).toUpperCase()))];
   const run = await query(
@@ -56,14 +54,16 @@ export async function refreshTickers(tickers) {
     const batch = list.slice(i, i + 20);
     try {
       const quotes = await fetchQuotes(batch);
-      const fiiTickers = batch.filter((t) => /11$/.test(t)); // heurística simples de FII
+      const fiiTickers = batch.filter((t) => /11$/.test(t));
       const indicators = await fetchFiiIndicators(fiiTickers);
       for (const q of quotes) {
         try {
           await saveQuote(q, { ...(indicators[q.ticker] || {}), kind: /11$/.test(q.ticker) ? 'fii' : 'acao' });
           ok++;
+          console.log('[quotes] SAVED', q.ticker, 'price=', q.price);
         } catch (e) {
           failed++;
+          console.error('[quotes] FAILED to save', q.ticker, ':', e.message, '| stack:', e.stack?.slice(0, 300));
           await query('UPDATE market_quotes SET last_error=$2 WHERE ticker=$1', [q.ticker, e.message]).catch(() => {});
         }
       }
@@ -77,8 +77,8 @@ export async function refreshTickers(tickers) {
     `UPDATE refresh_runs SET finished_at=now(), ok=$2, failed=$3 WHERE id=$1`,
     [runId, ok, failed]
   );
+  console.log('[quotes] run finished — ok:', ok, 'failed:', failed);
   return { tickers: list.length, ok, failed };
 }
 
-// Atualiza todos os tickers que aparecem em alguma carteira.
 export const refreshAllPortfolios = async () => refreshTickers(await allPortfolioTickers());
