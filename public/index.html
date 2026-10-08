@@ -158,12 +158,151 @@ input:focus, textarea:focus, select:focus{outline:none; border-color:var(--accen
 .auth{
   min-height:100dvh;
   display:grid;
-  place-items:center;
+  grid-template-columns: 1fr;
   padding:24px;
+  position: relative;
+  overflow: hidden;
   background:
-    radial-gradient(circle at 20% 10%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 50%),
-    radial-gradient(circle at 90% 90%, color-mix(in srgb, var(--amber) 6%, transparent), transparent 55%),
+    radial-gradient(circle at 15% 10%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 40%),
+    radial-gradient(circle at 85% 85%, color-mix(in srgb, var(--amber) 10%, transparent), transparent 45%),
+    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--accent) 3%, transparent), transparent 60%),
     var(--bg);
+}
+/* padrão sutil de "papel" sobre o fundo */
+.auth::before{
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--accent) 14%, transparent) 1px, transparent 0);
+  background-size: 32px 32px;
+  opacity: .25;
+  pointer-events: none;
+  mask-image: radial-gradient(ellipse at 50% 50%, black 20%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 50%, black 20%, transparent 80%);
+}
+@media (min-width: 920px){
+  .auth{
+    grid-template-columns: 1.1fr 1fr;
+    gap: 40px;
+    padding: 48px;
+    align-items: center;
+    justify-items: center;
+  }
+}
+.auth-side{
+  display: none;
+  position: relative;
+  z-index: 1;
+  max-width: 480px;
+  padding: 0 24px;
+}
+@media (min-width: 920px){ .auth-side{ display: block; } }
+.auth-eyebrow{
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12.5px; font-weight: 600;
+  padding: 5px 12px; border-radius: 999px;
+  background: var(--accent-soft); color: var(--accent);
+  margin-bottom: 24px;
+}
+.auth-eyebrow .pulse{
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse{
+  0%, 100%{ opacity: 1; transform: scale(1);}
+  50%{ opacity: .4; transform: scale(1.4);}
+}
+.auth-headline{
+  font-family: var(--f-serif);
+  font-weight: 600;
+  font-size: clamp(32px, 4.5vw, 48px);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  margin: 0 0 20px;
+  color: var(--ink);
+}
+.auth-headline em{
+  font-style: italic;
+  color: var(--accent);
+  font-weight: 500;
+}
+.auth-tag{
+  color: var(--ink-2);
+  font-size: 16.5px;
+  line-height: 1.5;
+  margin: 0 0 32px;
+  max-width: 420px;
+}
+.auth-art{
+  margin-top: 28px;
+  max-width: 420px;
+}
+.auth-art svg{
+  width: 100%; height: auto;
+  display: block;
+}
+.auth-art .ln-stroke{
+  stroke: var(--accent);
+  stroke-width: 2.5;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: draw 2.4s cubic-bezier(.4,.1,.2,1) .3s forwards;
+}
+.auth-art .ln-area{
+  fill: color-mix(in srgb, var(--accent) 12%, transparent);
+  opacity: 0;
+  animation: fade 1.2s ease .6s forwards;
+}
+.auth-art .ln-dot{
+  fill: var(--accent);
+  opacity: 0;
+  animation: pop 0.4s cubic-bezier(.3,1.5,.5,1) 1.9s forwards;
+}
+.auth-art .ln-grid{
+  stroke: var(--line);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+  opacity: 0;
+  animation: fade 1s ease .9s forwards;
+}
+.auth-art .ln-lbl{
+  font-family: var(--f-mono);
+  font-size: 10px;
+  fill: var(--muted);
+  opacity: 0;
+  animation: fade 1s ease 1.4s forwards;
+}
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes fade { to { opacity: 1; } }
+@keyframes pop  { 0% { opacity: 0; transform: scale(0);} 60% { transform: scale(1.3);} 100% { opacity: 1; transform: scale(1);} }
+.auth-features{
+  display: grid; gap: 10px;
+  margin-top: 28px;
+}
+.auth-features li{
+  display: flex; align-items: start; gap: 10px;
+  color: var(--ink-2); font-size: 14.5px;
+  list-style: none;
+}
+.auth-features .check{
+  width: 20px; height: 20px; flex-shrink: 0;
+  border-radius: 50%; background: var(--accent-soft);
+  color: var(--accent);
+  display: grid; place-items: center;
+  margin-top: 1px;
+}
+.auth-features .check svg{ width: 11px; height: 11px; }
+
+.auth-form-wrap{
+  display: grid;
+  place-items: center;
+  position: relative;
+  z-index: 1;
+  width: 100%;
 }
 .auth-card{
   width:100%;
@@ -288,6 +427,24 @@ input:focus, textarea:focus, select:focus{outline:none; border-color:var(--accen
    ========================================================================= */
 .section{padding:36px 0;}
 .section + .section{border-top:1px solid var(--line);}
+
+/* Animação de "aparecer ao descer a tela" - usa IntersectionObserver */
+.reveal{
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity .7s cubic-bezier(.2,.6,.2,1), transform .7s cubic-bezier(.2,.6,.2,1);
+  will-change: opacity, transform;
+}
+.reveal.in{
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1{ transition-delay: .08s; }
+.reveal-delay-2{ transition-delay: .16s; }
+.reveal-delay-3{ transition-delay: .24s; }
+@media (prefers-reduced-motion: reduce){
+  .reveal{ opacity: 1; transform: none; transition: none; }
+}
 .section-head{
   display:flex;
   align-items:baseline;
@@ -387,19 +544,67 @@ input:focus, textarea:focus, select:focus{outline:none; border-color:var(--accen
    ESTADO VAZIO — convite, não tristeza
    ========================================================================= */
 .empty{
-  padding:48px 32px;
+  padding:52px 32px 44px;
   border:1.5px dashed var(--line-strong);
   border-radius:20px;
   text-align:center;
+  position: relative;
+  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--accent) 2%, transparent));
 }
+.empty-art{
+  width: 128px; height: 128px;
+  margin: 0 auto 24px;
+  position: relative;
+}
+.empty-art svg{ width: 100%; height: 100%; display: block; }
+.empty-art .pot{
+  fill: color-mix(in srgb, var(--amber) 70%, var(--surface));
+  stroke: var(--ink-2); stroke-width: 1.5;
+}
+.empty-art .pot-top{
+  fill: color-mix(in srgb, var(--amber) 80%, var(--ink));
+}
+.empty-art .leaf{
+  fill: var(--accent);
+  transform-origin: 50% 85%;
+  animation: swayL 3s ease-in-out infinite;
+}
+.empty-art .leaf-r{ animation: swayR 3s ease-in-out infinite .5s; }
+.empty-art .stem{
+  stroke: var(--accent); stroke-width: 2.5;
+  fill: none; stroke-linecap: round;
+  stroke-dasharray: 100; stroke-dashoffset: 100;
+  animation: grow 1.4s ease-out .2s forwards;
+}
+.empty-art .coin{
+  fill: color-mix(in srgb, var(--amber) 90%, var(--ink));
+  stroke: var(--ink-2); stroke-width: 1;
+  opacity: 0;
+  animation: coinUp 1s cubic-bezier(.2,1.4,.5,1) forwards;
+}
+.empty-art .coin-1{ animation-delay: 1.6s; }
+.empty-art .coin-2{ animation-delay: 1.9s; }
+.empty-art .coin-3{ animation-delay: 2.2s; }
+.empty-art .coin-mark{
+  fill: color-mix(in srgb, var(--ink) 50%, transparent);
+  font-size: 7px; font-weight: 700; font-family: serif;
+}
+@keyframes grow{ to { stroke-dashoffset: 0; } }
+@keyframes swayL{ 0%,100%{ transform: rotate(-4deg);} 50%{ transform: rotate(2deg);} }
+@keyframes swayR{ 0%,100%{ transform: rotate(4deg);}  50%{ transform: rotate(-2deg);} }
+@keyframes coinUp{ 0%{ opacity: 0; transform: translateY(10px) scale(.6);} 60%{ opacity: 1; transform: translateY(-4px) scale(1.1);} 100%{ opacity: 1; transform: translateY(0) scale(1);} }
 .empty h3{
   font-family:var(--f-serif);
   font-weight:600;
-  font-size:24px;
+  font-size:26px;
   letter-spacing:-0.02em;
   margin:0 0 8px;
 }
-.empty p{color:var(--muted); margin:0 auto 24px; max-width:36ch; font-size:15px;}
+.empty p{color:var(--muted); margin:0 auto 24px; max-width:40ch; font-size:15.5px; line-height:1.5;}
+.empty .empty-hint{
+  margin-top:16px; font-size: 13px; color: var(--muted);
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
 
 /* =========================================================================
    DRAWER / SHEET — detalhes do ativo
@@ -900,34 +1105,83 @@ details.tip.action .tip-tag{color: var(--accent);}
      LOGIN / CADASTRO
      ========================================================================= -->
 <section class="auth" id="auth">
-  <div class="auth-card">
-    <div class="brand">
-      <span class="brand-mark">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 17l5-5 4 4 7-8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </span>
-      <span>Carteira</span>
-    </div>
-
-    <h1 class="auth-title" id="authTitle">Entrar</h1>
-    <p class="auth-sub" id="authSub">Fundos imobiliários, Tesouro Selic e ações — em um só lugar.</p>
-
-    <form id="authForm" autocomplete="on" novalidate>
-      <label class="field">
-        <span>E-mail</span>
-        <input id="email" type="email" required autocomplete="email" placeholder="voce@email.com">
-      </label>
-      <label class="field">
-        <span id="passLabel">Senha</span>
-        <input id="password" type="password" required autocomplete="current-password" placeholder="mínimo 8 caracteres">
-      </label>
-      <p class="err" id="authErr"></p>
-      <button class="btn btn-full" id="authBtn" type="submit">Entrar</button>
-    </form>
-
-    <p class="auth-foot">
-      <span id="toggleText">Ainda não tem conta?</span>
-      <button type="button" id="toggleBtn">Criar conta</button>
+  <!-- Painel lateral com headline + ilustração (só em desktop) -->
+  <aside class="auth-side">
+    <div class="auth-eyebrow"><span class="pulse"></span>Carteira · dados em tempo real</div>
+    <h2 class="auth-headline">Investir com <em>previsibilidade</em>. Dormir tranquilo.</h2>
+    <p class="auth-tag">
+      Acompanhe FIIs, ações e renda fixa num só lugar. Simule aportes, veja seu
+      patrimônio crescer e receba dicas feitas pro seu perfil.
     </p>
+    <!-- Ilustração animada: linha de crescimento que se desenha -->
+    <div class="auth-art">
+      <svg viewBox="0 0 420 180" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <!-- grid -->
+        <line class="ln-grid" x1="30" y1="40"  x2="400" y2="40"/>
+        <line class="ln-grid" x1="30" y1="90"  x2="400" y2="90"/>
+        <line class="ln-grid" x1="30" y1="140" x2="400" y2="140"/>
+        <!-- labels -->
+        <text class="ln-lbl" x="18" y="43"  text-anchor="end">R$10k</text>
+        <text class="ln-lbl" x="18" y="93"  text-anchor="end">R$5k</text>
+        <text class="ln-lbl" x="18" y="143" text-anchor="end">R$0</text>
+        <!-- área sombreada embaixo da linha -->
+        <path class="ln-area" d="M30,140 C70,135 100,125 130,120 S180,100 220,85 S280,55 320,45 S380,25 400,22 L400,160 L30,160 Z"/>
+        <!-- linha de crescimento -->
+        <path class="ln-stroke" d="M30,140 C70,135 100,125 130,120 S180,100 220,85 S280,55 320,45 S380,25 400,22"/>
+        <!-- ponto final pulsante -->
+        <circle class="ln-dot" cx="400" cy="22" r="5"/>
+      </svg>
+    </div>
+    <ul class="auth-features">
+      <li>
+        <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5 11-11"/></svg></span>
+        <span>Cotações atualizadas automaticamente durante o pregão.</span>
+      </li>
+      <li>
+        <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5 11-11"/></svg></span>
+        <span>Dicas e perfil de investidor personalizados pra você.</span>
+      </li>
+      <li>
+        <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5 11-11"/></svg></span>
+        <span>FIIs, ações, Tesouro Direto, CDB, LCI/LCA — tudo junto.</span>
+      </li>
+      <li>
+        <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5 11-11"/></svg></span>
+        <span>Grátis. Sem anúncios. Seus dados ficam só com você.</span>
+      </li>
+    </ul>
+  </aside>
+
+  <div class="auth-form-wrap">
+    <div class="auth-card">
+      <div class="brand">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 17l5-5 4 4 7-8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span>Carteira</span>
+      </div>
+
+      <h1 class="auth-title" id="authTitle">Entrar</h1>
+      <p class="auth-sub" id="authSub">Fundos imobiliários, Tesouro Selic e ações — em um só lugar.</p>
+
+      <form id="authForm" autocomplete="on" novalidate>
+        <label class="field">
+          <span>E-mail</span>
+          <input id="email" type="email" required autocomplete="email" placeholder="voce@email.com">
+        </label>
+        <label class="field">
+          <span id="passLabel">Senha</span>
+          <input id="password" type="password" required autocomplete="current-password" placeholder="mínimo 8 caracteres">
+        </label>
+        <p class="err" id="authErr"></p>
+        <button class="btn btn-full" id="authBtn" type="submit">Entrar</button>
+      </form>
+
+      <p class="auth-foot">
+        <span id="toggleText">Ainda não tem conta?</span>
+        <button type="button" id="toggleBtn">Criar conta</button>
+      </p>
+    </div>
   </div>
 </section>
 
@@ -974,7 +1228,7 @@ details.tip.action .tip-tag{color: var(--accent);}
     </section>
 
     <!-- ATIVOS -->
-    <section class="section">
+    <section class="section reveal">
       <div class="section-head">
         <div>
           <h2 class="section-title">Ativos</h2>
@@ -992,7 +1246,7 @@ details.tip.action .tip-tag{color: var(--accent);}
     </section>
 
     <!-- PERFIL DE INVESTIDOR (NOVO) -->
-    <section class="section" id="perfilSection">
+    <section class="section reveal reveal-delay-1" id="perfilSection">
       <div class="section-head">
         <div>
           <h2 class="section-title">Seu perfil</h2>
@@ -1003,7 +1257,7 @@ details.tip.action .tip-tag{color: var(--accent);}
     </section>
 
     <!-- DICAS -->
-    <section class="section">
+    <section class="section reveal reveal-delay-2">
       <div class="section-head">
         <div>
           <h2 class="section-title">Dicas e conceitos</h2>
@@ -1251,6 +1505,28 @@ async function enterApp(){
   render();
   // uma única animação orquestrada: contar o patrimônio
   countUpHero();
+  // Animações ao descer a tela
+  setupScrollReveal();
+}
+
+// Observer global pra elementos .reveal
+let _revealObserver = null;
+function setupScrollReveal(){
+  if (!('IntersectionObserver' in window)) {
+    // fallback: mostra tudo direto
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+    return;
+  }
+  if (_revealObserver) _revealObserver.disconnect();
+  _revealObserver = new IntersectionObserver((entries) => {
+    for (const e of entries){
+      if (e.isIntersecting){
+        e.target.classList.add('in');
+        _revealObserver.unobserve(e.target);
+      }
+    }
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => _revealObserver.observe(el));
 }
 
 async function persist(){
@@ -1689,10 +1965,44 @@ function renderAssets(){
   const list = $('assetList'); list.innerHTML = '';
   if (!state.positions.length){
     const e = el('div', 'empty');
-    e.appendChild(el('h3', null, 'Vamos começar?'));
-    e.appendChild(el('p', null, 'Adicione seu primeiro ativo pelo código. Os preços são atualizados sozinhos.'));
+    // Ilustração: planta brotando em um vaso, com moedas aparecendo em volta
+    const art = el('div', 'empty-art');
+    art.innerHTML = `
+      <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <!-- Caule que cresce -->
+        <path class="stem" d="M64,88 Q62,70 60,55 Q58,42 55,30"/>
+        <path class="stem" d="M64,88 Q66,72 70,58 Q74,45 78,34" style="animation-delay:.5s"/>
+        <!-- Folhas -->
+        <ellipse class="leaf" cx="48" cy="40" rx="12" ry="8" transform="rotate(-30 48 40)"/>
+        <ellipse class="leaf leaf-r" cx="82" cy="38" rx="12" ry="8" transform="rotate(30 82 38)"/>
+        <ellipse class="leaf" cx="52" cy="60" rx="9" ry="6" transform="rotate(-25 52 60)" style="animation-delay:.3s"/>
+        <ellipse class="leaf leaf-r" cx="76" cy="56" rx="9" ry="6" transform="rotate(25 76 56)" style="animation-delay:.8s"/>
+        <!-- Vaso -->
+        <path class="pot-top" d="M38,88 L90,88 L88,96 L40,96 Z"/>
+        <path class="pot" d="M40,96 L88,96 L84,120 L44,120 Z"/>
+        <!-- Moedas que aparecem -->
+        <g class="coin coin-1" transform="translate(22, 100)">
+          <circle cx="0" cy="0" r="7"/>
+          <text class="coin-mark" x="0" y="2.5" text-anchor="middle">$</text>
+        </g>
+        <g class="coin coin-2" transform="translate(104, 108)">
+          <circle cx="0" cy="0" r="7"/>
+          <text class="coin-mark" x="0" y="2.5" text-anchor="middle">$</text>
+        </g>
+        <g class="coin coin-3" transform="translate(26, 118)">
+          <circle cx="0" cy="0" r="6"/>
+          <text class="coin-mark" x="0" y="2" text-anchor="middle">$</text>
+        </g>
+      </svg>
+    `;
+    e.appendChild(art);
+    e.appendChild(el('h3', null, 'Plante sua primeira semente'));
+    e.appendChild(el('p', null, 'Adicione um FII, ação, Tesouro Direto ou CDB. Em segundos, você já começa a acompanhar seu patrimônio crescer.'));
     const b = el('button', 'btn', 'Adicionar primeiro ativo'); b.onclick = openAdd;
     e.appendChild(b);
+    const hint = el('div', 'empty-hint');
+    hint.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg> Os preços são atualizados automaticamente durante o pregão.';
+    e.appendChild(hint);
     list.appendChild(e);
     return;
   }
