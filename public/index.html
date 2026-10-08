@@ -1396,12 +1396,8 @@ function renderHistChart(){
     hist.push({ d: hoje, v: t.atual });
   }
 
-  if (hist.length < 2){
-    if (n === 0){ host.hidden = true; return; }
-    host.hidden = false;
-    host.innerHTML = '<div class="hc-empty">O gráfico aparece quando você tiver histórico de pelo menos 2 dias.</div>';
-    return;
-  }
+  // Sem histórico suficiente? Esconde o gráfico — nada de placeholder.
+  if (hist.length < 2){ host.hidden = true; host.innerHTML = ''; return; }
 
   host.hidden = false;
 
