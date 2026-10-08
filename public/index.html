@@ -2245,15 +2245,20 @@ function renderTips(){
   const tips = [];
 
   // ------- URGENTES (ação imediata) -------
-  if (profile && profile.urgent >= 2){
+  // dívida: só mostra quando usuário marcou "Sim, está pesado" (0) ou "Sim, controlado" (1)
+  if (profile && typeof profile.pts.dividas === 'number' && profile.pts.dividas <= 1){
+    const pesado = profile.pts.dividas === 0;
     tips.push(tipAccTag(
-      'Pague suas dívidas de juros alto antes de investir',
+      pesado ? 'Pague suas dívidas de juros alto antes de investir'
+             : 'Suas dívidas podem estar comendo o rendimento',
       'urgent', 'URGENTE',
-      '<p>Suas respostas mostram que você tem dívidas pesando. Cartão de crédito e cheque especial cobram <b>mais de 300% ao ano</b> — nenhum investimento rende isso.</p>' +
+      (pesado
+        ? '<p>Você respondeu que tem dívidas pesando. Cartão de crédito e cheque especial cobram <b>mais de 300% ao ano</b> — nenhum investimento rende isso.</p>'
+        : '<p>Você respondeu que tem dívidas, mas controladas. Mesmo assim, se o juro delas for maior que 1% ao mês, tá rendendo mais pagar do que investir.</p>') +
       '<p><b>Ordem recomendada:</b></p><ol>' +
-      '<li>Negociar e quitar dívidas de cartão/cheque especial</li>' +
+      '<li>Negociar e quitar as dívidas mais caras primeiro (cartão/cheque especial)</li>' +
       '<li>Fazer reserva de emergência (6 meses de gastos no Tesouro Selic)</li>' +
-      '<li>Só depois começar com FII e ações</li></ol>' +
+      '<li>Só depois aumentar a posição em FII e ações</li></ol>' +
       '<p>Investir com dívida cara é como abastecer um balde furado.</p>'
     ));
   }
