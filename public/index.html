@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Carteira</title>
+<meta name="description" content="Acompanhe seus fundos imobiliários, ações e renda fixa em um só lugar.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+/* =========================================================================
+   TOKENS — paleta papel quente + verde floresta (Brasilidade editorial)
+   ========================================================================= */
+:root{
+  /* light (padrão) */
+  --bg:#F5F2E9;             /* papel quente — nem cream nem branco frio */
+  --surface:#FFFFFF;        /* cartões */
+  --surface-2:#FAF7EE;      /* seções */
+  --ink:#122018;            /* near-black com tom verde */
+  --ink-2:#2E3B33;          /* texto secundário */
+  --muted:#6B7A72;          /* legendas, labels discretas */
+  --line:#E3DBC9;           /* hairline de papel */
+  --line-strong:#C9BFA8;    /* separador firme */
+  --accent:#1E5435;         /* VERDE FLORESTA — único destaque */
+  --accent-ink:#F6F2E7;     /* texto sobre o verde */
+  --accent-soft:#DCE6DD;    /* fundo de badges verdes */
+  --gain:#0F6B3E;           /* ganho (tom próximo do accent) */
+  --loss:#B13828;           /* perda — tijolo, não vermelho berrante */
+  --gain-soft:#D5E8DC;
+  --loss-soft:#F2D9D3;
+  --amber:#9A6A1F;          /* usado só no indicador "ao vivo" */
+
+  /* Fontes */
+  --f-serif: "Fraunces", Georgia, serif;
+  --f-sans: "Inter", system-ui, -apple-system, Segoe UI, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  color-scheme: light;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1512;
+    --surface:#161F1B;
+    --surface-2:#111915;
+    --ink:#EBE6D8;
+    --ink-2:#B6B4A5;
+    --muted:#8E9A91;
+    --line:#2A332E;
+    --line-strong:#3E4A43;
+    --accent:#5CC37D;
+    --accent-ink:#0D1512;
+    --accent-soft:#1C2E24;
+    --gain:#5CC37D;
+    --loss:#E07562;
+    --gain-soft:#1E2E24;
+    --loss-soft:#2F1A17;
+    --amber:#D4A657;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D1512;
+  --surface:#161F1B;
+  --surface-2:#111915;
+  --ink:#EBE6D8;
+  --ink-2:#B6B4A5;
+  --muted:#8E9A91;
+  --line:#2A332E;
+  --line-strong:#3E4A43;
+  --accent:#5CC37D;
+  --accent-ink:#0D1512;
+  --accent-soft:#1C2E24;
+  --gain:#5CC37D;
+  --loss:#E07562;
+  --gain-soft:#1E2E24;
+  --loss-soft:#2F1A17;
+  --amber:#D4A657;
+  color-scheme: dark;
+}
+
+/* =========================================================================
+   BASE
+   ========================================================================= */
+*{box-sizing:border-box}
+html{font-size:16px}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--f-sans);
+  font-size:16px;
+  line-height:1.5;
+  font-feature-settings:"ss01","cv11";
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+.num{font-variant-numeric: tabular-nums;}
+button, input, textarea, select{font:inherit; color:inherit;}
+button{cursor:pointer; background:none; border:0; padding:0;}
+input, textarea, select{
+  background:var(--surface);
+  color:var(--ink);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:12px 14px;
+  width:100%;
+  transition:border-color .15s;
+}
+input:focus, textarea:focus, select:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);}
+::selection{background:var(--accent); color:var(--accent-ink);}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px;}
+.hide{display:none !important}
+
+/* =========================================================================
+   BOTÕES
+   ========================================================================= */
+.btn{
+  font-family:var(--f-sans);
+  font-weight:600;
+  font-size:15px;
+  padding:12px 20px;
+  border-radius:10px;
+  background:var(--accent);
+  color:var(--accent-ink);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  transition:opacity .15s, background .15s;
+  white-space:nowrap;
+}
+.btn:hover{opacity:.88}
+.btn:disabled{opacity:.5; cursor:default;}
+.btn-ghost{background:transparent; color:var(--ink); border:1px solid var(--line-strong);}
+.btn-ghost:hover{opacity:1; background:var(--surface);}
+.btn-text{background:none; color:var(--muted); padding:8px 10px; font-weight:500; font-size:14px;}
+.btn-text:hover{color:var(--ink); opacity:1;}
+.btn-sm{padding:9px 14px; font-size:13.5px;}
+.btn-full{width:100%}
+
+.pill{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:4px 10px; border-radius:999px;
+  font-size:13px; font-weight:500;
+  background:var(--surface-2); color:var(--ink-2);
+  border:1px solid var(--line);
+}
+.pill.gain{background:var(--gain-soft); color:var(--gain); border-color:transparent;}
+.pill.loss{background:var(--loss-soft); color:var(--loss); border-color:transparent;}
+
+/* =========================================================================
+   LOGIN
+   ========================================================================= */
+.auth{
+  min-height:100dvh;
+  display:grid;
+  place-items:center;
+  padding:24px;
+  background:
+    radial-gradient(circle at 20% 10%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 50%),
+    radial-gradient(circle at 90% 90%, color-mix(in srgb, var(--amber) 6%, transparent), transparent 55%),
+    var(--bg);
+}
+.auth-card{
+  width:100%;
+  max-width:420px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:36px 32px;
+  box-shadow: 0 1px 2px rgba(18,32,24,.04), 0 20px 50px -30px rgba(18,32,24,.25);
+}
+.brand{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  font-family:var(--f-serif);
+  font-weight:600;
+  font-size:20px;
+  line-height:1;
+  letter-spacing:-0.015em;
+}
+.brand-mark{
+  width:34px; height:34px;
+  border-radius:8px;
+  background:var(--accent);
+  color:var(--accent-ink);
+  display:grid; place-items:center;
+}
+.brand-mark svg{width:18px; height:18px;}
+.auth-title{
+  font-family:var(--f-serif);
+  font-weight:600;
+  font-size:28px;
+  letter-spacing:-0.02em;
+  margin:28px 0 6px;
+  line-height:1.1;
+}
+.auth-sub{color:var(--muted); font-size:15px; margin:0 0 28px;}
+.field{display:block; margin-bottom:16px;}
+.field > span{display:block; font-size:13px; color:var(--muted); margin-bottom:6px;}
+.auth-foot{text-align:center; margin-top:18px; font-size:14px; color:var(--muted);}
+.auth-foot button{color:var(--accent); font-weight:600;}
+.auth-foot button:hover{text-decoration:underline;}
+
+.err{color:var(--loss); font-size:13.5px; min-height:1.2em; margin:4px 0 10px;}
+
+/* =========================================================================
+   APP SHELL
+   ========================================================================= */
+.topbar{
+  position:sticky; top:0; z-index:20;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: saturate(1.3) blur(10px);
+  -webkit-backdrop-filter: saturate(1.3) blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.topbar-in{
+  max-width:860px; margin:0 auto;
+  padding:14px 22px;
+  display:flex; align-items:center; gap:16px;
+}
+.topbar .brand{font-size:17px;}
+.topbar .brand-mark{width:30px; height:30px;}
+.topbar .brand-mark svg{width:16px; height:16px;}
+.topbar-end{margin-left:auto; display:flex; align-items:center; gap:6px;}
+.icon-btn{
+  width:38px; height:38px;
+  border-radius:10px;
+  display:grid; place-items:center;
+  color:var(--muted);
+  transition:background .15s, color .15s;
+}
+.icon-btn:hover{background:var(--surface); color:var(--ink);}
+.icon-btn svg{width:18px; height:18px;}
+
+.container{max-width:860px; margin:0 auto; padding:0 22px 100px;}
+
+/* =========================================================================
+   HERO — o patrimônio é a estrela da página
+   ========================================================================= */
+.hero{
+  padding:48px 0 44px;
+  border-bottom:1px solid var(--line);
+}
+.hero-eyebrow{
+  font-size:13px;
+  color:var(--muted);
+  margin-bottom:10px;
+  display:flex; align-items:center; gap:10px;
+}
+.live-dot{
+  width:8px; height:8px; border-radius:50%;
+  background:var(--amber);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--amber) 25%, transparent);
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.live-dot{animation: pulse 2.4s ease-in-out infinite;}
+
+.hero-value{
+  font-family:var(--f-serif);
+  font-variation-settings: "opsz" 144, "wght" 600;
+  font-size: clamp(44px, 10vw, 72px);
+  line-height:1;
+  letter-spacing:-0.035em;
+  margin:0;
+  color:var(--ink);
+}
+.hero-change{
+  display:flex; align-items:center; gap:14px;
+  margin-top:16px;
+  font-size:15px;
+  color:var(--ink-2);
+}
+.hero-change .pill{font-size:14px;}
+.hero-meta{
+  margin-top:4px;
+  font-size:14px;
+  color:var(--muted);
+}
+
+/* =========================================================================
+   SEÇÕES
+   ========================================================================= */
+.section{padding:36px 0;}
+.section + .section{border-top:1px solid var(--line);}
+.section-head{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:20px;
+}
+.section-title{
+  font-family:var(--f-serif);
+  font-weight:600;
+  font-size:24px;
+  letter-spacing:-0.02em;
+  margin:0;
+  color:var(--ink);
+}
+.section-sub{
+  color:var(--muted); font-size:14px; margin-top:4px;
+}
+
+/* =========================================================================
+   ATIVOS
+   ========================================================================= */
+.asset-grid{display:grid; gap:12px;}
+.asset{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:20px;
+  display:grid;
+  gap:14px;
+  text-align:left;
+  width:100%;
+  transition:border-color .15s, transform .15s;
+}
+.asset:hover{border-color:var(--line-strong); transform:translateY(-1px);}
+.asset-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:16px;
+}
+.asset-id{min-width:0;}
+.ticker{
+  font-family:var(--f-mono);
+  font-weight:600;
+  font-size:18px;
+  letter-spacing:0;
+  color:var(--ink);
+}
+.asset-name{
+  font-size:13.5px;
+  color:var(--muted);
+  margin-top:3px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.asset-val{text-align:right; flex-shrink:0;}
+.asset-val .v{
+  font-family:var(--f-serif);
+  font-variation-settings: "opsz" 72, "wght" 600;
+  font-size:22px;
+  line-height:1.1;
+  letter-spacing:-0.02em;
+}
+.asset-val .d{
+  font-size:13px;
+  margin-top:3px;
+}
+.asset-grid-stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  padding-top:14px;
+  border-top:1px solid var(--line);
+}
+.stat-label{font-size:12px; color:var(--muted); margin-bottom:4px;}
+.stat-val{font-size:16px; font-weight:600;}
+
+.asset-expand{
+  margin-top:4px;
+  padding:10px 14px;
+  background:var(--surface-2);
+  color:var(--ink-2);
+  border-radius:10px;
+  font-size:13.5px;
+  font-weight:500;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  transition:background .15s;
+}
+.asset-expand:hover{background:var(--accent-soft); color:var(--accent);}
+.asset-expand svg{width:14px; height:14px;}
+
+/* =========================================================================
+   ESTADO VAZIO — convite, não tristeza
+   ========================================================================= */
+.empty{
+  padding:48px 32px;
+  border:1.5px dashed var(--line-strong);
+  border-radius:20px;
+  text-align:center;
+}
+.empty h3{
+  font-family:var(--f-serif);
+  font-weight:600;
+  font-size:24px;
+  letter-spacing:-0.02em;
+  margin:0 0 8px;
+}
+.empty p{color:var(--muted); margin:0 auto 24px; max-width:36ch; font-size:15px;}
+
+/* =========================================================================
+   DRAWER / SHEET — detalhes do ativo
+   ========================================================================= */
+.sheet-backdrop{
+  position:fixed; inset:0; z-index:40;
+  background: rgba(18, 32, 24, 0.55);
+  display:flex; align-items:flex-end; justify-content:center;
+  opacity:0; transition:opacity .2s;
+}
+.sheet-backdrop.open{opacity:1}
+.sheet{
+  width:100%;
+  max-width:560px;
+  max-height:92dvh;
+  overflow-y:auto;
+  background:var(--surface);
+  border-radius:22px 22px 0 0;
+  padding: 20px 24px calc(32px + env(safe-area-inset-bottom,0px));
+  transform:translateY(100%);
+  transition:transform .25s cubic-bezier(.2,.9,.3,1);
+  box-shadow: 0 -20px 60px rgba(0,0,0,.25);
+}
+.sheet-backdrop.open .sheet{transform:translateY(0)}
+.sheet-handle{
+  width:36px; height:4px; border-radius:4px;
+  background:var(--line-strong);
+  margin:0 auto 16px;
+}
+.sheet-head{
+  display:flex; justify-content:space-between; align-items:flex-start;
+  margin-bottom:20px;
+}
+.sheet-head .ticker{font-size:22px;}
+.sheet-head .asset-name{font-size:14px; margin-top:4px;}
+.close-btn{
+  width:32px; height:32px;
+  border-radius:50%;
+  background:var(--surface-2);
+  color:var(--ink-2);
+  display:grid; place-items:center;
+  flex-shrink:0;
+}
+.close-btn:hover{background:var(--line);}
+
+.sheet-value{
+  font-family:var(--f-serif);
+  font-variation-settings: "opsz" 144, "wght" 600;
+  font-size:36px;
+  letter-spacing:-0.03em;
+  line-height:1;
+  margin-bottom:8px;
+}
+.sheet-section{margin:28px 0 0;}
+.sheet-section-title{
+  font-family:var(--f-serif);
+  font-weight:600;
+  font-size:17px;
+  letter-spacing:-0.01em;
+  margin:0 0 14px;
+  color:var(--ink);
+}
+.sheet-section-sub{color:var(--muted); font-size:13px; margin:-10px 0 14px;}
+
+.kv-list{display:grid; gap:0;}
+.kv-list > div{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  padding:11px 0;
+  border-bottom:1px solid var(--line);
+  font-size:14px;
+}
+.kv-list > div:last-child{border-bottom:0;}
+.kv-list span{color:var(--muted);}
+.kv-list b{font-weight:600; color:var(--ink);}
+
+/* Comparação com Selic — barras */
+.compare{display:grid; gap:14px;}
+.compare-row{display:grid; grid-template-columns:1fr auto; gap:10px; align-items:baseline;}
+.compare-row .label{font-size:13.5px; color:var(--ink-2);}
+.compare-row .val{font-family:var(--f-mono); font-weight:600; font-size:14px;}
+.compare-bar{
+  grid-column:1 / -1;
+  height:8px;
+  background:var(--surface-2);
+  border-radius:4px;
+  overflow:hidden;
+  margin-top:-6px;
+}
+.compare-bar > span{
+  display:block; height:100%; border-radius:4px;
+  background:var(--accent); transition:width .5s ease-out;
+}
+.compare-bar.selic > span{background:var(--amber);}
+.compare-note{
+  margin-top:14px;
+  padding:12px 14px;
+  background:var(--surface-2);
+  border-radius:10px;
+  font-size:13.5px;
+  color:var(--ink-2);
+}
+
+.sheet-actions{
+  display:flex; gap:10px; flex-wrap:wrap;
+  margin-top:28px;
+}
+.sheet-actions .btn{flex:1 1 140px;}
+
+/* =========================================================================
+   AUTOCOMPLETE — momento mágico
+   ========================================================================= */
+.search-box{position:relative;}
+.search-input{
+  padding-right:40px;
+  font-family:var(--f-sans);
+}
+.search-spinner{
+  position:absolute; right:14px; top:50%;
+  transform:translateY(-50%);
+  width:14px; height:14px;
+  border-radius:50%;
+  border:2px solid var(--line);
+  border-top-color:var(--accent);
+  animation:spin .8s linear infinite;
+  display:none;
+}
+.search-spinner.on{display:block;}
+@keyframes spin{to{transform:translateY(-50%) rotate(360deg)}}
+
+.suggestions{
+  position:absolute;
+  top:calc(100% + 6px); left:0; right:0;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:12px;
+  box-shadow: 0 20px 40px -20px rgba(18,32,24,.25);
+  overflow:hidden;
+  z-index:5;
+  max-height:320px;
+  overflow-y:auto;
+}
+.sugg-item{
+  display:flex; align-items:center; gap:12px;
+  padding:12px 14px;
+  border-bottom:1px solid var(--line);
+  cursor:pointer;
+  transition:background .1s;
+}
+.sugg-item:last-child{border-bottom:0;}
+.sugg-item:hover, .sugg-item[aria-selected="true"]{background:var(--surface-2);}
+.sugg-ticker{
+  font-family:var(--f-mono);
+  font-weight:600;
+  font-size:14px;
+  min-width:72px;
+}
+.sugg-name{
+  flex:1; min-width:0;
+  font-size:13.5px;
+  color:var(--ink-2);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.sugg-kind{
+  font-size:11px;
+  color:var(--muted);
+  padding:2px 8px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  flex-shrink:0;
+}
+
+/* Painel do ativo escolhido */
+.picked{
+  padding:16px;
+  background:var(--accent-soft);
+  border-radius:12px;
+  margin-top:14px;
+}
+.picked-head{
+  display:flex; justify-content:space-between; align-items:baseline;
+  margin-bottom:8px;
+}
+.picked-head .ticker{font-size:17px; color:var(--accent);}
+.picked-price{
+  font-family:var(--f-serif);
+  font-weight:600;
+  font-size:20px;
+  color:var(--accent);
+}
+.picked-meta{font-size:13px; color:var(--ink-2);}
+
+.form-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px;}
+.form-grid .field{margin:0;}
+
+.preview-note{
+  margin-top:14px;
+  padding:12px 14px;
+  background:var(--surface-2);
+  border-radius:10px;
+  font-size:14px;
+  color:var(--ink-2);
+}
+.preview-note b{color:var(--ink);}
+
+/* =========================================================================
+   DICAS EM ACCORDION
+   ========================================================================= */
+.tips{display:grid; gap:8px;}
+details.tip{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:12px;
+  overflow:hidden;
+}
+details.tip[open]{border-color:var(--line-strong);}
+details.tip > summary{
+  list-style:none;
+  padding:16px 18px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  cursor:pointer;
+  font-weight:500;
+  font-size:15px;
+}
+details.tip > summary::-webkit-details-marker{display:none;}
+details.tip .tip-dot{
+  width:8px; height:8px; border-radius:50%;
+  background:var(--muted);
+  flex-shrink:0;
+}
+details.tip.warn .tip-dot{background:var(--loss);}
+details.tip.info .tip-dot{background:var(--accent);}
+details.tip .chev{
+  margin-left:auto;
+  color:var(--muted);
+  transition:transform .2s;
+  flex-shrink:0;
+}
+details.tip[open] .chev{transform:rotate(180deg);}
+details.tip .tip-body{
+  padding:0 18px 18px 40px;
+  color:var(--ink-2);
+  font-size:14.5px;
+  line-height:1.6;
+}
+details.tip .tip-body p{margin:0 0 8px;}
+details.tip .tip-body p:last-child{margin:0;}
+
+/* =========================================================================
+   TOAST
+   ========================================================================= */
+.toast{
+  position:fixed;
+  left:50%; bottom:calc(28px + env(safe-area-inset-bottom,0px));
+  transform:translateX(-50%) translateY(16px);
+  background:var(--ink);
+  color:var(--bg);
+  padding:12px 18px;
+  border-radius:999px;
+  font-size:14px;
+  font-weight:500;
+  box-shadow: 0 10px 30px rgba(0,0,0,.3);
+  opacity:0;
+  transition:opacity .2s, transform .2s;
+  z-index:60;
+  pointer-events:none;
+}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+/* =========================================================================
+   RESPONSIVO
+   ========================================================================= */
+@media (min-width: 680px){
+  .asset-grid{grid-template-columns: 1fr 1fr;}
+  .sheet{align-self:center; max-height:85dvh; border-radius:22px;}
+  .sheet-backdrop{align-items:center;}
+}
+
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .live-dot{animation:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- =========================================================================
+     LOGIN / CADASTRO
+     ========================================================================= -->
+<section class="auth" id="auth">
+  <div class="auth-card">
+    <div class="brand">
+      <span class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 17l5-5 4 4 7-8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span>Carteira</span>
+    </div>
+
+    <h1 class="auth-title" id="authTitle">Entrar</h1>
+    <p class="auth-sub" id="authSub">Fundos imobiliários, Tesouro Selic e ações — em um só lugar.</p>
+
+    <form id="authForm" autocomplete="on" novalidate>
+      <label class="field">
+        <span>E-mail</span>
+        <input id="email" type="email" required autocomplete="email" placeholder="voce@email.com">
+      </label>
+      <label class="field">
+        <span id="passLabel">Senha</span>
+        <input id="password" type="password" required autocomplete="current-password" placeholder="mínimo 8 caracteres">
+      </label>
+      <p class="err" id="authErr"></p>
+      <button class="btn btn-full" id="authBtn" type="submit">Entrar</button>
+    </form>
+
+    <p class="auth-foot">
+      <span id="toggleText">Ainda não tem conta?</span>
+      <button type="button" id="toggleBtn">Criar conta</button>
+    </p>
+  </div>
+</section>
+
+<!-- =========================================================================
+     APP
+     ========================================================================= -->
+<div id="app" class="hide">
+  <header class="topbar">
+    <div class="topbar-in">
+      <div class="brand">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 17l5-5 4 4 7-8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span>Carteira</span>
+      </div>
+      <div class="topbar-end">
+        <button class="icon-btn" id="themeBtn" aria-label="Alternar tema" title="Alternar tema">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9c-5 0-9-4-9-9z"/></svg>
+        </button>
+        <button class="icon-btn" id="logoutBtn" aria-label="Sair" title="Sair">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-eyebrow">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span>Seu patrimônio</span>
+        <span id="heroUpd" style="margin-left:auto;"></span>
+      </div>
+      <h1 class="hero-value num" id="heroValue">R$ 0,00</h1>
+      <div class="hero-change">
+        <span class="pill" id="heroPill">—</span>
+        <span id="heroMeta"></span>
+      </div>
+    </section>
+
+    <!-- ATIVOS -->
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Ativos</h2>
+          <p class="section-sub" id="assetsSub"></p>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-text" id="refreshBtn" title="Atualizar cotações">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="vertical-align:middle;"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/></svg>
+            Atualizar
+          </button>
+          <button class="btn btn-sm" id="addBtn">Adicionar</button>
+        </div>
+      </div>
+      <div id="assetList"></div>
+    </section>
+
+    <!-- DICAS -->
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Dicas e conceitos</h2>
+          <p class="section-sub">Toque para expandir. Avisos personalizados aparecem no topo.</p>
+        </div>
+      </div>
+      <div class="tips" id="tips"></div>
+    </section>
+  </main>
+</div>
+
+<!-- =========================================================================
+     SHEETS (drawer e add)
+     ========================================================================= -->
+<div id="sheetHost"></div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { api } from './api.js';
+
+/* ---------------------------------------------------------------- helpers */
+const $ = (id) => document.getElementById(id);
+const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
+const brl = new Intl.NumberFormat('pt-BR', { style:'currency', currency:'BRL' });
+const pct = new Intl.NumberFormat('pt-BR', { minimumFractionDigits:2, maximumFractionDigits:2 });
+const toNum = (v) => { v = String(v||'').replace(/\./g,'').replace(',','.'); const n = parseFloat(v); return isNaN(n) ? 0 : n; };
+
+const toast = (msg) => {
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 2200);
+};
+
+/* ---------------------------------------------------------------- estado */
+let state = { version: 0, positions: [], profile: null, legacy: null, settings: null, hist: [] };
+let authMode = 'login';
+
+/* ---------------------------------------------------------------- tema */
+try { const t = localStorage.getItem('tema'); if (t) document.documentElement.setAttribute('data-theme', t); } catch(e){}
+$('themeBtn').onclick = () => {
+  let cur = document.documentElement.getAttribute('data-theme');
+  if (!cur) cur = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem('tema', next); } catch(e){}
+};
+
+/* ---------------------------------------------------------------- login */
+$('toggleBtn').onclick = () => {
+  authMode = authMode === 'login' ? 'register' : 'login';
+  const reg = authMode === 'register';
+  $('authTitle').textContent = reg ? 'Criar conta' : 'Entrar';
+  $('authSub').textContent = reg ? 'Em menos de um minuto você começa a acompanhar.' : 'Fundos imobiliários, Tesouro Selic e ações — em um só lugar.';
+  $('authBtn').textContent = reg ? 'Criar conta' : 'Entrar';
+  $('toggleText').textContent = reg ? 'Já tem conta?' : 'Ainda não tem conta?';
+  $('toggleBtn').textContent = reg ? 'Entrar' : 'Criar conta';
+  $('password').autocomplete = reg ? 'new-password' : 'current-password';
+  $('password').placeholder = reg ? 'mínimo 8 caracteres' : 'sua senha';
+  $('authErr').textContent = '';
+};
+
+$('authForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const email = $('email').value.trim(), password = $('password').value;
+  $('authErr').textContent = ''; $('authBtn').disabled = true;
+  try {
+    await (authMode === 'register' ? api.register(email, password) : api.login(email, password));
+    await enterApp();
+  } catch (err) {
+    const msgs = {
+      email_em_uso: 'Esse e-mail já tem conta. Faça login.',
+      credenciais_invalidas: 'E-mail ou senha incorretos.',
+      senha_curta: 'A senha precisa de ao menos 8 caracteres.',
+      email_invalido: 'E-mail inválido.',
+      dados_invalidos: 'Confira os dados e tente de novo.',
+    };
+    $('authErr').textContent = msgs[err.data?.error] || 'Não foi possível concluir. Tente de novo.';
+  } finally { $('authBtn').disabled = false; }
+};
+
+$('logoutBtn').onclick = async () => { await api.logout().catch(()=>{}); location.reload(); };
+
+async function enterApp(){
+  try { state = await api.getPortfolio(); }
+  catch { state = { version:0, positions:[], profile:null, hist:[] }; }
+  $('auth').classList.add('hide');
+  $('app').classList.remove('hide');
+  render();
+  // uma única animação orquestrada: contar o patrimônio
+  countUpHero();
+}
+
+async function persist(){
+  try { const r = await api.savePortfolio(state); state.version = r.version; }
+  catch (err) {
+    if (err.status === 409) { toast('Carteira atualizada em outro aparelho'); setTimeout(async () => { state = await api.getPortfolio(); render(); }, 900); }
+    else toast('Não consegui salvar');
+  }
+}
+
+/* ---------------------------------------------------------------- cálculos */
+function enrich(p){
+  if (p.ticker) {
+    const inv = p.q * p.c;
+    const atual = p.q * (p.a ?? p.c);
+    const renda = p.q * (p.d || 0);
+    return { inv, atual, ganho: atual - inv, pct: inv > 0 ? (atual - inv) / inv * 100 : 0, renda };
+  }
+  return { inv: p.ap || 0, atual: p.ap || 0, ganho: 0, pct: 0, renda: 0 };
+}
+function totals(){
+  return state.positions.reduce((t, p) => {
+    const r = enrich(p);
+    t.inv += r.inv; t.atual += r.atual; t.renda += r.renda;
+    return t;
+  }, { inv:0, atual:0, renda:0 });
+}
+
+/* ---------------------------------------------------------------- render hero */
+function render(){
+  const t = totals();
+  const ganho = t.atual - t.inv;
+  const pctg = t.inv > 0 ? ganho/t.inv*100 : 0;
+
+  $('heroValue').textContent = brl.format(t.atual);
+  $('heroValue').dataset.target = t.atual;
+
+  const pill = $('heroPill');
+  if (state.positions.length === 0){
+    pill.className = 'pill'; pill.textContent = 'Carteira vazia';
+  } else {
+    pill.className = 'pill ' + (ganho >= 0 ? 'gain' : 'loss');
+    pill.textContent = (ganho >= 0 ? '+ ' : '− ') + brl.format(Math.abs(ganho)) + ' (' + (ganho>=0?'+':'−') + pct.format(Math.abs(pctg)) + '%)';
+  }
+  const n = state.positions.length;
+  const meta = [];
+  if (n > 0) meta.push(n + (n===1 ? ' ativo' : ' ativos'));
+  if (t.renda > 0) meta.push(brl.format(t.renda) + '/mês projetado');
+  $('heroMeta').textContent = meta.join(' · ');
+
+  $('assetsSub').textContent = n > 0 ? 'Cotações atualizadas automaticamente.' : '';
+
+  renderAssets();
+  renderTips();
+  $('heroUpd').textContent = n > 0 ? 'ao vivo' : '';
+}
+
+function countUpHero(){
+  const el = $('heroValue');
+  const target = Number(el.dataset.target || 0);
+  if (!target || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const start = performance.now(), dur = 900;
+  const tick = (now) => {
+    const p = Math.min(1, (now - start) / dur);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = brl.format(target * eased);
+    if (p < 1) requestAnimationFrame(tick);
+    else el.textContent = brl.format(target);
+  };
+  requestAnimationFrame(tick);
+}
+
+/* ---------------------------------------------------------------- render ativos */
+function renderAssets(){
+  const list = $('assetList'); list.innerHTML = '';
+  if (!state.positions.length){
+    const e = el('div', 'empty');
+    e.appendChild(el('h3', null, 'Vamos começar?'));
+    e.appendChild(el('p', null, 'Adicione seu primeiro ativo pelo código. Os preços são atualizados sozinhos.'));
+    const b = el('button', 'btn', 'Adicionar primeiro ativo'); b.onclick = openAdd;
+    e.appendChild(b);
+    list.appendChild(e);
+    return;
+  }
+  const grid = el('div', 'asset-grid');
+  state.positions.forEach(p => grid.appendChild(buildAssetCard(p)));
+  list.appendChild(grid);
+}
+
+function buildAssetCard(p){
+  const r = enrich(p);
+  const card = el('button', 'asset');
+  card.onclick = () => openDetails(p);
+
+  const top = el('div', 'asset-top');
+  const id = el('div', 'asset-id');
+  const tk = el('div', 'ticker', p.ticker || p.nome || '—');
+  id.appendChild(tk);
+  const name = p.name || p.nome || (p.ticker ? '' : '');
+  if (name) id.appendChild(el('div', 'asset-name', name));
+
+  const val = el('div', 'asset-val');
+  const v = el('div', 'v num', brl.format(r.atual));
+  const d = el('div', 'd num');
+  if (p.ticker){
+    d.className = 'd num ' + (r.ganho >= 0 ? 'gain' : 'loss');
+    d.style.color = r.ganho >= 0 ? 'var(--gain)' : 'var(--loss)';
+    d.textContent = (r.ganho>=0?'+ ':'− ') + brl.format(Math.abs(r.ganho));
+  } else {
+    d.textContent = 'aplicado';
+    d.style.color = 'var(--muted)';
+  }
+  val.appendChild(v); val.appendChild(d);
+  top.appendChild(id); top.appendChild(val);
+  card.appendChild(top);
+
+  const stats = el('div', 'asset-grid-stats');
+  const s1 = el('div');
+  s1.appendChild(el('div', 'stat-label', 'Investido'));
+  s1.appendChild(el('div', 'stat-val num', brl.format(r.inv)));
+  const s2 = el('div');
+  s2.appendChild(el('div', 'stat-label', 'Rendimento projetado'));
+  const sv = el('div', 'stat-val num', r.renda > 0 ? brl.format(r.renda) + '/mês' : '—');
+  if (r.renda > 0) sv.style.color = 'var(--gain)';
+  s2.appendChild(sv);
+  stats.appendChild(s1); stats.appendChild(s2);
+  card.appendChild(stats);
+
+  const exp = el('div', 'asset-expand');
+  exp.innerHTML = '<span>Ver detalhes</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>';
+  card.appendChild(exp);
+
+  return card;
+}
+
+/* ---------------------------------------------------------------- sheet infra */
+function openSheet(buildBody){
+  const host = $('sheetHost');
+  const bd = el('div', 'sheet-backdrop');
+  const sheet = el('div', 'sheet');
+  sheet.appendChild(el('div', 'sheet-handle'));
+  bd.appendChild(sheet);
+  host.appendChild(bd);
+  const close = () => {
+    bd.classList.remove('open');
+    setTimeout(() => bd.remove(), 250);
+    document.removeEventListener('keydown', key);
+  };
+  const key = (e) => { if (e.key === 'Escape') close(); };
+  bd.addEventListener('click', (e) => { if (e.target === bd) close(); });
+  document.addEventListener('keydown', key);
+  requestAnimationFrame(() => bd.classList.add('open'));
+  buildBody(sheet, close);
+  return close;
+}
+
+/* ---------------------------------------------------------------- detalhes do ativo */
+function openDetails(p){
+  openSheet((body, close) => {
+    const r = enrich(p);
+    const K = p.ticker ? (p.kind === 'acao' ? 'Ação' : 'Fundo imobiliário') : (p.kind === 'selic' ? 'Tesouro Selic' : p.kind === 'cdb' ? 'CDB' : 'Fundo');
+
+    const head = el('div', 'sheet-head');
+    const left = el('div');
+    const tk = el('div', 'ticker', p.ticker || p.nome || K);
+    left.appendChild(tk);
+    if (p.name) left.appendChild(el('div', 'asset-name', p.name));
+    const cb = el('button', 'close-btn'); cb.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+    cb.onclick = close;
+    head.appendChild(left); head.appendChild(cb);
+    body.appendChild(head);
+
+    body.appendChild(el('div', 'sheet-value num', brl.format(r.atual)));
+    if (p.ticker){
+      const pill = el('span', 'pill ' + (r.ganho >= 0 ? 'gain' : 'loss'),
+        (r.ganho >= 0 ? '+ ' : '− ') + brl.format(Math.abs(r.ganho)) + ' (' + pct.format(Math.abs(r.pct)) + '%)');
+      body.appendChild(pill);
+    }
+
+    /* Comparação com Tesouro Selic (base 13,75% a.a.) */
+    if (p.ticker && r.inv > 0){
+      const selicAnnual = 13.75;
+      const selicProj = r.inv * selicAnnual / 100 * 0.85; // 15% IR
+      const assetProj = r.renda * 12;
+      const max = Math.max(assetProj, selicProj, 0.01);
+
+      const sec = el('div', 'sheet-section');
+      sec.appendChild(el('h3', 'sheet-section-title', 'Comparação em 12 meses'));
+      sec.appendChild(el('p', 'sheet-section-sub', 'Rendimento esperado se nada mudar. Base: Selic 13,75%, já descontado o IR.'));
+
+      const cmp = el('div', 'compare');
+      const r1 = el('div', 'compare-row');
+      r1.appendChild(el('div', 'label', p.ticker + ' (dividendos)'));
+      r1.appendChild(el('div', 'val', brl.format(assetProj)));
+      const b1 = el('div', 'compare-bar'); const s1 = el('span'); s1.style.width = (assetProj/max*100) + '%'; b1.appendChild(s1);
+      r1.appendChild(b1);
+      cmp.appendChild(r1);
+
+      const r2 = el('div', 'compare-row');
+      r2.appendChild(el('div', 'label', 'Tesouro Selic'));
+      r2.appendChild(el('div', 'val', brl.format(selicProj)));
+      const b2 = el('div', 'compare-bar selic'); const s2 = el('span'); s2.style.width = (selicProj/max*100) + '%'; b2.appendChild(s2);
+      r2.appendChild(b2);
+      cmp.appendChild(r2);
+      sec.appendChild(cmp);
+
+      const diff = assetProj - selicProj;
+      const note = el('div', 'compare-note');
+      if (Math.abs(diff) < 1) note.textContent = 'Rendimento parecido com o do Tesouro Selic.';
+      else if (diff > 0) note.innerHTML = 'Seu ativo renderia <b>' + brl.format(diff) + '</b> a mais que o Tesouro Selic no período. Lembre que o preço da cota pode subir ou cair.';
+      else note.innerHTML = 'Seu ativo renderia <b>' + brl.format(-diff) + '</b> a menos que o Tesouro Selic no período, mas a cota pode se valorizar.';
+      sec.appendChild(note);
+      body.appendChild(sec);
+    }
+
+    /* Detalhes técnicos */
+    const tech = el('div', 'sheet-section');
+    tech.appendChild(el('h3', 'sheet-section-title', 'Detalhes técnicos'));
+    const kv = el('div', 'kv-list');
+    const row = (k, v) => { const d = el('div'); d.appendChild(el('span', null, k)); d.appendChild(el('b', 'num', v)); kv.appendChild(d); };
+    if (p.ticker){
+      row('Cotas', String(p.q));
+      row('Preço médio pago', brl.format(p.c));
+      row('Preço atual', brl.format(p.a ?? p.c));
+      if (p.d > 0) row('Último dividendo (por cota)', brl.format(p.d));
+      if (p.dy12 != null) row('Dividend Yield (12m)', pct.format(p.dy12) + '%');
+      if (p.pvp != null) row('P/VP', pct.format(p.pvp));
+      if (p.segment) row('Segmento', p.segment);
+    } else {
+      row('Valor aplicado', brl.format(p.ap || 0));
+    }
+    tech.appendChild(kv);
+    body.appendChild(tech);
+
+    /* Ações */
+    const acts = el('div', 'sheet-actions');
+    const rm = el('button', 'btn btn-ghost', 'Remover');
+    rm.onclick = async () => {
+      if (!confirm('Remover ' + (p.ticker || p.nome) + ' da carteira?')) return;
+      state.positions = state.positions.filter(x => x.id !== p.id);
+      close(); render(); await persist(); toast('Ativo removido');
+    };
+    acts.appendChild(rm);
+    body.appendChild(acts);
+  });
+}
+
+/* ---------------------------------------------------------------- adicionar ativo */
+function openAdd(){
+  openSheet((body, close) => {
+    const head = el('div', 'sheet-head');
+    const left = el('div');
+    left.appendChild(el('h3', 'sheet-section-title', 'Adicionar ativo'));
+    left.appendChild(el('div', 'section-sub', 'Digite o código (ex: MXRF11, PETR4). O resto vem automático.'));
+    const cb = el('button', 'close-btn'); cb.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+    cb.onclick = close;
+    head.appendChild(left); head.appendChild(cb);
+    body.appendChild(head);
+
+    const sb = el('div', 'search-box');
+    sb.style.marginTop = '16px';
+    const inp = document.createElement('input');
+    inp.className = 'search-input';
+    inp.placeholder = 'Buscar por código ou nome';
+    inp.autocapitalize = 'characters';
+    inp.setAttribute('inputmode', 'text');
+    const spin = el('div', 'search-spinner');
+    sb.appendChild(inp); sb.appendChild(spin);
+    body.appendChild(sb);
+
+    const picked = el('div');
+    body.appendChild(picked);
+
+    const err = el('p', 'err');
+    const ok = el('button', 'btn btn-full', 'Adicionar à carteira');
+    ok.disabled = true;
+    ok.style.marginTop = '20px';
+    body.appendChild(err);
+    body.appendChild(ok);
+
+    let suggList = null, items = [], sel = -1, timer = null, chosen = null;
+
+    const closeList = () => { if (suggList) suggList.remove(); suggList = null; items = []; sel = -1; };
+
+    const choose = async (r) => {
+      closeList();
+      inp.value = r.ticker;
+      chosen = r;
+      picked.innerHTML = '';
+      ok.disabled = false;
+
+      const box = el('div', 'picked');
+      const h = el('div', 'picked-head');
+      h.appendChild(el('div', 'ticker', r.ticker));
+      const price = el('div', 'picked-price', 'carregando…');
+      h.appendChild(price);
+      box.appendChild(h);
+      box.appendChild(el('div', 'picked-meta', r.name));
+      picked.appendChild(box);
+
+      // formulário
+      const form = el('div', 'form-grid');
+      const qty = el('label', 'field');
+      qty.appendChild(el('span', null, 'Quantidade'));
+      const qtyI = document.createElement('input');
+      qtyI.setAttribute('inputmode', 'decimal'); qtyI.placeholder = '100';
+      qty.appendChild(qtyI);
+      const prc = el('label', 'field');
+      prc.appendChild(el('span', null, 'Preço médio pago (R$)'));
+      const prcI = document.createElement('input');
+      prcI.setAttribute('inputmode', 'decimal'); prcI.placeholder = '10,00';
+      prc.appendChild(prcI);
+      form.appendChild(qty); form.appendChild(prc);
+      picked.appendChild(form);
+
+      const prev = el('div', 'preview-note', 'Preencha quantidade e preço para ver o resumo.');
+      picked.appendChild(prev);
+
+      // busca cotação
+      try {
+        const q = await api.quote(r.ticker);
+        chosen._price = q.price; chosen._d = q.last_dividend; chosen._dy = q.dy_12m; chosen._pvp = q.pvp;
+        price.textContent = brl.format(q.price);
+      } catch { price.textContent = 'preço indisponível'; price.style.fontSize = '14px'; }
+
+      const upd = () => {
+        const Q = toNum(qtyI.value), C = toNum(prcI.value);
+        if (Q <= 0 || C <= 0){ prev.textContent = 'Preencha quantidade e preço para ver o resumo.'; return; }
+        const invested = Q * C;
+        const current = Q * (chosen._price || C);
+        const diff = current - invested;
+        prev.innerHTML = 'Você investiu <b>' + brl.format(invested) + '</b>. Hoje vale <b>' + brl.format(current) + '</b> ('
+          + (diff >= 0 ? '+' : '−') + brl.format(Math.abs(diff)) + ').';
+      };
+      qtyI.oninput = upd; prcI.oninput = upd;
+      setTimeout(() => qtyI.focus(), 50);
+
+      ok.onclick = async () => {
+        const Q = toNum(qtyI.value), C = toNum(prcI.value);
+        if (Q <= 0){ err.textContent = 'Informe a quantidade.'; return; }
+        if (C <= 0){ err.textContent = 'Informe o preço médio pago.'; return; }
+        if (state.positions.some(x => x.ticker === chosen.ticker)){ err.textContent = 'Esse ativo já está na sua carteira.'; return; }
+        state.positions.push({
+          id: crypto.randomUUID(),
+          kind: chosen.kind === 'acao' ? 'acao' : 'fii',
+          ticker: chosen.ticker, name: chosen.name,
+          q: Q, c: C, a: chosen._price ?? C, d: chosen._d ?? 0,
+          dy12: chosen._dy ?? null, pvp: chosen._pvp ?? null,
+        });
+        close(); render(); countUpHero(); toast('Ativo adicionado'); await persist();
+      };
+    };
+
+    const showList = (results) => {
+      closeList();
+      if (!results.length) return;
+      suggList = el('div', 'suggestions');
+      results.forEach((r) => {
+        const it = el('div', 'sugg-item');
+        it.setAttribute('role', 'option');
+        it.appendChild(el('div', 'sugg-ticker', r.ticker));
+        it.appendChild(el('div', 'sugg-name', r.name));
+        it.appendChild(el('div', 'sugg-kind', r.kind === 'acao' ? 'Ação' : r.kind === 'fii' ? 'FII' : r.kind.toUpperCase()));
+        it.onmousedown = (e) => { e.preventDefault(); choose(r); };
+        suggList.appendChild(it);
+      });
+      sb.appendChild(suggList);
+      items = [...suggList.children];
+    };
+
+    inp.oninput = () => {
+      chosen = null; picked.innerHTML = ''; ok.disabled = true; err.textContent = '';
+      const q = inp.value.trim();
+      clearTimeout(timer);
+      if (q.length < 1){ closeList(); spin.classList.remove('on'); return; }
+      spin.classList.add('on');
+      timer = setTimeout(async () => {
+        try { const r = await api.search(q); showList(r.results || []); }
+        catch { closeList(); }
+        finally { spin.classList.remove('on'); }
+      }, 180);
+    };
+    inp.onkeydown = (e) => {
+      if (!items.length) return;
+      if (e.key === 'ArrowDown'){ e.preventDefault(); sel = (sel+1) % items.length; }
+      else if (e.key === 'ArrowUp'){ e.preventDefault(); sel = (sel-1+items.length) % items.length; }
+      else if (e.key === 'Enter' && sel >= 0){ e.preventDefault(); items[sel].onmousedown(new Event('x')); return; }
+      else return;
+      items.forEach((it, i) => it.setAttribute('aria-selected', i === sel));
+      items[sel].scrollIntoView({ block: 'nearest' });
+    };
+
+    setTimeout(() => inp.focus(), 80);
+  });
+}
+
+$('addBtn').onclick = openAdd;
+
+/* ---------------------------------------------------------------- refresh */
+$('refreshBtn').onclick = async () => {
+  const b = $('refreshBtn');
+  b.disabled = true;
+  try { await api.refresh(); state = await api.getPortfolio(); render(); countUpHero(); toast('Cotações atualizadas'); }
+  catch { toast('Não consegui atualizar'); }
+  finally { b.disabled = false; }
+};
+
+/* ---------------------------------------------------------------- dicas */
+function tipAcc(title, cls, bodyHtml){
+  const d = document.createElement('details');
+  d.className = 'tip' + (cls ? ' ' + cls : '');
+  const sum = el('summary');
+  sum.appendChild(el('span', 'tip-dot'));
+  sum.appendChild(el('span', null, title));
+  const chev = el('span', 'chev');
+  chev.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>';
+  sum.appendChild(chev);
+  d.appendChild(sum);
+  const b = el('div', 'tip-body'); b.innerHTML = bodyHtml;
+  d.appendChild(b);
+  return d;
+}
+
+function renderTips(){
+  const box = $('tips'); box.innerHTML = '';
+  const t = totals();
+  const alerts = [];
+
+  // alertas personalizados primeiro
+  state.positions.forEach(p => {
+    if (p.pvp && p.pvp > 1.10) alerts.push(tipAcc(
+      p.ticker + ' está com P/VP alto',
+      'warn',
+      '<p>O P/VP de <b>' + pct.format(p.pvp) + '</b> indica que você está pagando acima do valor patrimonial do fundo.</p><p>Para fundos de tijolo, um P/VP acima de 1,10 costuma significar um ágio alto. Nem sempre é problema, mas vale verificar se os imóveis justificam o preço.</p>'
+    ));
+    if (p.dy12 && p.dy12 > 15) alerts.push(tipAcc(
+      p.ticker + ' tem rendimento muito alto',
+      'warn',
+      '<p>Rendimento de <b>' + pct.format(p.dy12) + '% ao ano</b> está bem acima da média. Pode ser oportunidade — ou pode ser o que o mercado chama de <i>yield trap</i>: um fundo que paga muito porque tem risco maior.</p><p>Vale olhar o relatório gerencial do fundo antes de aumentar a posição.</p>'
+    ));
+    if (t.atual > 0){
+      const r = enrich(p);
+      if (r.atual / t.atual > 0.25) alerts.push(tipAcc(
+        p.ticker + ' concentra sua carteira',
+        'warn',
+        '<p>Esse ativo representa <b>' + pct.format(r.atual/t.atual*100) + '%</b> do seu patrimônio.</p><p>A diversificação costuma ficar entre 10% e 15% por ativo. Se algo der errado com esse fundo, uma parte grande da carteira sente.</p>'
+      ));
+    }
+  });
+
+  // conceitos (sempre)
+  const concepts = [
+    ['O que é Dividend Yield (DY)?',
+     '<p>É quanto um ativo paga de rendimentos em relação ao preço da cota, nos últimos 12 meses.</p>' +
+     '<p>Ex: um FII com DY de 10% ao ano significa que, se você investir R$ 1.000, deve receber cerca de R$ 100 em dividendos ao longo do ano.</p>' +
+     '<p>É uma referência, não garantia. O valor pago pode mudar todo mês.</p>'],
+    ['O que é P/VP?',
+     '<p>Compara o preço da cota com o valor patrimonial do fundo.</p>' +
+     '<p><b>P/VP = 1,00</b>: você paga exatamente o que vale o patrimônio.<br><b>Abaixo de 1,00</b>: compra com desconto.<br><b>Acima de 1,00</b>: compra com ágio.</p>' +
+     '<p>Desconto não significa barganha — pode refletir algum problema. Ágio não significa roubo — pode ser um fundo muito bem avaliado.</p>'],
+    ['Fundos de tijolo vs. papel',
+     '<p><b>Tijolo</b>: investe em imóveis físicos (shoppings, galpões, lajes). O ganho vem do aluguel.</p>' +
+     '<p><b>Papel</b>: investe em títulos de dívida ligados a imóveis (CRIs). O ganho vem dos juros.</p>' +
+     '<p>Carteira equilibrada costuma ter os dois: tijolo dá exposição a imóveis reais, papel costuma pagar mais rendimento no curto prazo.</p>'],
+    ['Por que a cotação muda sem eu fazer nada?',
+     '<p>O preço do ativo é definido pelo mercado — por quanto as pessoas estão comprando e vendendo naquele momento.</p>' +
+     '<p>Nosso sistema atualiza automaticamente a cada 5 minutos durante o pregão (10h às 18h). Fora desse horário, o preço fica congelado no último fechamento.</p>'],
+  ];
+  concepts.forEach(([t, b]) => alerts.push(tipAcc(t, 'info', b)));
+
+  alerts.forEach(a => box.appendChild(a));
+}
+
+/* ---------------------------------------------------------------- start */
+(async () => {
+  try { await api.me(); await enterApp(); }
+  catch { /* mostra login */ }
+})();
+</script>
+</body>
+</html>
