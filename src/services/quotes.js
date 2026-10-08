@@ -1,5 +1,4 @@
-// Motor de cotações: busca preços/indicadores na Brapi e grava no cache
-// (market_quotes). Chamado pelo agendador e pela rota "atualizar agora".
+// Motor de cotações: busca preços/indicadores na Brapi e grava no cache.
 import { query } from '../lib/db.js';
 import { fetchQuotes, fetchFiiIndicators } from './brapi.js';
 import { allPortfolioTickers } from '../repos/portfolio.js';
@@ -14,13 +13,15 @@ async function ensureInstrument(ticker, kindHint) {
 
 async function saveQuote(q, extra = {}) {
   await ensureInstrument(q.ticker, extra.kind);
+  // Casts explícitos para Postgres não confundir tipos quando vem NULL
   await query(
     `INSERT INTO market_quotes
        (ticker, price, prev_close, change_pct, volume, last_dividend,
         last_ex_date, last_pay_date, dy_12m, pvp, nav_per_share,
         fetched_at, fundamentals_at, last_error)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11, now(),
-             CASE WHEN $10 IS NULL AND $11 IS NULL THEN NULL ELSE now() END, NULL)
+     VALUES ($1::text, $2::numeric, $3::numeric, $4::numeric, $5::numeric, $6::numeric,
+             $7::date, $8::date, $9::numeric, $10::numeric, $11::numeric, now(),
+             CASE WHEN $10::numeric IS NULL AND $11::numeric IS NULL THEN NULL ELSE now() END, NULL)
      ON CONFLICT (ticker) DO UPDATE SET
         price=EXCLUDED.price, prev_close=EXCLUDED.prev_close,
         change_pct=EXCLUDED.change_pct, volume=EXCLUDED.volume,
@@ -63,8 +64,7 @@ export async function refreshTickers(tickers) {
           console.log('[quotes] SAVED', q.ticker, 'price=', q.price);
         } catch (e) {
           failed++;
-          console.error('[quotes] FAILED to save', q.ticker, ':', e.message, '| stack:', e.stack?.slice(0, 300));
-          await query('UPDATE market_quotes SET last_error=$2 WHERE ticker=$1', [q.ticker, e.message]).catch(() => {});
+          console.error('[quotes] FAILED to save', q.ticker, ':', e.message);
         }
       }
     } catch (e) {
