@@ -34,4 +34,9 @@ export const api = {
   savePortfolio: (snapshot) => api._req('PUT', '/api/portfolio', snapshot),
   refresh:       () => api._req('POST', '/api/portfolio/refresh'),
   snapshot:      (total) => api._req('POST', '/api/portfolio/snapshot', { total }),
+
+  // --- conta ---
+  getEmailPrefs: () => api._req('GET', '/api/user/email-prefs'),
+  saveEmailPrefs: (prefs) => api._req('PUT', '/api/user/email-prefs', prefs),
+  sendTestEmail: (kind) => api._req('POST', '/api/user/email-test', { kind }),
 };

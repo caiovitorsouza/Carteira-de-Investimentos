@@ -31,6 +31,12 @@ export const config = {
     cookieName: 'carteira_session',
     cookieSecure: bool(process.env.COOKIE_SECURE, false),
   },
+
+  email: {
+    enabled: bool(process.env.EMAIL_ENABLED, false),
+    apiKey:  process.env.RESEND_API_KEY || '',
+    from:    process.env.EMAIL_FROM || 'Carteira <onboarding@resend.dev>',
+  },
 };
 
 // A API de FIIs (P/VP) só existe no plano Pro da Brapi.

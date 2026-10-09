@@ -8,6 +8,7 @@ import { config } from './lib/config.js';
 import { authRouter } from './routes/auth.js';
 import { marketRouter } from './routes/market.js';
 import { portfolioRouter } from './routes/portfolio.js';
+import { userRouter } from './routes/user.js';
 import { startQuoteScheduler } from './jobs/scheduler.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -22,6 +23,7 @@ app.get('/api/health', (_req, res) => res.json({ ok: true, ts: Date.now() }));
 app.use('/api/auth', authRouter);
 app.use('/api/market', marketRouter);
 app.use('/api/portfolio', portfolioRouter);
+app.use('/api/user', userRouter);
 
 // Front-end estático (coloque o index.html em /public).
 app.use(express.static(path.join(__dirname, '..', 'public')));

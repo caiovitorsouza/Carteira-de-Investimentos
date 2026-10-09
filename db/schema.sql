@@ -138,3 +138,22 @@ ALTER TABLE positions ADD CONSTRAINT positions_shape CHECK (
     (kind IN ('fii','acao') AND ticker IS NOT NULL AND quantity IS NOT NULL AND avg_price IS NOT NULL)
  OR (kind IN ('selic','cdb','pre','ipca','lci','lca','fundo') AND ticker IS NULL AND invested_amount IS NOT NULL)
 );
+
+-- Preferências de e-mail por usuário + token público de unsubscribe.
+-- weekly/monthly: bool opt-in. nome: usado nos cumprimentos. unsub_token: UUID.
+ALTER TABLE users ADD COLUMN IF NOT EXISTS email_prefs jsonb NOT NULL
+  DEFAULT '{"weekly":true,"monthly":true}'::jsonb;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS unsub_token uuid DEFAULT gen_random_uuid();
+ALTER TABLE users ADD COLUMN IF NOT EXISTS first_name text;
+CREATE INDEX IF NOT EXISTS users_unsub_token_idx ON users(unsub_token);
+
+-- Log de e-mails enviados (idempotência + histórico)
+CREATE TABLE IF NOT EXISTS email_log (
+  id        bigserial PRIMARY KEY,
+  user_id   uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  kind      text NOT NULL,                       -- 'weekly' | 'monthly'
+  sent_at   timestamptz NOT NULL DEFAULT now(),
+  provider_id text,
+  error     text
+);
+CREATE INDEX IF NOT EXISTS email_log_user_idx ON email_log(user_id, kind, sent_at);

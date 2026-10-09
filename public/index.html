@@ -1097,6 +1097,43 @@ details.tip.action .tip-tag{color: var(--accent);}
 .sim-leg .dot.verde{background: var(--accent);}
 .sim-leg .dot.cinza{background: var(--muted);}
 
+/* Preferências de e-mail */
+.pref-item{
+  display:flex; align-items: start; justify-content: space-between;
+  gap: 16px; padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+}
+.pref-item:last-child{ border-bottom: none; }
+.pref-info{ flex: 1; }
+.pref-title{ font-weight: 600; font-size: 15px; margin: 0 0 4px; color: var(--ink);}
+.pref-desc{ color: var(--muted); font-size: 13.5px; margin: 0; line-height: 1.4; }
+.pref-when{ font-size: 11.5px; color: var(--accent); font-weight: 600; margin-top: 6px; text-transform: lowercase; }
+.pref-test{
+  background: transparent; border: none; cursor: pointer;
+  color: var(--accent); font-size: 12.5px; font-weight: 500;
+  padding: 2px 0; margin-top: 6px;
+  font-family: inherit;
+}
+.pref-test:hover{ text-decoration: underline; }
+.toggle{
+  position: relative;
+  width: 44px; height: 26px;
+  background: var(--line-strong); border-radius: 999px;
+  cursor: pointer; flex-shrink: 0;
+  transition: background .2s;
+  border: none; padding: 0;
+}
+.toggle::before{
+  content: ''; position: absolute;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #fff;
+  top: 3px; left: 3px;
+  transition: transform .2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,.2);
+}
+.toggle.on{ background: var(--accent); }
+.toggle.on::before{ transform: translateX(18px); }
+
 </style>
 </head>
 <body>
@@ -1198,6 +1235,9 @@ details.tip.action .tip-tag{color: var(--accent);}
         <span>Carteira</span>
       </div>
       <div class="topbar-end">
+        <button class="icon-btn" id="notifBtn" aria-label="Notificações por e-mail" title="Notificações por e-mail">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7l8 5 8-5M4 7v10a2 2 0 002 2h12a2 2 0 002-2V7M4 7a2 2 0 012-2h12a2 2 0 012 2"/></svg>
+        </button>
         <button class="icon-btn" id="themeBtn" aria-label="Alternar tema" title="Alternar tema">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9c-5 0-9-4-9-9z"/></svg>
         </button>
@@ -3127,6 +3167,100 @@ function openFundoAdd(){
 
 $('addBtn').onclick = openAdd;
 $('simBtn').onclick = openSimulatorSheet;
+$('notifBtn').onclick = openNotifSheet;
+
+/* ---------------------------------------------------------------- notificações */
+function openNotifSheet(){
+  openSheet(async (body, close) => {
+    buildAddHead(body, close, 'Notificações por e-mail',
+      'Escolha o que você quer receber. Pode mudar quando quiser.');
+
+    const loader = el('p', 'section-sub', 'Carregando preferências…');
+    body.appendChild(loader);
+
+    let prefs = { weekly: true, monthly: true, first_name: null };
+    try { prefs = await api.getEmailPrefs(); } catch { /* usa default */ }
+    loader.remove();
+
+    // Campo: Nome (para o cumprimento)
+    const nameWrap = el('div', 'sheet-section');
+    nameWrap.appendChild(el('h3', 'sheet-section-title', 'Como quer ser chamado?'));
+    nameWrap.appendChild(el('p', 'sheet-section-sub', 'Usado só nos cumprimentos dos e-mails. Pode deixar em branco se quiser.'));
+    const nameI = document.createElement('input');
+    nameI.className = 'search-input';
+    nameI.style.marginTop = '4px';
+    nameI.placeholder = 'Caio';
+    nameI.value = prefs.first_name || '';
+    nameI.maxLength = 60;
+    nameWrap.appendChild(nameI);
+    body.appendChild(nameWrap);
+
+    const list = el('div', 'sheet-section');
+    list.appendChild(el('h3', 'sheet-section-title', 'Tipos de e-mail'));
+    body.appendChild(list);
+
+    const makePref = (key, title, desc, when) => {
+      const item = el('div', 'pref-item');
+      const info = el('div', 'pref-info');
+      info.appendChild(el('div', 'pref-title', title));
+      info.appendChild(el('p', 'pref-desc', desc));
+      info.appendChild(el('div', 'pref-when', when));
+      const test = el('button', 'pref-test', '✉ enviar teste pra mim');
+      test.onclick = async () => {
+        test.textContent = 'enviando…'; test.disabled = true;
+        try {
+          const r = await api.sendTestEmail(key);
+          if (r.skipped) toast('E-mail em modo dev — veja o log do servidor');
+          else if (r.ok) toast('Teste enviado pra ' + ($('email').value || 'seu e-mail'));
+          else toast('Falha: ' + (r.error || 'erro desconhecido'));
+        } catch { toast('Erro ao enviar teste'); }
+        finally { test.textContent = '✉ enviar teste pra mim'; test.disabled = false; }
+      };
+      info.appendChild(test);
+      item.appendChild(info);
+      const tog = el('button', 'toggle' + (prefs[key] ? ' on' : ''));
+      tog.setAttribute('aria-pressed', String(!!prefs[key]));
+      tog.onclick = async () => {
+        prefs[key] = !prefs[key];
+        tog.classList.toggle('on', prefs[key]);
+        tog.setAttribute('aria-pressed', String(prefs[key]));
+        try {
+          const upd = await api.saveEmailPrefs({
+            weekly: prefs.weekly, monthly: prefs.monthly, first_name: nameI.value.trim() || null,
+          });
+          prefs = { ...prefs, ...upd };
+        } catch { toast('Não consegui salvar'); }
+      };
+      item.appendChild(tog);
+      list.appendChild(item);
+    };
+
+    makePref('weekly',
+      'Resumo da semana',
+      'Toda semana um panorama da sua carteira: variação, projeção de dividendos e uma dica personalizada pelo seu perfil.',
+      'domingo · 19h');
+    makePref('monthly',
+      'Lembrete de aporte mensal',
+      'No primeiro dia útil do mês, um lembrete amigável de aportar — com atalhos pros tipos de ativo que fazem sentido pra você.',
+      'dia 1 · 9h');
+
+    // Salva nome quando sai do campo
+    nameI.onchange = async () => {
+      try {
+        await api.saveEmailPrefs({
+          weekly: prefs.weekly, monthly: prefs.monthly, first_name: nameI.value.trim() || null,
+        });
+        toast('Nome salvo');
+      } catch { toast('Não consegui salvar o nome'); }
+    };
+
+    const foot = el('p', 'section-sub');
+    foot.style.marginTop = '20px';
+    foot.style.fontSize = '12.5px';
+    foot.innerHTML = 'Os e-mails saem de <code style="font-family:var(--f-mono);background:var(--surface-2);padding:1px 5px;border-radius:4px;">onboarding@resend.dev</code>. Pra evitar ir pra spam, marque como "não é spam" no primeiro.';
+    body.appendChild(foot);
+  });
+}
 
 /* ---------------------------------------------------------------- refresh */
 $('refreshBtn').onclick = async () => {
