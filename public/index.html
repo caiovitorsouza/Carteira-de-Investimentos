@@ -1332,6 +1332,28 @@ const SEGMENT_DY = {
   hibrido:      { mes: 0.83, nome: 'Híbrido',                faixa: '9-11% a.a.'  },
 };
 
+// DY médio por setor de ação (base: histórico B3, out/2026).
+// Ações pagam ANUAL ou SEMI-ANUAL — convertemos pra mensal dividindo por 12
+// pra ficar comparável com FII. Usado quando usuário não informa dividendo.
+// Fonte: dados históricos consolidados Status Invest / Fundamentus (média 5 anos).
+const SECTOR_DY = {
+  bancos:        { ano: 7.0,  nome: 'Bancos',                     faixa: '5-9% a.a.'   },
+  petroleo:      { ano: 11.0, nome: 'Petróleo e gás',              faixa: '8-14% a.a.'  },
+  mineracao:     { ano: 9.5,  nome: 'Mineração',                   faixa: '6-13% a.a.'  },
+  siderurgia:    { ano: 6.5,  nome: 'Siderurgia e metalurgia',     faixa: '4-10% a.a.'  },
+  eletricas:     { ano: 8.0,  nome: 'Elétricas (energia)',         faixa: '6-10% a.a.'  },
+  saneamento:    { ano: 6.0,  nome: 'Saneamento',                  faixa: '4-8% a.a.'   },
+  telecom:       { ano: 7.0,  nome: 'Telecom',                     faixa: '5-9% a.a.'   },
+  seguros:       { ano: 7.5,  nome: 'Seguros',                     faixa: '5-10% a.a.'  },
+  papel:         { ano: 4.5,  nome: 'Papel e celulose',            faixa: '3-6% a.a.'   },
+  alimentos:     { ano: 3.5,  nome: 'Alimentos e bebidas',         faixa: '2-5% a.a.'   },
+  varejo:        { ano: 2.5,  nome: 'Varejo e consumo',            faixa: '1-4% a.a.'   },
+  construcao:    { ano: 4.0,  nome: 'Construção e incorporação',   faixa: '2-6% a.a.'   },
+  saude:         { ano: 2.0,  nome: 'Saúde e hospitais',           faixa: '0-3% a.a.'   },
+  tecnologia:    { ano: 1.0,  nome: 'Tecnologia',                  faixa: '0-2% a.a.'   },
+  outros:        { ano: 5.0,  nome: 'Outros / não sei',            faixa: '~ 5% a.a.'   },
+};
+
 // Taxas de referência — carregadas do backend (que puxa do Banco Central).
 // Os valores aqui são apenas FALLBACK se o endpoint falhar na primeira carga.
 const TAXAS = {
@@ -1613,8 +1635,8 @@ function enrich(p){
     const temCotacao = p.a != null && p.a > 0 && !p.noQuote;
     const precoRef = temCotacao ? p.a : p.c;
     const atual = p.q * precoRef;
-    // dividendo: usa o informado OU estima pelo segmento (FII) OU 0 (ação sem info)
-    const divUnit = (p.d > 0) ? p.d : (p.kind === 'fii' ? estimarDividendoPorCota(p) : 0);
+    // dividendo: usa o informado OU estima (FII por segmento, ação por setor).
+    const divUnit = (p.d > 0) ? p.d : estimarDividendoPorCota(p);
     const renda = p.q * divUnit;
     return {
       inv, atual,
@@ -1628,14 +1650,21 @@ function enrich(p){
   return calcRendaFixa(p);
 }
 
-// Estima dividendo mensal por cota com base no segmento do FII e preço atual
+// Estima dividendo mensal por cota com base no segmento (FII) ou setor (ação).
+// Pra ação a conta é anual / 12 porque ações pagam dividendo anual ou semi-anual.
 function estimarDividendoPorCota(p){
-  if (p.kind !== 'fii') return 0;
-  const seg = p.segment || p.seg || 'tijolo_log';
-  const info = SEGMENT_DY[seg] || SEGMENT_DY.tijolo_log;
-  const preco = p.a ?? p.c ?? 0;
-  // mes é % do preço atual (ex: 0.83 = 0.83%/mês ≈ 10%/ano)
-  return preco * info.mes / 100;
+  const preco = (p.a != null && p.a > 0) ? p.a : (p.c ?? 0);
+  if (p.kind === 'fii'){
+    const seg = p.segment || p.seg || 'tijolo_log';
+    const info = SEGMENT_DY[seg] || SEGMENT_DY.tijolo_log;
+    return preco * info.mes / 100;
+  }
+  if (p.kind === 'acao'){
+    const setor = p.sector || p.setor || 'outros';
+    const info = SECTOR_DY[setor] || SECTOR_DY.outros;
+    return preco * info.ano / 100 / 12;
+  }
+  return 0;
 }
 
 // Calcula valor atual + rendimento mensal projetado para renda fixa
@@ -2287,11 +2316,16 @@ function openDetails(p){
       row('Preço atual', brl.format(p.a ?? p.c));
       if (p.d > 0) row('Último dividendo (por cota)', brl.format(p.d));
       else if (p.kind === 'fii' && r.divUnit > 0) row('Dividendo estimado (cota)', brl.format(r.divUnit) + ' /mês');
+      else if (p.kind === 'acao' && r.divUnit > 0) row('Dividendo estimado (ação)', brl.format(r.divUnit * 12) + ' /ano');
       if (p.dy12 != null) row('Dividend Yield (12m)', pct.format(p.dy12) + '%');
       if (p.pvp != null) row('P/VP', pct.format(p.pvp));
       if (p.segment) {
         const si = SEGMENT_DY[p.segment];
         row('Segmento', si ? si.nome : p.segment);
+      }
+      if (p.sector) {
+        const si = SECTOR_DY[p.sector];
+        row('Setor', si ? si.nome : p.sector);
       }
     } else {
       row('Tipo', kindFull);
@@ -2812,50 +2846,77 @@ function openFiiAcaoAdd(){
       form.appendChild(qty); form.appendChild(prc);
       picked.appendChild(form);
 
-      // dividendo (manual OU estimado) - só para FII
+      // dividendo (manual OU estimado) — FII por segmento, ação por setor
       let userSegment = 'tijolo_log';
+      let userSector = 'outros';
       let userDiv = null;
-      if (r.kind === 'fii'){
+
+      const ehFii = r.kind === 'fii';
+      const ehAcao = r.kind === 'acao';
+      if (ehFii || ehAcao){
         const divBox = el('div', 'sheet-section');
         divBox.style.marginTop = '14px';
-        divBox.appendChild(el('h3', 'sheet-section-title', 'Dividendo mensal'));
-        divBox.appendChild(el('p', 'sheet-section-sub', 'Se você sabe o valor pago por cota, informe. Se não, estimamos pelo segmento.'));
+        divBox.appendChild(el('h3', 'sheet-section-title',
+          ehFii ? 'Dividendo mensal' : 'Dividendo anual (média)'));
+        divBox.appendChild(el('p', 'sheet-section-sub',
+          ehFii
+            ? 'Se você sabe o valor pago por cota, informe. Se não, estimamos pelo segmento.'
+            : 'Ações pagam dividendo anual ou semi-anual (não mensal). Se você sabe o total pago nos últimos 12 meses por ação, informe. Se não, estimamos pelo setor.'));
         const divForm = el('div', 'form-grid');
         divForm.style.gridTemplateColumns = '1fr';
         const divLbl = el('label', 'field');
-        divLbl.appendChild(el('span', null, 'Último dividendo pago (R$ por cota)'));
+        divLbl.appendChild(el('span', null,
+          ehFii ? 'Último dividendo pago (R$ por cota)'
+                : 'Total pago em 12 meses (R$ por ação)'));
         const divI = document.createElement('input');
         divI.setAttribute('inputmode', 'decimal');
-        divI.placeholder = '0,10';
+        divI.placeholder = ehFii ? '0,10' : '2,80';
         divLbl.appendChild(divI);
         divForm.appendChild(divLbl);
         divBox.appendChild(divForm);
 
-        const estBtn = el('button', 'btn btn-ghost', '💡 Não sei - estimar pelo segmento');
+        const estBtn = el('button', 'btn btn-ghost',
+          ehFii ? '💡 Não sei - estimar pelo segmento' : '💡 Não sei - estimar pelo setor');
         estBtn.style.marginTop = '10px';
         estBtn.style.width = '100%';
         const segBox = el('div');
         segBox.style.display = 'none';
         const segOpts = el('div', 'seg-opts');
-        Object.entries(SEGMENT_DY).forEach(([k, info]) => {
+
+        const tabela = ehFii ? SEGMENT_DY : SECTOR_DY;
+        Object.entries(tabela).forEach(([k, info]) => {
           const o = el('div', 'seg-opt');
           o.appendChild(el('div', 'nm', info.nome));
           o.appendChild(el('div', 'rt', info.faixa));
           o.onclick = () => {
             segBox.querySelectorAll('.seg-opt').forEach(x => x.classList.remove('sel'));
             o.classList.add('sel');
-            userSegment = k;
             const preco = chosen._price || toNum(prcI.value) || 0;
-            const est = preco * info.mes / 100;
-            divI.value = est.toFixed(2).replace('.', ',');
-            userDiv = est;
-            toast('Estimativa aplicada: ' + brl.format(est) + '/cota/mês');
+            let est;
+            if (ehFii){
+              userSegment = k;
+              est = preco * info.mes / 100;                 // mensal
+              divI.value = est.toFixed(2).replace('.', ',');
+              userDiv = est;
+              toast('Estimativa: ' + brl.format(est) + '/cota/mês');
+            } else {
+              userSector = k;
+              const anual = preco * info.ano / 100;         // anual
+              est = anual / 12;                             // mensal equivalente (uso interno)
+              divI.value = anual.toFixed(2).replace('.', ',');
+              userDiv = est;
+              toast('Estimativa: ' + brl.format(anual) + '/ano/ação (' + brl.format(est) + '/mês)');
+            }
           };
           segOpts.appendChild(o);
         });
         segBox.appendChild(segOpts);
         estBtn.onclick = (e) => { e.preventDefault(); segBox.style.display = segBox.style.display === 'none' ? 'block' : 'none'; };
-        divI.oninput = () => { userDiv = toNum(divI.value); };
+        divI.oninput = () => {
+          // Pra FII, input é mensal direto. Pra ação, input é anual → divide por 12.
+          const v = toNum(divI.value);
+          userDiv = ehFii ? v : (v / 12);
+        };
 
         divBox.appendChild(estBtn);
         divBox.appendChild(segBox);
@@ -2935,6 +2996,7 @@ function openFiiAcaoAdd(){
           d: (userDiv != null ? userDiv : (chosen._d ?? 0)),
           dy12: chosen._dy ?? null, pvp: chosen._pvp ?? null,
           segment: chosen.kind === 'fii' ? userSegment : null,
+          sector:  chosen.kind === 'acao' ? userSector : null,
         });
         close(); render(); countUpHero(); toast('Ativo adicionado'); await persist();
       };

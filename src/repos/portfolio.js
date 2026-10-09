@@ -52,7 +52,8 @@ function shapePosition(r) {
     return {
       id: r.id, kind: r.kind, ticker: r.ticker,
       name: r.name || r.instrument_name,
-      segment: meta.segment || r.segment, // preferência: escolha do usuário
+      segment: meta.segment || r.segment, // preferência: escolha do usuário (FII)
+      sector:  meta.sector  || null,       // escolha do usuário (ação)
       logo: r.logo_url,
       q: Number(r.quantity), c: Number(r.avg_price),
       a: hasQuote ? Number(r.price) : null, // null = sem cotação (frontend trata)
@@ -114,6 +115,7 @@ function insertPosition(client, userId, p) {
         t: p.t || '', rec: p.rec || 0,
         ...(p.d != null ? { d: p.d } : {}),
         ...(p.segment ? { segment: p.segment } : {}),
+        ...(p.sector  ? { sector:  p.sector  } : {}),
       }
     : stripFixa(p);
   return client.query(
