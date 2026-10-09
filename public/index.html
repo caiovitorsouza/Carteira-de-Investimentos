@@ -1251,6 +1251,97 @@ details.tip.action .tip-tag{color: var(--accent);}
 .sim-leg .dot.verde{background: var(--accent);}
 .sim-leg .dot.cinza{background: var(--muted);}
 
+/* Seção "Explorar ativos" na tela de adicionar */
+.explore-section{
+  background: var(--surface-2);
+  border-radius: 14px;
+  padding: 14px 16px 16px;
+  margin-bottom: 18px;
+}
+.explore-section > summary{
+  cursor: pointer;
+  display: flex; align-items: center; gap: 8px;
+  list-style: none;
+  font-size: 14px; font-weight: 600;
+  color: var(--ink);
+}
+.explore-section > summary::-webkit-details-marker{ display: none; }
+.explore-section > summary .chev-x{
+  margin-left: auto;
+  transition: transform .2s;
+}
+.explore-section[open] > summary .chev-x{ transform: rotate(180deg); }
+.explore-tabs{
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin: 14px 0 12px;
+}
+.explore-tab{
+  background: var(--surface); border: 1px solid var(--line);
+  color: var(--ink-2);
+  padding: 6px 12px; border-radius: 999px;
+  font-size: 12.5px; font-family: inherit;
+  cursor: pointer;
+  transition: all .15s;
+}
+.explore-tab:hover{ border-color: var(--accent); color: var(--accent); }
+.explore-tab.active{
+  background: var(--accent); color: var(--accent-ink);
+  border-color: var(--accent); font-weight: 600;
+}
+.explore-list{
+  display: grid; gap: 6px;
+  max-height: 320px; overflow-y: auto;
+}
+.explore-item{
+  display: grid; grid-template-columns: 1fr auto; gap: 10px;
+  padding: 10px 12px; border-radius: 10px;
+  background: var(--surface); border: 1px solid var(--line);
+  cursor: pointer; text-align: left;
+  transition: all .15s;
+  font-family: inherit;
+}
+.explore-item:hover{
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.explore-item .tk{
+  font-family: var(--f-mono); font-weight: 600;
+  font-size: 14px; color: var(--ink);
+}
+.explore-item .nm{
+  font-size: 12px; color: var(--muted);
+  margin-top: 2px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  max-width: 100%;
+}
+.explore-item .meta{
+  display: flex; flex-direction: column; align-items: flex-end;
+  justify-content: center; gap: 2px;
+  text-align: right; flex-shrink: 0;
+}
+.explore-item .pr{
+  font-family: var(--f-mono); font-size: 13px; color: var(--ink-2);
+}
+.explore-item .mt{
+  font-size: 11px; color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.explore-item .mt.gain{ color: var(--gain); font-weight: 600; }
+.explore-item .mt.loss{ color: var(--loss); font-weight: 600; }
+.explore-item .mt.warn{ color: var(--amber); }
+.explore-empty{
+  text-align: center; color: var(--muted);
+  font-size: 13px; padding: 24px 12px;
+}
+.explore-disclaim{
+  font-size: 11px; color: var(--muted);
+  margin-top: 10px; line-height: 1.4;
+}
+.explore-loading{
+  text-align: center; padding: 20px;
+  color: var(--muted); font-size: 13px;
+}
+
 /* Preferências de e-mail */
 .pref-item{
   display:flex; align-items: start; justify-content: space-between;
@@ -3058,10 +3149,44 @@ function openAdd(){
 // Fluxo FII / Ação - busca por ticker com dividendo editável + estimativa por segmento
 function openFiiAcaoAdd(){
   openSheet((body, close) => {
-    buildAddHead(body, close, 'Adicionar FII ou Ação', 'Digite o código (ex: MXRF11, PETR4). O preço vem automático.');
+    buildAddHead(body, close, 'Adicionar FII ou Ação', 'Digite o código (ex: MXRF11, PETR4) ou explore a lista abaixo.');
+
+    // Seção "Explorar ativos" — recolhida por default
+    const explore = document.createElement('details');
+    explore.className = 'explore-section';
+    explore.style.marginTop = '14px';
+    explore.innerHTML = `
+      <summary>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/></svg>
+        Explorar ativos
+        <svg class="chev-x" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </summary>
+      <div style="margin-top:10px;">
+        <div style="display:flex;gap:4px;background:var(--surface);padding:4px;border-radius:999px;width:fit-content;margin-bottom:10px;">
+          <button class="explore-tab active" data-explore-kind="fii">FIIs</button>
+          <button class="explore-tab" data-explore-kind="acao">Ações</button>
+        </div>
+        <div class="explore-tabs" id="exploreFilters">
+          <button class="explore-tab active" data-explore-filter="volume">Mais negociados</button>
+          <button class="explore-tab" data-explore-filter="alta">Em alta hoje</button>
+          <button class="explore-tab" data-explore-filter="dy">Maior rendimento</button>
+          <button class="explore-tab" data-explore-filter="pvp">Mais baratos (P/VP)</button>
+          <button class="explore-tab" data-explore-filter="diversificar">Diversificar</button>
+        </div>
+        <div class="explore-list" id="exploreList">
+          <div class="explore-loading">Carregando…</div>
+        </div>
+        <p class="explore-disclaim">
+          <b>Isso não é recomendação de compra.</b> Os ativos são listados por critérios objetivos
+          (volume, variação, DY, P/VP) a partir dos dados do mercado. Pesquise antes de decidir —
+          leia o relatório, veja o histórico, entenda os riscos.
+        </p>
+      </div>
+    `;
+    body.appendChild(explore);
 
     const sb = el('div', 'search-box');
-    sb.style.marginTop = '16px';
+    sb.style.marginTop = '6px';
     const inp = document.createElement('input');
     inp.className = 'search-input';
     inp.placeholder = 'Buscar por código ou nome';
@@ -3080,6 +3205,106 @@ function openFiiAcaoAdd(){
     ok.style.marginTop = '20px';
     body.appendChild(err);
     body.appendChild(ok);
+
+    // -------- Lógica da seção Explorar --------
+    let explKind = 'fii', explFilter = 'volume';
+    const exploreList = explore.querySelector('#exploreList');
+
+    const carregarExplore = async () => {
+      exploreList.innerHTML = '<div class="explore-loading">Carregando…</div>';
+      try {
+        const r = await api.explore(explFilter, explKind);
+        if (!r.results || !r.results.length){
+          exploreList.innerHTML = '<div class="explore-empty">' +
+            (explFilter === 'diversificar'
+              ? 'Você já tem ' + (explKind === 'fii' ? 'FIIs' : 'ações') + ' de todos os segmentos principais. Bom trabalho!'
+              : 'Nada disponível agora. Tenta outro filtro.') +
+            '</div>';
+          return;
+        }
+        exploreList.innerHTML = '';
+        r.results.forEach(it => {
+          const btn = document.createElement('button');
+          btn.className = 'explore-item';
+          const esquerda = el('div');
+          esquerda.appendChild(el('div', 'tk', it.ticker));
+          esquerda.appendChild(el('div', 'nm', it.name || ''));
+          btn.appendChild(esquerda);
+
+          const meta = el('div', 'meta');
+          if (it.price != null) meta.appendChild(el('div', 'pr', brl.format(Number(it.price))));
+          // Mostra a métrica em destaque conforme o filtro
+          let mtDiv = el('div', 'mt');
+          if (explFilter === 'alta' && it.change_pct != null){
+            const v = Number(it.change_pct);
+            mtDiv.className = 'mt ' + (v >= 0 ? 'gain' : 'loss');
+            mtDiv.textContent = (v >= 0 ? '+' : '') + v.toFixed(2) + '% hoje';
+          } else if (explFilter === 'dy' && it.dy_12m != null){
+            const dy = Number(it.dy_12m);
+            mtDiv.className = 'mt' + (dy > 15 ? ' warn' : '');
+            mtDiv.textContent = 'DY ' + dy.toFixed(1) + '%' + (dy > 15 ? ' ⚠' : '');
+          } else if (explFilter === 'pvp' && it.pvp != null){
+            mtDiv.textContent = 'P/VP ' + Number(it.pvp).toFixed(2);
+          } else if (it.segment || it.sector){
+            mtDiv.textContent = it.segment || it.sector || '';
+          }
+          if (mtDiv.textContent) meta.appendChild(mtDiv);
+          btn.appendChild(meta);
+
+          btn.onclick = () => {
+            // Fecha a seção explorar e simula uma seleção
+            explore.open = false;
+            inp.value = it.ticker;
+            // Dispara o fluxo normal de escolha chamando choose() diretamente
+            choose({
+              ticker: it.ticker,
+              name: it.name || it.ticker,
+              kind: it.kind,
+            });
+          };
+          exploreList.appendChild(btn);
+        });
+      } catch (e) {
+        exploreList.innerHTML = '<div class="explore-empty">Não consegui carregar. Tente de novo.</div>';
+      }
+    };
+
+    // Tabs de kind (FII/Ação)
+    explore.querySelectorAll('[data-explore-kind]').forEach(b => {
+      b.onclick = () => {
+        explore.querySelectorAll('[data-explore-kind]').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        explKind = b.dataset.exploreKind;
+        // P/VP só existe pra FII — desabilita visualmente se ação
+        const pvpBtn = explore.querySelector('[data-explore-filter="pvp"]');
+        if (pvpBtn){
+          pvpBtn.style.display = explKind === 'fii' ? '' : 'none';
+          if (explKind !== 'fii' && explFilter === 'pvp'){
+            explFilter = 'volume';
+            explore.querySelectorAll('[data-explore-filter]').forEach(x => x.classList.toggle('active', x.dataset.exploreFilter === 'volume'));
+          }
+        }
+        carregarExplore();
+      };
+    });
+
+    // Tabs de filter
+    explore.querySelectorAll('[data-explore-filter]').forEach(b => {
+      b.onclick = () => {
+        explore.querySelectorAll('[data-explore-filter]').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        explFilter = b.dataset.exploreFilter;
+        carregarExplore();
+      };
+    });
+
+    // Carrega quando o usuário abrir a seção
+    explore.addEventListener('toggle', () => {
+      if (explore.open && !exploreList.dataset.loaded){
+        exploreList.dataset.loaded = '1';
+        carregarExplore();
+      }
+    });
 
     let suggList = null, items = [], sel = -1, timer = null, chosen = null;
     const closeList = () => { if (suggList) suggList.remove(); suggList = null; items = []; sel = -1; };
