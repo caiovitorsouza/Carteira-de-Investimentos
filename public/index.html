@@ -1741,7 +1741,43 @@ const $ = (id) => document.getElementById(id);
 const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
 const brl = new Intl.NumberFormat('pt-BR', { style:'currency', currency:'BRL' });
 const pct = new Intl.NumberFormat('pt-BR', { minimumFractionDigits:2, maximumFractionDigits:2 });
-const toNum = (v) => { v = String(v||'').replace(/\./g,'').replace(',','.'); const n = parseFloat(v); return isNaN(n) ? 0 : n; };
+// Parse de valor BRL formatado: aceita "R$ 1.234,56", "1234,56", "1234.56", "1234"
+const toNum = (v) => {
+  v = String(v||'').replace(/R\$\s?/g, '').replace(/\s/g, '').replace(/\./g,'').replace(',','.');
+  const n = parseFloat(v);
+  return isNaN(n) ? 0 : n;
+};
+
+// Aplica máscara de moeda BRL em um input. Usuário digita só números e
+// o input mostra "R$ 1.234,56" conforme digita (vai preenchendo da direita
+// pra esquerda, estilo app de banco). O valor interno é sempre lido com toNum().
+function aplicarMascaraMoeda(inp){
+  if (!inp || inp.dataset.moedaMask === '1') return;
+  inp.dataset.moedaMask = '1';
+  inp.setAttribute('inputmode', 'numeric');
+  const format = (seedCentavos) => {
+    let centavos;
+    if (seedCentavos != null) {
+      centavos = seedCentavos;
+    } else {
+      const rawDigits = inp.value.replace(/\D/g, '');
+      if (!rawDigits) { inp.value = ''; return; }
+      centavos = parseInt(rawDigits, 10);
+    }
+    const num = centavos / 100;
+    inp.value = 'R$ ' + num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
+  inp.addEventListener('input', () => format());
+  inp.addEventListener('focus', () => {
+    // posiciona cursor no final (sempre edita o último dígito)
+    setTimeout(() => inp.setSelectionRange(inp.value.length, inp.value.length), 0);
+  });
+  // seedcentavos a partir de valor pré-existente (vindo como "10,00" ou similar)
+  if (inp.value) {
+    const n = toNum(inp.value);
+    if (n > 0) format(Math.round(n * 100));
+  }
+}
 
 const toast = (msg) => {
   const t = $('toast'); t.textContent = msg; t.classList.add('show');
@@ -2121,11 +2157,13 @@ function openSimulatorSheet(){
       form.appendChild(f);
       return i;
     };
-    const iInicial = mkField('Capital inicial (R$)', '1.000,00', inicialDefault);
-    const iAporte  = mkField('Aporte mensal (R$)',   '500,00',   aporteDefault);
-    const iAnos    = mkField('Prazo (anos)',         '10',       anosDefault);
-    const iTaxa    = mkField('Rendimento (% a.a.)',  '10,00',    taxaDefault);
+    const iInicial = mkField('Capital inicial (R$)', 'R$ 1.000,00', inicialDefault);
+    const iAporte  = mkField('Aporte mensal (R$)',   'R$ 500,00',   aporteDefault);
+    const iAnos    = mkField('Prazo (anos)',         '10',          anosDefault);
+    const iTaxa    = mkField('Rendimento (% a.a.)',  '10,00',       taxaDefault);
     body.appendChild(form);
+    aplicarMascaraMoeda(iInicial);
+    aplicarMascaraMoeda(iAporte);
 
     // Projeção textual + gráfico
     const prev = el('div');
@@ -2663,18 +2701,18 @@ function openAporteSheet(p){
       const prc = el('label', 'field');
       prc.appendChild(el('span', null, 'Preço pago agora (R$)'));
       prcI = document.createElement('input');
-      prcI.setAttribute('inputmode', 'decimal');
       prcI.value = (p.a ?? p.c).toFixed(2).replace('.', ',');
       prc.appendChild(prcI);
       form.appendChild(qty); form.appendChild(prc);
+      aplicarMascaraMoeda(prcI);
     } else {
       const vl = el('label', 'field');
       vl.appendChild(el('span', null, 'Valor adicional aplicado (R$)'));
       valI = document.createElement('input');
-      valI.setAttribute('inputmode', 'decimal');
-      valI.placeholder = '500,00';
+      valI.placeholder = 'R$ 500,00';
       vl.appendChild(valI);
       form.appendChild(vl);
+      aplicarMascaraMoeda(valI);
     }
     body.appendChild(form);
 
@@ -2788,18 +2826,18 @@ function openSellSheet(p){
       const prc = el('label', 'field');
       prc.appendChild(el('span', null, 'Preço de venda (R$)'));
       prcI = document.createElement('input');
-      prcI.setAttribute('inputmode', 'decimal');
       prcI.value = (p.a ?? p.c).toFixed(2).replace('.', ',');
       prc.appendChild(prcI);
       form.appendChild(qty); form.appendChild(prc);
+      aplicarMascaraMoeda(prcI);
     } else {
       const vl = el('label', 'field');
       vl.appendChild(el('span', null, 'Valor resgatado (R$)'));
       valI = document.createElement('input');
-      valI.setAttribute('inputmode', 'decimal');
-      valI.placeholder = (p.ap || 0).toFixed(2).replace('.', ',');
+      valI.placeholder = 'R$ ' + (p.ap || 0).toFixed(2).replace('.', ',');
       vl.appendChild(valI);
       form.appendChild(vl);
+      aplicarMascaraMoeda(valI);
     }
     body.appendChild(form);
 
@@ -3086,10 +3124,11 @@ function openFiiAcaoAdd(){
       const prc = el('label', 'field');
       prc.appendChild(el('span', null, existing ? 'Preço pago agora (R$)' : 'Preço médio pago (R$)'));
       const prcI = document.createElement('input');
-      prcI.setAttribute('inputmode', 'decimal'); prcI.placeholder = '10,00';
+      prcI.placeholder = 'R$ 10,00';
       prc.appendChild(prcI);
       form.appendChild(qty); form.appendChild(prc);
       picked.appendChild(form);
+      aplicarMascaraMoeda(prcI);
 
       // dividendo (manual OU estimado) — FII por segmento, ação por setor
       // Auto-detecção: se o ticker está no nosso mapa, pré-seleciona.
@@ -3360,10 +3399,11 @@ function tesouroForm(kind, label, taxaDefault){
 
     const form = el('div', 'form-grid');
     const vl = el('label', 'field'); vl.appendChild(el('span', null, 'Valor aplicado (R$)'));
-    const vlI = document.createElement('input'); vlI.setAttribute('inputmode', 'decimal'); vlI.placeholder = '1.000,00'; vl.appendChild(vlI);
+    const vlI = document.createElement('input'); vlI.placeholder = 'R$ 1.000,00'; vl.appendChild(vlI);
     const dt = el('label', 'field'); dt.appendChild(el('span', null, 'Data da aplicação'));
     const dtI = document.createElement('input'); dtI.type = 'date'; dtI.value = new Date().toISOString().slice(0,10); dt.appendChild(dtI);
     form.appendChild(vl); form.appendChild(dt);
+    aplicarMascaraMoeda(vlI);
 
     if (kind === 'pre' || kind === 'ipca'){
       const tx = el('label', 'field');
@@ -3469,7 +3509,7 @@ function cdbForm(kind, label){
     const form = el('div', 'form-grid');
     form.style.gridTemplateColumns = '1fr';
     const vl = el('label', 'field'); vl.appendChild(el('span', null, 'Valor aplicado (R$)'));
-    const vlI = document.createElement('input'); vlI.setAttribute('inputmode', 'decimal'); vlI.placeholder = '1.000,00'; vl.appendChild(vlI);
+    const vlI = document.createElement('input'); vlI.placeholder = 'R$ 1.000,00'; vl.appendChild(vlI);
     const dt = el('label', 'field'); dt.appendChild(el('span', null, 'Data da aplicação'));
     const dtI = document.createElement('input'); dtI.type = 'date'; dtI.value = new Date().toISOString().slice(0,10); dt.appendChild(dtI);
     const tx = el('label', 'field');
@@ -3478,6 +3518,7 @@ function cdbForm(kind, label){
     const txI = document.createElement('input'); txI.setAttribute('inputmode', 'decimal'); txI.placeholder = defVal; txI.value = defVal; tx.appendChild(txI);
     form.appendChild(vl); form.appendChild(dt); form.appendChild(tx);
     body.appendChild(form);
+    aplicarMascaraMoeda(vlI);
 
     const prev = el('div', 'preview-note'); prev.style.marginTop = '14px';
     prev.textContent = 'Preencha o valor para ver a projeção.';
@@ -3525,7 +3566,7 @@ function openFundoAdd(){
     const nm = el('label', 'field'); nm.appendChild(el('span', null, 'Nome do fundo'));
     const nmI = document.createElement('input'); nmI.placeholder = 'Ex: Trend Multimercado'; nm.appendChild(nmI);
     const vl = el('label', 'field'); vl.appendChild(el('span', null, 'Valor aplicado (R$)'));
-    const vlI = document.createElement('input'); vlI.setAttribute('inputmode', 'decimal'); vlI.placeholder = '1.000,00'; vl.appendChild(vlI);
+    const vlI = document.createElement('input'); vlI.placeholder = 'R$ 1.000,00'; vl.appendChild(vlI);
     const dt = el('label', 'field'); dt.appendChild(el('span', null, 'Data da aplicação'));
     const dtI = document.createElement('input'); dtI.type = 'date'; dtI.value = new Date().toISOString().slice(0,10); dt.appendChild(dtI);
     const tx = el('label', 'field');
@@ -3533,6 +3574,7 @@ function openFundoAdd(){
     const txI = document.createElement('input'); txI.setAttribute('inputmode', 'decimal'); txI.placeholder = '10,00'; tx.appendChild(txI);
     form.appendChild(nm); form.appendChild(vl); form.appendChild(dt); form.appendChild(tx);
     body.appendChild(form);
+    aplicarMascaraMoeda(vlI);
 
     const prev = el('div', 'preview-note'); prev.style.marginTop = '14px';
     prev.textContent = 'Preencha os campos para ver a projeção.';
