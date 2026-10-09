@@ -86,7 +86,7 @@
    BASE
    ========================================================================= */
 *{box-sizing:border-box}
-html{font-size:16px}
+html{font-size:16px; overflow-x: hidden;}
 body{
   margin:0;
   background:var(--bg);
@@ -97,7 +97,9 @@ body{
   font-feature-settings:"ss01","cv11";
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeLegibility;
+  overflow-x: hidden; /* evita scroll horizontal em celular por qualquer motivo */
 }
+img, svg{max-width: 100%;}
 .num{font-variant-numeric: tabular-nums;}
 button, input, textarea, select{font:inherit; color:inherit;}
 button{cursor:pointer; background:none; border:0; padding:0;}
@@ -108,6 +110,7 @@ input, textarea, select{
   border-radius:10px;
   padding:12px 14px;
   width:100%;
+  font-size:16px; /* 16px evita zoom automático do iOS Safari */
   transition:border-color .15s;
 }
 input:focus, textarea:focus, select:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);}
@@ -886,6 +889,86 @@ details.tip .tip-body p:last-child{margin:0;}
   .asset-grid{grid-template-columns: 1fr 1fr;}
   .sheet{align-self:center; max-height:85dvh; border-radius:22px;}
   .sheet-backdrop{align-items:center;}
+}
+
+/* ---------- MOBILE (até 540px) — ajustes dedicados ---------- */
+@media (max-width: 540px){
+  /* Padding geral menor pra ganhar espaço útil */
+  .container{padding: 0 16px 100px;}
+  .topbar-in{padding: 12px 16px; gap: 10px;}
+  .topbar .brand{font-size: 16px;}
+  .topbar .brand-mark{width: 28px; height: 28px;}
+  .topbar-end{gap: 2px;}
+  .icon-btn{width: 36px; height: 36px;}
+
+  /* Hero menos agressivo */
+  .hero{padding: 32px 0 28px;}
+  .hero-value{
+    font-size: clamp(36px, 11vw, 56px);
+    letter-spacing: -0.03em;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+  .hero-change{flex-wrap: wrap; gap: 10px; margin-top: 12px;}
+  .hero-eyebrow{font-size: 12.5px;}
+
+  /* Sections mais compactas */
+  .section{padding: 28px 0;}
+  .section-title{font-size: 22px;}
+  .section-head{flex-wrap: wrap; gap: 8px;}
+
+  /* Asset card: valor pode descer em telas muito estreitas */
+  .asset{padding: 16px;}
+  .asset-top{gap: 10px;}
+  .asset-val .v{font-size: 20px;}
+  .ticker{font-size: 17px;}
+  .asset-grid-stats{gap: 10px;}
+  .stat-val{font-size: 15px;}
+
+  /* Sheets com padding menor */
+  .sheet{padding: 20px 18px 32px; max-height: 92dvh;}
+  .sheet-head{margin-bottom: 10px;}
+  .sheet-section{margin-top: 20px;}
+  .sheet-section-title{font-size: 18px;}
+  .sheet-value{font-size: clamp(28px, 9vw, 42px); word-break: break-word;}
+
+  /* Simulação temporal: esconde os marcadores do meio */
+  .time-sim-marks span:nth-child(2),
+  .time-sim-marks span:nth-child(3),
+  .time-sim-marks span:nth-child(4){display: none;}
+
+  /* Simulator: fonte do resultado menor */
+  .sim-big{font-size: 28px;}
+  .sim-split{grid-template-columns: 1fr; gap: 8px;}
+
+  /* Perfil card: padding menor */
+  .perfil-card{padding: 18px 20px;}
+  .perfil-name{font-size: 20px;}
+
+  /* Quiz: fonte das perguntas */
+  .quiz-q{font-size: 18px;}
+
+  /* Dicas: padding do body */
+  details.tip > div{padding: 12px 14px;}
+
+  /* Topbar end: esconde o botão de tema no mobile pra ganhar espaço */
+  /* Mantém só logout — tema fica implícito via sistema */
+}
+
+/* ---------- MOBILE MUITO ESTREITO (até 360px, iPhone SE etc.) ---------- */
+@media (max-width: 360px){
+  .container{padding: 0 12px 80px;}
+  .topbar-in{padding: 10px 12px;}
+  .hero-value{font-size: 34px;}
+  .asset{padding: 14px;}
+  .asset-grid-stats{grid-template-columns: 1fr; gap: 8px;}
+  .asset-grid-stats > div{display: flex; justify-content: space-between; align-items: baseline;}
+  .stat-label{margin-bottom: 0; font-size: 11.5px;}
+  .sheet{padding: 18px 14px 28px;}
+  .sheet-section-title{font-size: 17px;}
+  .section-title{font-size: 20px;}
+  .sim-big{font-size: 24px;}
+  .type-grid{grid-template-columns: 1fr;}
 }
 
 @media (prefers-reduced-motion: reduce){
