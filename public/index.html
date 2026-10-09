@@ -1329,6 +1329,70 @@ details.tip.action .tip-tag{color: var(--accent);}
 .explore-item .mt.gain{ color: var(--gain); font-weight: 600; }
 .explore-item .mt.loss{ color: var(--loss); font-weight: 600; }
 .explore-item .mt.warn{ color: var(--amber); }
+
+/* Variação "rica" do card de ativo pra lista com mais detalhes */
+.explore-item-rich{
+  grid-template-columns: 1fr;
+  padding: 14px 16px;
+  gap: 10px;
+}
+.explore-item-rich .ex-head{
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: start;
+}
+.explore-item-rich .ex-tk-wrap .tk{
+  font-size: 15px;
+}
+.explore-item-rich .ex-tk-wrap .nm{
+  margin-top: 2px;
+}
+.explore-item-rich .ex-price-wrap{
+  text-align: right;
+  flex-shrink: 0;
+}
+.explore-item-rich .ex-price-wrap .pr{
+  font-family: var(--f-mono);
+  font-size: 15px;
+  color: var(--ink);
+  font-weight: 600;
+}
+.explore-item-rich .ex-chg{
+  font-size: 11.5px;
+  margin-top: 2px;
+  font-variant-numeric: tabular-nums;
+}
+.explore-item-rich .ex-chg.gain{ color: var(--gain); font-weight: 600; }
+.explore-item-rich .ex-chg.loss{ color: var(--loss); font-weight: 600; }
+.explore-item-rich .ex-chips{
+  display: flex; flex-wrap: wrap;
+  gap: 6px;
+}
+.ex-chip{
+  display: inline-flex; align-items: center;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--ink-2);
+  border: 1px solid var(--line);
+  font-weight: 500;
+  white-space: nowrap;
+}
+.ex-chip-accent{
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: transparent;
+}
+.ex-chip-muted{
+  color: var(--muted);
+}
+.ex-chip-warn{
+  background: color-mix(in srgb, var(--amber) 15%, transparent);
+  color: var(--amber);
+  border-color: transparent;
+}
 .explore-empty{
   text-align: center; color: var(--muted);
   font-size: 13px; padding: 24px 12px;
@@ -3203,6 +3267,28 @@ function openFiiAcaoAdd(){
     let explKind = 'fii';
     const exploreList = explore.querySelector('#exploreList');
 
+    // Formata volume financeiro: 12000000 → "R$ 12M", 150000 → "R$ 150k"
+    const fmtVolume = (v) => {
+      if (v == null || v <= 0) return null;
+      v = Number(v);
+      if (v >= 1_000_000_000) return 'R$ ' + (v/1_000_000_000).toFixed(1) + 'B';
+      if (v >= 1_000_000)     return 'R$ ' + (v/1_000_000).toFixed(1) + 'M';
+      if (v >= 1_000)         return 'R$ ' + (v/1_000).toFixed(0) + 'k';
+      return 'R$ ' + v.toFixed(0);
+    };
+
+    // Resolve nome amigável do segmento (nossos mapas) ou cai no da Brapi
+    const nomeSegmentoFii = (ticker, dbSegment) => {
+      const key = FII_SEGMENT_MAP[ticker];
+      if (key && SEGMENT_DY[key]) return SEGMENT_DY[key].nome;
+      return dbSegment || null;
+    };
+    const nomeSetorAcao = (ticker, dbSector) => {
+      const key = ACAO_SECTOR_MAP[ticker];
+      if (key && SECTOR_DY[key]) return SECTOR_DY[key].nome;
+      return dbSector || null;
+    };
+
     const carregarExplore = async () => {
       exploreList.innerHTML = '<div class="explore-loading">Carregando…</div>';
       try {
@@ -3214,16 +3300,52 @@ function openFiiAcaoAdd(){
         exploreList.innerHTML = '';
         r.results.forEach(it => {
           const btn = document.createElement('button');
-          btn.className = 'explore-item';
-          const esquerda = el('div');
-          esquerda.appendChild(el('div', 'tk', it.ticker));
-          esquerda.appendChild(el('div', 'nm', it.name || ''));
-          btn.appendChild(esquerda);
+          btn.className = 'explore-item explore-item-rich';
 
-          const meta = el('div', 'meta');
-          if (it.price != null) meta.appendChild(el('div', 'pr', brl.format(Number(it.price))));
-          if (it.segment || it.sector) meta.appendChild(el('div', 'mt', it.segment || it.sector));
-          btn.appendChild(meta);
+          // Cabeçalho: ticker + preço + variação do dia
+          const head = el('div', 'ex-head');
+          const tkWrap = el('div', 'ex-tk-wrap');
+          tkWrap.appendChild(el('div', 'tk', it.ticker));
+          const nm = el('div', 'nm', it.name || '');
+          tkWrap.appendChild(nm);
+          head.appendChild(tkWrap);
+
+          const priceWrap = el('div', 'ex-price-wrap');
+          if (it.price != null){
+            priceWrap.appendChild(el('div', 'pr', brl.format(Number(it.price))));
+          }
+          if (it.change_pct != null){
+            const v = Number(it.change_pct);
+            const chg = el('div', 'ex-chg ' + (v >= 0 ? 'gain' : 'loss'));
+            chg.textContent = (v >= 0 ? '+' : '') + v.toFixed(2) + '% hoje';
+            priceWrap.appendChild(chg);
+          }
+          head.appendChild(priceWrap);
+          btn.appendChild(head);
+
+          // Rodapé: chips de informação (segmento, volume, DY)
+          const chips = el('div', 'ex-chips');
+          const seg = it.kind === 'fii'
+            ? nomeSegmentoFii(it.ticker, it.segment)
+            : nomeSetorAcao(it.ticker, it.sector);
+          if (seg) chips.appendChild(el('span', 'ex-chip', seg));
+
+          const volFmt = fmtVolume(it.avg_volume);
+          if (volFmt) chips.appendChild(el('span', 'ex-chip ex-chip-muted', '💱 ' + volFmt + '/dia'));
+
+          if (it.dy_12m != null && Number(it.dy_12m) > 0){
+            const dy = Number(it.dy_12m);
+            const chip = el('span', 'ex-chip ex-chip-accent', 'DY ' + dy.toFixed(1) + '%');
+            if (dy > 15) chip.className = 'ex-chip ex-chip-warn';
+            chips.appendChild(chip);
+          }
+
+          if (it.kind === 'fii' && it.last_dividend != null && Number(it.last_dividend) > 0){
+            const d = Number(it.last_dividend);
+            chips.appendChild(el('span', 'ex-chip ex-chip-accent', '💰 ' + brl.format(d) + '/cota'));
+          }
+
+          if (chips.children.length) btn.appendChild(chips);
 
           btn.onclick = () => {
             // Fecha a seção explorar e dispara o fluxo normal de escolha
