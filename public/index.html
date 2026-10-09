@@ -1724,9 +1724,13 @@ function renderHistChart(){
 
   const vals = data.map(p => Number(p.v));
   const min = Math.min(...vals), max = Math.max(...vals);
-  const pad = (max - min) * 0.1 || max * 0.02 || 1;
-  const yMin = min - pad, yMax = max + pad;
-  const W = 600, H = 120, PAD_L = 44, PAD_R = 8, PAD_T = 6, PAD_B = 14;
+  const center = (max + min) / 2;
+  // Clamp do eixo Y: no mínimo ±5% do valor central. Isso evita que uma
+  // variação de centavos pareça dramática (não dá zoom extremo em diferença mínima).
+  const halfRange = Math.max((max - min) / 2, center * 0.05, 1);
+  const yMin = center - halfRange * 1.2;
+  const yMax = center + halfRange * 1.2;
+  const W = 600, H = 120, PAD_L = 52, PAD_R = 8, PAD_T = 6, PAD_B = 14;
   const plotW = W - PAD_L - PAD_R, plotH = H - PAD_T - PAD_B;
 
   const x = (i) => PAD_L + (data.length === 1 ? plotW/2 : (i / (data.length - 1)) * plotW);
@@ -1740,16 +1744,26 @@ function renderHistChart(){
   });
   area += `L${x(data.length-1).toFixed(1)},${(PAD_T+plotH).toFixed(1)} L${PAD_L},${(PAD_T+plotH).toFixed(1)} Z`;
 
-  // Labels de eixo Y (min e max)
-  const fmt = (v) => v >= 1000 ? 'R$' + (v/1000).toFixed(1) + 'k' : 'R$' + v.toFixed(0);
+  // Formatador: 2 decimais quando valor baixo (<1k), 1 decimal em k, inteiro em k >= 10
+  const fmt = (v) => {
+    if (v >= 1_000_000) return 'R$' + (v/1_000_000).toFixed(1) + 'M';
+    if (v >= 10_000)    return 'R$' + (v/1000).toFixed(0) + 'k';
+    if (v >= 1000)      return 'R$' + (v/1000).toFixed(1) + 'k';
+    return 'R$' + v.toFixed(2);
+  };
 
   const first = Number(data[0].v), last = Number(data[data.length-1].v);
   const diff = last - first;
   const pctDiff = first > 0 ? diff / first * 100 : 0;
+  // Clamp pra 0 quando essencialmente nula (evita "-0,00%")
+  const pctShow = Math.abs(pctDiff) < 0.05 ? 0 : pctDiff;
+  const diffLabel = pctShow !== 0
+    ? ` · <b style="color:var(--${pctShow>=0?'gain':'loss'})">${pctShow>=0?'+':''}${pct.format(pctShow)}%</b>`
+    : ' · <span style="color:var(--muted)">estável</span>';
 
   host.innerHTML = `
     <div class="hc-head">
-      <div class="hc-title">Evolução do patrimônio ${diff !== 0 ? '· <b style="color:var(--' + (diff>=0?'gain':'loss') + ')">' + (diff>=0?'+':'') + pct.format(pctDiff) + '%</b>' : ''}</div>
+      <div class="hc-title">Evolução do patrimônio${diffLabel}</div>
       <div class="hc-tabs">
         <button class="hc-tab ${_histRange===30?'on':''}" data-r="30">30d</button>
         <button class="hc-tab ${_histRange===90?'on':''}" data-r="90">90d</button>
