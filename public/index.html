@@ -1533,15 +1533,17 @@ $('logoutBtn').onclick = async () => { await api.logout().catch(()=>{}); locatio
 async function enterApp(){
   try { state = await api.getPortfolio(); }
   catch { state = { version:0, positions:[], profile:null, hist:[] }; }
-  // carrega taxas em paralelo (não bloqueia o render)
-  carregarTaxas().finally(() => render());
   $('auth').classList.add('hide');
   $('app').classList.remove('hide');
-  render();
-  // uma única animação orquestrada: contar o patrimônio
+  render();  // render imediato com estado atual
   countUpHero();
-  // Animações ao descer a tela
   setupScrollReveal();
+  // Carrega taxas depois (não bloqueia render inicial). Re-renderiza só se
+  // as taxas mudarem valor em relação ao fallback — evita flicker desnecessário.
+  const taxasAntes = JSON.stringify(TAXAS);
+  carregarTaxas().finally(() => {
+    if (JSON.stringify(TAXAS) !== taxasAntes) render();
+  });
 }
 
 // Observer global pra elementos .reveal
@@ -1606,11 +1608,21 @@ async function persist(){
 function enrich(p){
   if (p.ticker) {
     const inv = p.q * p.c;
-    const atual = p.q * (p.a ?? p.c);
+    // Cotação indisponível (backend não tem market_quotes): usa p.c como fallback
+    // SÓ para não quebrar o cálculo, mas sinaliza noQuote pra UI mostrar aviso.
+    const temCotacao = p.a != null && p.a > 0 && !p.noQuote;
+    const precoRef = temCotacao ? p.a : p.c;
+    const atual = p.q * precoRef;
     // dividendo: usa o informado OU estima pelo segmento (FII) OU 0 (ação sem info)
     const divUnit = (p.d > 0) ? p.d : (p.kind === 'fii' ? estimarDividendoPorCota(p) : 0);
     const renda = p.q * divUnit;
-    return { inv, atual, ganho: atual - inv, pct: inv > 0 ? (atual - inv) / inv * 100 : 0, renda, divUnit, isMarket: true };
+    return {
+      inv, atual,
+      ganho: temCotacao ? atual - inv : 0,
+      pct: temCotacao && inv > 0 ? (atual - inv) / inv * 100 : 0,
+      renda, divUnit, isMarket: true,
+      noQuote: !temCotacao,
+    };
   }
   // renda fixa / fundos
   return calcRendaFixa(p);
@@ -1857,10 +1869,11 @@ function openSimulatorSheet(){
     body.appendChild(dicasBox);
 
     const upd = () => {
-      const V0 = toNum(iInicial.value);
-      const A  = toNum(iAporte.value);
-      const N  = Math.max(1, Math.min(60, Math.round(toNum(iAnos.value))));
-      const i  = toNum(iTaxa.value) / 100;
+      // Clamp a valores >= 0 para não gerar NaN com negativos ou valores vazios
+      const V0 = Math.max(0, toNum(iInicial.value));
+      const A  = Math.max(0, toNum(iAporte.value));
+      const N  = Math.max(1, Math.min(60, Math.round(toNum(iAnos.value) || 1)));
+      const i  = Math.max(0, toNum(iTaxa.value)) / 100;
       const im = Math.pow(1 + i, 1/12) - 1;      // taxa mensal equivalente
       const meses = N * 12;
 
@@ -2112,7 +2125,13 @@ function buildAssetCard(p){
   const val = el('div', 'asset-val');
   const v = el('div', 'v num', brl.format(r.atual));
   const d = el('div', 'd num');
-  if (r.isMarket){
+  if (r.isMarket && r.noQuote){
+    // sem cotação: mostra aviso claro em vez de "+ R$ 0,00"
+    d.className = 'd num';
+    d.style.color = 'var(--muted)';
+    d.style.fontSize = '12px';
+    d.textContent = 'sem cotação';
+  } else if (r.isMarket){
     d.className = 'd num ' + (r.ganho >= 0 ? 'gain' : 'loss');
     d.style.color = r.ganho >= 0 ? 'var(--gain)' : 'var(--loss)';
     d.textContent = (r.ganho>=0?'+ ':'− ') + brl.format(Math.abs(r.ganho));
@@ -2428,8 +2447,11 @@ function openAporteSheet(p){
         const custoTotal = alvo.q * alvo.c + Q * C;
         alvo.q = totalCotas;
         alvo.c = custoTotal / totalCotas;
-        // atualiza o preço atual com o mais recente (que vem automático na próxima refresh de qualquer jeito)
-        alvo.a = p.a ?? C;
+        // preço atual: só sobrescreve se tivermos cotação válida (> 0).
+        // Antes usava `p.a ?? C`, mas `??` não substitui 0 — se cotação
+        // estava zerada (sem market_quotes), gravava 0.
+        if (p.a != null && p.a > 0) alvo.a = p.a;
+        else if (!alvo.a || alvo.a <= 0) alvo.a = C;
         close(); render(); countUpHero(); toast('Aporte de ' + Q + ' cotas registrado'); await persist();
       } else {
         const V = toNum(valI.value);
@@ -2899,7 +2921,9 @@ function openFiiAcaoAdd(){
           existing.q = totalCotas;
           existing.c = custoTotal / totalCotas;
           // mantém segmento e dividendo escolhidos originalmente, mas atualiza preço atual
-          existing.a = chosen._price ?? existing.a ?? C;
+          // só se tivermos cotação válida (> 0). Senão mantém o que já tinha.
+          if (chosen._price != null && chosen._price > 0) existing.a = chosen._price;
+          else if (!existing.a || existing.a <= 0) existing.a = C;
           close(); render(); countUpHero(); toast('Aporte de ' + Q + ' cotas registrado'); await persist();
           return;
         }

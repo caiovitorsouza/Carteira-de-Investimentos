@@ -45,13 +45,18 @@ export async function loadSnapshot(userId) {
 function shapePosition(r) {
   const meta = r.meta || {};
   if (r.kind === 'fii' || r.kind === 'acao') {
+    // Preço atual: só preenche se o backend tem cotação. Nulo quando NÃO tem
+    // — o frontend diferencia e mostra 'cotação indisponível' em vez de usar
+    // o preço médio digitado como se fosse cotação atual.
+    const hasQuote = r.price != null;
     return {
       id: r.id, kind: r.kind, ticker: r.ticker,
       name: r.name || r.instrument_name,
       segment: meta.segment || r.segment, // preferência: escolha do usuário
       logo: r.logo_url,
       q: Number(r.quantity), c: Number(r.avg_price),
-      a: r.price != null ? Number(r.price) : Number(r.avg_price), // cotação automática
+      a: hasQuote ? Number(r.price) : null, // null = sem cotação (frontend trata)
+      noQuote: !hasQuote, // flag explícita pro frontend
       d: r.last_dividend != null ? Number(r.last_dividend) : (meta.d ?? 0),
       dy12: r.dy_12m, pvp: r.pvp, changePct: r.change_pct,
       dcom: r.last_ex_date, dpag: r.last_pay_date,

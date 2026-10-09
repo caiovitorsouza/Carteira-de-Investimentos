@@ -36,5 +36,8 @@ app.use((err, _req, res, _next) => {
 
 app.listen(config.port, () => {
   console.log(`API em http://localhost:${config.port}  (${config.env})`);
-  if (config.env === 'production' || process.env.ENABLE_SCHEDULER) startQuoteScheduler();
+  // Scheduler sempre liga, exceto se DISABLE_SCHEDULER=true for passado explicitamente.
+  // Antes dependia de NODE_ENV=production, o que podia deixar o cron desligado
+  // sem o usuário saber (ex: deploy sem a env var setada).
+  if (!/^(1|true|yes)$/i.test(process.env.DISABLE_SCHEDULER || '')) startQuoteScheduler();
 });
