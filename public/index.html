@@ -1052,6 +1052,77 @@ details.tip.action .tip-tag{color: var(--accent);}
   background: var(--surface-2); border-radius: 12px;
   color: var(--muted); font-size: 13px;
 }
+/* Simulação temporal: toggle + slider */
+.time-sim{margin-top: 16px;}
+.time-sim-toggle{
+  background: transparent;
+  border: 1px solid var(--line-strong);
+  color: var(--muted);
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-family: inherit;
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: all .15s;
+}
+.time-sim-toggle:hover{ border-color: var(--accent); color: var(--accent); }
+.time-sim-toggle.active{
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+.time-sim-panel{
+  margin-top: 16px;
+  padding: 18px 20px;
+  background: linear-gradient(135deg, var(--accent-soft), var(--surface-2));
+  border-radius: 16px;
+  border: 1px solid var(--line);
+}
+.time-sim-head{
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 10px;
+  font-size: 13.5px; color: var(--ink-2);
+}
+.time-sim-head b{color: var(--accent); font-weight: 600; font-family: var(--f-mono);}
+.time-sim-gain{font-family: var(--f-mono); color: var(--gain); font-weight: 600;}
+.time-sim-slider{
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 6px;
+  background: var(--line);
+  border-radius: 999px;
+  outline: none;
+  margin: 4px 0 8px;
+}
+.time-sim-slider::-webkit-slider-thumb{
+  -webkit-appearance: none; appearance: none;
+  width: 20px; height: 20px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: grab;
+  border: 3px solid var(--surface);
+  box-shadow: 0 1px 4px rgba(0,0,0,.15);
+}
+.time-sim-slider::-moz-range-thumb{
+  width: 20px; height: 20px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: grab;
+  border: 3px solid var(--surface);
+  box-shadow: 0 1px 4px rgba(0,0,0,.15);
+}
+.time-sim-marks{
+  display: flex; justify-content: space-between;
+  font-size: 10.5px; color: var(--muted);
+  font-family: var(--f-mono);
+}
+.time-sim-note{
+  margin-top: 10px;
+  font-size: 12px; color: var(--muted);
+  line-height: 1.4;
+}
+
 /* Link discreto do simulador - visível sempre, fora do chart */
 .hc-proj{
   display: block; width: 100%;
@@ -1250,7 +1321,7 @@ details.tip.action .tip-tag{color: var(--accent);}
     <section class="hero">
       <div class="hero-eyebrow">
         <span class="live-dot" aria-hidden="true"></span>
-        <span>Seu patrimônio</span>
+        <span id="heroEyebrowLabel">Seu patrimônio</span>
         <span id="heroUpd" style="margin-left:auto;"></span>
       </div>
       <h1 class="hero-value num" id="heroValue">R$ 0,00</h1>
@@ -1258,7 +1329,27 @@ details.tip.action .tip-tag{color: var(--accent);}
         <span class="pill" id="heroPill">—</span>
         <span id="heroMeta"></span>
       </div>
-      <!-- Link do simulador -->
+
+      <!-- Simulação temporal: toggle + slider -->
+      <div id="timeSimBox" class="time-sim">
+        <button class="time-sim-toggle" id="timeSimToggle">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <span id="timeSimToggleLabel">Simular com o tempo passando</span>
+        </button>
+        <div class="time-sim-panel" id="timeSimPanel" hidden>
+          <div class="time-sim-head">
+            <span>Daqui a <b id="timeSimMonthsLabel">0 meses</b></span>
+            <span class="time-sim-gain" id="timeSimGain"></span>
+          </div>
+          <input type="range" min="0" max="240" step="1" value="0" class="time-sim-slider" id="timeSimSlider" aria-label="Meses no futuro">
+          <div class="time-sim-marks">
+            <span>hoje</span><span>5 anos</span><span>10 anos</span><span>15 anos</span><span>20 anos</span>
+          </div>
+          <div class="time-sim-note" id="timeSimNote"></div>
+        </div>
+      </div>
+
+      <!-- Link do simulador de aportes mensais -->
       <button class="hc-proj" id="simBtn">💭 Projetar com aportes mensais →</button>
     </section>
 
@@ -1330,6 +1421,77 @@ const SEGMENT_DY = {
   fof:          { mes: 0.92, nome: 'Fundo de Fundos (FoF)',  faixa: '10-12% a.a.' },
   fiagro:       { mes: 1.00, nome: 'Fiagro (agronegócio)',   faixa: '11-13% a.a.' },
   hibrido:      { mes: 0.83, nome: 'Híbrido',                faixa: '9-11% a.a.'  },
+};
+
+// Mapa de ticker FII → segmento (os ~45 mais negociados da B3, out/2026)
+// Usado pra pré-selecionar o segmento quando usuário adiciona o FII, sem
+// precisar escolher na mão. Se o ticker não estiver aqui, cai em 'tijolo_log'.
+const FII_SEGMENT_MAP = {
+  // PAPEL / CRIs
+  MXRF11:'papel', KNCR11:'papel', HGCR11:'papel', RBRR11:'papel', CPTS11:'papel',
+  KNHY11:'papel', VGIR11:'papel', VGIP11:'papel', VCRI11:'papel', IRDM11:'papel',
+  BTCI11:'papel', HGLG11:'tijolo_log',
+  // LOGÍSTICA
+  VILG11:'tijolo_log', BTLG11:'tijolo_log', XPLG11:'tijolo_log', LVBI11:'tijolo_log',
+  BRCO11:'tijolo_log', GGRC11:'tijolo_log', ALZR11:'tijolo_log', PATL11:'tijolo_log',
+  LGCP11:'tijolo_log',
+  // SHOPPINGS
+  XPML11:'tijolo_shop', VISC11:'tijolo_shop', HSML11:'tijolo_shop', HGBS11:'tijolo_shop',
+  MALL11:'tijolo_shop', VSHO11:'tijolo_shop',
+  // LAJES CORPORATIVAS
+  HGRE11:'tijolo_laj', PVBI11:'tijolo_laj', BRCR11:'tijolo_laj', RCRB11:'tijolo_laj',
+  JSRE11:'tijolo_laj', TRXF11:'tijolo_laj', HGRU11:'tijolo_laj',
+  // AGÊNCIAS BANCÁRIAS
+  BBPO11:'tijolo_ag', AGCX11:'tijolo_ag', SAAG11:'tijolo_ag',
+  // FIAGRO (agronegócio)
+  KNCA11:'fiagro', RZAG11:'fiagro', DEVA11:'fiagro', VGIA11:'fiagro',
+  // FUNDO DE FUNDOS
+  BPFF11:'fof', KFOF11:'fof', FOFT11:'fof', RBFF11:'fof', BCFF11:'fof', HGFF11:'fof',
+  // HÍBRIDO
+  KNRI11:'hibrido', HGPO11:'hibrido',
+};
+
+// Mapa de ticker ação → setor (as ~60 mais negociadas da B3, out/2026)
+// Mesma lógica: pré-seleciona na hora de adicionar, usuário pode trocar.
+const ACAO_SECTOR_MAP = {
+  // BANCOS
+  ITUB4:'bancos', ITUB3:'bancos', BBDC4:'bancos', BBDC3:'bancos', BBAS3:'bancos',
+  SANB11:'bancos', BPAC11:'bancos', ABCB4:'bancos', BRSR6:'bancos',
+  // PETRÓLEO
+  PETR4:'petroleo', PETR3:'petroleo', PRIO3:'petroleo', RRRP3:'petroleo',
+  RECV3:'petroleo', BRAV3:'petroleo', UGPA3:'petroleo', VBBR3:'petroleo',
+  // MINERAÇÃO
+  VALE3:'mineracao', CMIN3:'mineracao', BRAP4:'mineracao',
+  // SIDERURGIA
+  CSNA3:'siderurgia', GGBR4:'siderurgia', GOAU4:'siderurgia', USIM5:'siderurgia',
+  CSNA4:'siderurgia',
+  // ELÉTRICAS
+  ELET3:'eletricas', ELET6:'eletricas', CMIG4:'eletricas', TAEE11:'eletricas',
+  EGIE3:'eletricas', ENGI11:'eletricas', CPFE3:'eletricas', ENBR3:'eletricas',
+  CPLE6:'eletricas', ALUP11:'eletricas',
+  // SANEAMENTO
+  SBSP3:'saneamento', SAPR11:'saneamento', CSMG3:'saneamento', AMBP3:'saneamento',
+  // TELECOM
+  VIVT3:'telecom', TIMS3:'telecom', OIBR3:'telecom',
+  // SEGUROS
+  BBSE3:'seguros', PSSA3:'seguros', IRBR3:'seguros', WIZC3:'seguros',
+  // PAPEL E CELULOSE
+  SUZB3:'papel', KLBN11:'papel', KLBN4:'papel',
+  // ALIMENTOS E BEBIDAS
+  ABEV3:'alimentos', JBSS3:'alimentos', BRFS3:'alimentos', MRFG3:'alimentos',
+  BEEF3:'alimentos', SMTO3:'alimentos',
+  // VAREJO
+  MGLU3:'varejo', AMER3:'varejo', LREN3:'varejo', VIIA3:'varejo', ARZZ3:'varejo',
+  PETZ3:'varejo', LWSA3:'varejo', ASAI3:'varejo', GMAT3:'varejo',
+  // CONSTRUÇÃO
+  MRVE3:'construcao', CYRE3:'construcao', EZTC3:'construcao', TEND3:'construcao',
+  // SAÚDE
+  HAPV3:'saude', RADL3:'saude', FLRY3:'saude', RDOR3:'saude', PNVL3:'saude',
+  // TECNOLOGIA
+  TOTS3:'tecnologia', LWSA3:'tecnologia', CASH3:'tecnologia', MELI34:'tecnologia',
+  // OUTROS/DIVERSOS
+  WEGE3:'siderurgia', EMBR3:'tecnologia', AZUL4:'outros', GOLL4:'outros',
+  B3SA3:'bancos', RENT3:'outros', LOCA3:'outros', HYPE3:'saude',
 };
 
 // DY médio por setor de ação (base: histórico B3, out/2026).
@@ -2847,12 +3009,15 @@ function openFiiAcaoAdd(){
       picked.appendChild(form);
 
       // dividendo (manual OU estimado) — FII por segmento, ação por setor
-      let userSegment = 'tijolo_log';
-      let userSector = 'outros';
-      let userDiv = null;
-
+      // Auto-detecção: se o ticker está no nosso mapa, pré-seleciona.
       const ehFii = r.kind === 'fii';
       const ehAcao = r.kind === 'acao';
+      let userSegment = (ehFii && FII_SEGMENT_MAP[r.ticker]) || 'tijolo_log';
+      let userSector  = (ehAcao && ACAO_SECTOR_MAP[r.ticker]) || 'outros';
+      let userDiv = null;
+      // Marca que foi auto-detectado pra UI avisar
+      const autoDetectado = ehFii ? !!FII_SEGMENT_MAP[r.ticker]
+                                  : (ehAcao ? !!ACAO_SECTOR_MAP[r.ticker] : false);
       if (ehFii || ehAcao){
         const divBox = el('div', 'sheet-section');
         divBox.style.marginTop = '14px';
@@ -2918,6 +3083,15 @@ function openFiiAcaoAdd(){
           userDiv = ehFii ? v : (v / 12);
         };
 
+        // Se tem auto-detecção, mostra chip indicando qual foi
+        if (autoDetectado){
+          const info = ehFii ? SEGMENT_DY[userSegment] : SECTOR_DY[userSector];
+          const chip = el('div');
+          chip.style.cssText = 'display:flex;align-items:center;gap:6px;margin-top:10px;padding:8px 12px;background:var(--accent-soft);border-radius:8px;font-size:12.5px;color:var(--accent);';
+          chip.innerHTML = '✓ Detectado automaticamente: <b>' + info.nome + '</b> (' + info.faixa + '). Dá pra trocar se precisar.';
+          divBox.appendChild(chip);
+        }
+
         divBox.appendChild(estBtn);
         divBox.appendChild(segBox);
         picked.appendChild(divBox);
@@ -2932,12 +3106,35 @@ function openFiiAcaoAdd(){
         const q = await api.quote(r.ticker);
         chosen._price = q.price; chosen._d = q.last_dividend; chosen._dy = q.dy_12m; chosen._pvp = q.pvp;
         price.textContent = brl.format(q.price);
-        if (q.last_dividend > 0 && r.kind === 'fii'){
+        if (q.last_dividend > 0 && ehFii){
           // backend tem dividendo real — usa esse
           const divInput = picked.querySelector('input[placeholder="0,10"]');
           if (divInput && !divInput.value){
             divInput.value = q.last_dividend.toFixed(2).replace('.', ',');
             userDiv = q.last_dividend;
+          }
+        }
+        // AUTO-ESTIMATIVA: se o ticker tá nos nossos mapas e ainda não tem
+        // dividendo preenchido, aplica estimativa pelo setor/segmento conhecido.
+        if (autoDetectado && chosen._price > 0 && !userDiv){
+          const divInput = picked.querySelector('input[inputmode="decimal"][placeholder]');
+          // na verdade pode ter vários inputs decimais — pega o específico
+          const divInputReal = Array.from(picked.querySelectorAll('input')).find(x =>
+            x.placeholder === '0,10' || x.placeholder === '2,80');
+          if (ehFii){
+            const info = SEGMENT_DY[userSegment];
+            const est = chosen._price * info.mes / 100;
+            if (divInputReal && !divInputReal.value){
+              divInputReal.value = est.toFixed(2).replace('.', ',');
+              userDiv = est;
+            }
+          } else if (ehAcao){
+            const info = SECTOR_DY[userSector];
+            const estAnual = chosen._price * info.ano / 100;
+            if (divInputReal && !divInputReal.value){
+              divInputReal.value = estAnual.toFixed(2).replace('.', ',');
+              userDiv = estAnual / 12;
+            }
           }
         }
       } catch { price.textContent = 'preço indisponível'; price.style.fontSize = '14px'; }
@@ -3289,6 +3486,106 @@ $('simBtn').onclick = openSimulatorSheet;
 // próprio verificado no Resend. A função openNotifSheet() segue definida
 // pra reativar quando o momento for certo.
 
+/* ---------------------------------------------------------------- simulação temporal */
+// Projeção simples por posição: cada ativo cresce pela sua rentabilidade esperada
+// composta mensal (reinveste dividendos). Retorna { atual, projetado, ganho }.
+function projetarPosicao(p, meses){
+  const r = enrich(p);
+  const base = r.atual;
+  if (base <= 0 || meses <= 0) return { base, proj: base, taxaAA: 0 };
+
+  let taxaAA; // taxa anual esperada (%)
+  if (p.kind === 'fii'){
+    // FII: dividendo é mensal. Taxa anual ≈ DY (não considera valorização pra ser conservador)
+    const divMes = (p.d > 0) ? p.d : estimarDividendoPorCota(p);
+    const dyMes = p.q > 0 && base > 0 ? (divMes * p.q / base) : 0; // taxa mensal
+    taxaAA = (Math.pow(1 + dyMes, 12) - 1) * 100;
+  } else if (p.kind === 'acao'){
+    // Ação: DY anual + 2% valorização real conservadora
+    const divAno = (p.d > 0 ? p.d * 12 : 0) * p.q || estimarDividendoPorCota(p) * 12 * p.q;
+    const dyAA = base > 0 ? (divAno / base * 100) : 0;
+    taxaAA = dyAA + 2.0;
+  } else {
+    // Renda fixa: usa taxa efetiva calculada em calcRendaFixa
+    taxaAA = r.taxaAA || 0;
+  }
+
+  // Capitalização mensal composta
+  const taxaMes = Math.pow(1 + taxaAA / 100, 1/12) - 1;
+  const proj = base * Math.pow(1 + taxaMes, meses);
+  return { base, proj, taxaAA };
+}
+
+function projetarCarteira(meses){
+  let base = 0, proj = 0;
+  for (const p of state.positions){
+    const r = projetarPosicao(p, meses);
+    base += r.base;
+    proj += r.proj;
+  }
+  return { base, proj, ganho: proj - base, pct: base > 0 ? (proj - base) / base * 100 : 0 };
+}
+
+let _simAtivo = false;
+
+function toggleSimTemporal(){
+  _simAtivo = !_simAtivo;
+  const panel = $('timeSimPanel');
+  const btn = $('timeSimToggle');
+  const label = $('timeSimToggleLabel');
+  panel.hidden = !_simAtivo;
+  btn.classList.toggle('active', _simAtivo);
+  label.textContent = _simAtivo ? 'Fechar simulação' : 'Simular com o tempo passando';
+  if (_simAtivo){
+    $('timeSimSlider').value = 0;
+    updateSimTemporal();
+  } else {
+    // volta pro patrimônio real
+    render();
+  }
+}
+
+function updateSimTemporal(){
+  const meses = Number($('timeSimSlider').value);
+  const anos = Math.floor(meses / 12);
+  const mesesExtra = meses % 12;
+  let timeLabel;
+  if (meses === 0) timeLabel = 'hoje';
+  else if (anos === 0) timeLabel = meses + (meses === 1 ? ' mês' : ' meses');
+  else if (mesesExtra === 0) timeLabel = anos + (anos === 1 ? ' ano' : ' anos');
+  else timeLabel = anos + 'a ' + mesesExtra + 'm';
+  $('timeSimMonthsLabel').textContent = timeLabel;
+
+  const { base, proj, ganho, pct } = projetarCarteira(meses);
+
+  // Atualiza o hero com valor projetado
+  $('heroValue').textContent = brl.format(proj);
+  $('heroEyebrowLabel').textContent = meses === 0 ? 'Seu patrimônio' : 'Patrimônio projetado';
+
+  const pill = $('heroPill');
+  if (meses === 0){
+    pill.className = 'pill';
+    pill.textContent = 'Agora';
+  } else {
+    pill.className = 'pill ' + (ganho >= 0 ? 'gain' : 'loss');
+    pill.textContent = (ganho >= 0 ? '+ ' : '− ') + brl.format(Math.abs(ganho)) +
+      ' (' + (ganho >= 0 ? '+' : '−') + pct.format(Math.abs(pct)) + '%)';
+  }
+  $('heroMeta').textContent = meses > 0 ? 'projeção a partir de ' + brl.format(base) : '';
+
+  // Mensagem no painel
+  $('timeSimGain').textContent = meses > 0 ? '+ ' + brl.format(ganho) : '';
+  const noteBox = $('timeSimNote');
+  if (meses === 0){
+    noteBox.innerHTML = 'Arraste pra ver quanto a sua carteira valeria no futuro, considerando as taxas atuais e reinvestimento de dividendos.';
+  } else {
+    noteBox.innerHTML = 'Estimativa baseada em: <b>FII</b> → DY atual composto; <b>ação</b> → DY + 2% a.a. de valorização; <b>renda fixa</b> → taxa efetiva atual. Não considera aportes futuros, inflação ou IR na venda.';
+  }
+}
+
+$('timeSimToggle').onclick = toggleSimTemporal;
+$('timeSimSlider').oninput = updateSimTemporal;
+
 /* ---------------------------------------------------------------- notificações */
 function openNotifSheet(){
   openSheet(async (body, close) => {
@@ -3611,7 +3908,30 @@ function renderTips(){
   const profile = state.profile;
   const tips = [];
 
-  // ------- URGENTES (ação imediata) -------
+  // ===================================================================
+  // MÉTRICAS DA CARTEIRA — base pra decidir quais dicas fazem sentido
+  // ===================================================================
+  const temFii = state.positions.some(p => p.kind === 'fii');
+  const temAcao = state.positions.some(p => p.kind === 'acao');
+  // Ativos de liquidez diária que servem como reserva de emergência
+  const RESERVA_KINDS = ['selic', 'cdb', 'lci', 'lca'];
+  const posReserva = state.positions.filter(p => RESERVA_KINDS.includes(p.kind));
+  const valorReserva = posReserva.reduce((s, p) => s + enrich(p).atual, 0);
+  const temReservaLiquida = valorReserva > 0;
+  // Tesouro Prefixado/IPCA+ não serve pra reserva (marcação a mercado)
+  const temRfNaoLiquida = state.positions.some(p => p.kind === 'pre' || p.kind === 'ipca');
+  const valorFiiAcao = state.positions
+    .filter(p => p.kind === 'fii' || p.kind === 'acao')
+    .reduce((s, p) => s + enrich(p).atual, 0);
+  // "Reserva suficiente" = reserva cobre pelo menos 30% do capital de risco
+  // (regra prática pros arrojados; conservadores precisam mais, mas pelo menos
+  // já exige que a reserva seja algo, não zero)
+  const reservaProporcional = valorReserva >= (valorFiiAcao * 0.3) || valorReserva >= 2000;
+
+  // ===================================================================
+  // DICAS URGENTES — ação imediata necessária
+  // ===================================================================
+
   // dívida: só mostra quando usuário marcou "Sim, está pesado" (0) ou "Sim, controlado" (1)
   if (profile && typeof profile.pts.dividas === 'number' && profile.pts.dividas <= 1){
     const pesado = profile.pts.dividas === 0;
@@ -3630,7 +3950,10 @@ function renderTips(){
     ));
   }
 
-  if (profile && profile.pts.reserva === 0 && n > 0){
+  // Reserva de emergência: AGORA olha as posições de verdade, não só o perfil.
+  // Só mostra se NÃO TEM reserva (selic/cdb/lci/lca) OU se a reserva é muito pequena
+  // em relação ao capital em risco.
+  if (profile && profile.pts.reserva === 0 && n > 0 && !temReservaLiquida){
     tips.push(tipAccTag(
       'Você investe mas não tem reserva de emergência',
       'urgent', 'URGENTE',
@@ -3638,9 +3961,20 @@ function renderTips(){
       '<p><b>Onde fica:</b> Tesouro Selic ou CDB de liquidez diária em bancos grandes. Rende quase a Selic cheia (' + TAXAS.selic + '% a.a.) e você resgata em 1 dia útil.</p>' +
       '<p><b>Não serve:</b> FII, ação, Tesouro Prefixado, Tesouro IPCA — todos oscilam.</p>'
     ));
+  } else if (profile && profile.pts.reserva === 0 && temReservaLiquida && !reservaProporcional && valorFiiAcao > 0){
+    // Tem reserva mas é pequena comparada ao capital em risco
+    tips.push(tipAccTag(
+      'Sua reserva pode ser pequena pro tamanho da carteira',
+      'action', 'EQUILIBRAR',
+      '<p>Você tem <b>' + brl.format(valorReserva) + '</b> em renda fixa de liquidez (Selic/CDB/LCI/LCA) e <b>' + brl.format(valorFiiAcao) + '</b> em FII/ação.</p>' +
+      '<p>Como o perfil mostrou que você não tem reserva formada, a renda fixa daqui vale como primeira camada de segurança. O ideal é que ela cubra ao menos 30% do capital em risco — hoje tá em <b>' + pct.format(valorReserva/valorFiiAcao*100) + '%</b>.</p>' +
+      '<p>Nos próximos aportes, considera reforçar a renda fixa até alcançar essa proporção, aí volta pro FII/ação.</p>'
+    ));
   }
 
-  // ------- AÇÕES DA CARTEIRA -------
+  // ===================================================================
+  // DICAS POR ATIVO ESPECÍFICO
+  // ===================================================================
   state.positions.forEach(p => {
     const r = enrich(p);
 
@@ -3657,8 +3991,8 @@ function renderTips(){
       ));
     }
 
-    // P/VP alto
-    if (p.ticker && p.pvp && p.pvp > 1.15){
+    // P/VP alto (só FII)
+    if (p.kind === 'fii' && p.pvp && p.pvp > 1.15){
       tips.push(tipAccTag(
         p.ticker + ' está pagando ágio (P/VP alto)',
         'warn', 'ATENÇÃO',
@@ -3668,7 +4002,7 @@ function renderTips(){
       ));
     }
 
-    // Concentração
+    // Concentração (só se um ativo pesa >25% da carteira)
     if (p.ticker && t.atual > 0 && r.atual / t.atual > 0.25){
       tips.push(tipAccTag(
         p.ticker + ' concentra ' + pct.format(r.atual/t.atual*100) + '% da sua carteira',
@@ -3679,24 +4013,35 @@ function renderTips(){
       ));
     }
 
-    // Renda fixa com Prefixado longo e perfil conservador
+    // Tesouro Prefixado para perfil conservador
     if (p.kind === 'pre' && profile && profile.perfil === 'conservador'){
       tips.push(tipAccTag(
-        'Tesouro Prefixado tem risco pro seu perfil',
+        p.nome + ' tem risco pro seu perfil',
         'warn', 'ATENÇÃO',
         '<p>Prefixado <b>trava a taxa</b>. Se a Selic subir, você perde — porque fica preso num rendimento menor que o novo CDI.</p>' +
         '<p>Se precisar resgatar antes do vencimento, pode receber menos que investiu (marcação a mercado).</p>' +
         '<p><b>Alternativa pro conservador:</b> Tesouro Selic acompanha os juros em tempo real, sem surpresa.</p>'
       ));
     }
+
+    // CDB sem FGC acima de R$ 250k — não dá pra saber banco emissor, mas aviso geral
+    if (p.kind === 'cdb' && p.ap > 240000){
+      tips.push(tipAccTag(
+        'Sua posição em CDB tá no limite do FGC',
+        'warn', 'ATENÇÃO',
+        '<p>O FGC (Fundo Garantidor de Créditos) cobre até <b>R$ 250.000 por CPF por instituição</b>. Acima disso você perde a garantia se o banco quebrar.</p>' +
+        '<p>Se é tudo no mesmo banco, considera dividir em bancos diferentes nos próximos aportes.</p>' +
+        '<p>O limite global é R$ 1 milhão a cada 4 anos.</p>'
+      ));
+    }
   });
 
-  // ------- CARTEIRA GERAL -------
+  // ===================================================================
+  // DICAS DE CARTEIRA GERAL — baseadas no mix de ativos
+  // ===================================================================
 
-  // Carteira só FII sem renda fixa
-  const temFii = state.positions.some(p => p.kind === 'fii');
-  const temRf  = state.positions.some(p => ['selic','pre','ipca','cdb','lci','lca'].includes(p.kind));
-  if (temFii && !temRf && n >= 2){
+  // Só FII sem renda fixa alguma — SÓ MOSTRA se de fato não tem RF
+  if (temFii && !temReservaLiquida && !temRfNaoLiquida && n >= 2){
     tips.push(tipAccTag(
       'Sua carteira só tem FII',
       'action', 'EQUILIBRAR',
@@ -3709,21 +4054,22 @@ function renderTips(){
     ));
   }
 
-  // Poucos ativos
-  if (n > 0 && n < 5){
+  // Poucos ativos — só mostra se não há renda fixa suficiente OU se o foco é FII/ação
+  // (ter 1 Tesouro + 1 FII tecnicamente já é "só 2 ativos" mas é começo saudável)
+  const nMercado = state.positions.filter(p => p.kind === 'fii' || p.kind === 'acao').length;
+  if (nMercado > 0 && nMercado < 5){
     tips.push(tipAccTag(
-      'Você tem só ' + n + ' ' + (n===1?'ativo':'ativos') + ' — diversifique mais',
+      'Você tem só ' + nMercado + ' ' + (nMercado===1?'ativo':'ativos') + ' de bolsa — diversifique mais',
       'action', 'DIVERSIFICAR',
-      '<p>Carteiras com 1-4 ativos ficam muito expostas a problemas específicos. O ideal:</p>' +
+      '<p>Carteiras com 1-4 FIIs/ações ficam muito expostas a problemas específicos. O ideal:</p>' +
       '<ul><li><b>FII:</b> ao menos 6-8 ativos, misturando papel (CRI) e tijolo (imóveis)</li>' +
-      '<li><b>Ações:</b> 10-15 empresas de setores diferentes</li>' +
-      '<li><b>Renda fixa:</b> Tesouro + 1-2 CDBs/LCIs</li></ul>' +
+      '<li><b>Ações:</b> 10-15 empresas de setores diferentes</li></ul>' +
       '<p>Não precisa comprar tudo hoje. Acrescente aos poucos conforme aporta.</p>'
     ));
   }
 
-  // Perfil ansioso + muitos ativos de risco
-  if (profile && profile.ansioso >= 2 && temFii){
+  // Perfil ansioso + ativos de bolsa que oscilam
+  if (profile && profile.ansioso >= 2 && (temFii || temAcao)){
     tips.push(tipAccTag(
       'Diminua a frequência que olha o preço',
       'info', 'HÁBITO',
@@ -3736,8 +4082,8 @@ function renderTips(){
     ));
   }
 
-  // Perfil pânico
-  if (profile && profile.panico >= 3){
+  // Perfil pânico — só mostra se tem exposição a oscilação
+  if (profile && profile.panico >= 3 && (temFii || temAcao)){
     tips.push(tipAccTag(
       'Prepare-se mentalmente para quedas',
       'info', 'MINDSET',
@@ -3762,6 +4108,28 @@ function renderTips(){
       '<li>Tijolo logística: contratos longos. Ex: HGLG11, VILG11, BTLG11</li>' +
       '<li>Shopping/laje: mais cíclico mas potencial de valorização. Ex: XPML11, HGRE11</li></ul>' +
       '<p>Não é indicação de compra — é referência pra pesquisar.</p>'
+    ));
+  }
+
+  // Objetivo longo prazo (aposentadoria) + só renda fixa
+  if (profile && profile.pts.obj === 'longo' && !temFii && !temAcao && n > 0){
+    tips.push(tipAccTag(
+      'Seu horizonte é longo mas tudo em renda fixa',
+      'action', 'OPORTUNIDADE',
+      '<p>Você respondeu que o objetivo é independência financeira em 10+ anos. Em prazos longos, renda variável (FII/ação) historicamente supera renda fixa, mesmo com crises no meio.</p>' +
+      '<p>Pra um horizonte longo, é saudável ter ao menos <b>30-50% em FII/ação</b> além da renda fixa. Mantém a base segura mas deixa parte do dinheiro trabalhando com mais potencial.</p>' +
+      '<p>Como você é jovem, o risco de curto prazo (volatilidade) é menos perigoso que o risco de longo prazo (inflação comendo a Selic).</p>'
+    ));
+  }
+
+  // Carteira equilibrada e madura — reforço positivo
+  if (temFii && temReservaLiquida && n >= 5){
+    tips.push(tipAccTag(
+      'Sua carteira tá equilibrada — continue assim',
+      'info', 'PARABÉNS',
+      '<p>Você tem <b>' + brl.format(valorReserva) + '</b> em renda fixa de liquidez + <b>' + brl.format(valorFiiAcao) + '</b> em FII/ação. Esse mix é o que a maioria dos educadores financeiros recomenda.</p>' +
+      '<p><b>O que fazer agora:</b> consistência. Aporte todo mês mesmo que seja pouco. Não troque de estratégia a cada notícia.</p>' +
+      '<p>Juros compostos premiam quem não para no meio do caminho.</p>'
     ));
   }
 
