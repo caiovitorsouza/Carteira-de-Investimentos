@@ -7,10 +7,46 @@ import { refreshTickers } from '../services/quotes.js';
 export const portfolioRouter = Router();
 portfolioRouter.use(requireAuth);
 
+// Horário de pregão (10h-18h BRT, dias úteis). Fora disso, não vale a pena
+// buscar porque os preços estão congelados no fechamento anterior mesmo.
+function emHorarioPregao() {
+  const now = new Date();
+  // BRT = UTC-3 (não considera horário de verão porque Brasil não tem mais desde 2019)
+  const h = (now.getUTCHours() - 3 + 24) % 24;
+  const dow = now.getUTCDay();
+  return dow >= 1 && dow <= 5 && h >= 10 && h < 18;
+}
+
+const STALE_MS = 10 * 60 * 1000; // 10 minutos
+
 // GET /api/portfolio -> snapshot completo (posições + cotações + perfil + histórico).
+// Se durante pregão algum ticker tiver cotação velha (>10min), força refresh
+// ANTES de responder — garante que o usuário sempre vê preços frescos no load,
+// mesmo que o scheduler estivesse dormindo (plano free do Render).
 portfolioRouter.get('/', async (req, res, next) => {
   try {
-    res.json(await loadSnapshot(req.user.id));
+    let snap = await loadSnapshot(req.user.id);
+
+    if (emHorarioPregao()) {
+      const agora = Date.now();
+      const velhos = snap.positions
+        .filter((p) => p.ticker)
+        .filter((p) => !p.quotedAt || agora - new Date(p.quotedAt).getTime() > STALE_MS)
+        .map((p) => p.ticker);
+
+      if (velhos.length > 0) {
+        console.log('[portfolio] auto-refresh em', velhos.length, 'tickers velhos:', velhos.join(','));
+        try {
+          await refreshTickers(velhos);
+          snap = await loadSnapshot(req.user.id);
+        } catch (e) {
+          console.warn('[portfolio] auto-refresh falhou:', e.message);
+          // continua respondendo com os dados antigos — melhor do que erro
+        }
+      }
+    }
+
+    res.json(snap);
   } catch (err) { next(err); }
 });
 
