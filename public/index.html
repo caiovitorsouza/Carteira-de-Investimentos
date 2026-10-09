@@ -1235,9 +1235,6 @@ details.tip.action .tip-tag{color: var(--accent);}
         <span>Carteira</span>
       </div>
       <div class="topbar-end">
-        <button class="icon-btn" id="notifBtn" aria-label="Notificações por e-mail" title="Notificações por e-mail">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7l8 5 8-5M4 7v10a2 2 0 002 2h12a2 2 0 002-2V7M4 7a2 2 0 012-2h12a2 2 0 012 2"/></svg>
-        </button>
         <button class="icon-btn" id="themeBtn" aria-label="Alternar tema" title="Alternar tema">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9c-5 0-9-4-9-9z"/></svg>
         </button>
@@ -3181,7 +3178,9 @@ function openFundoAdd(){
 
 $('addBtn').onclick = openAdd;
 $('simBtn').onclick = openSimulatorSheet;
-$('notifBtn').onclick = openNotifSheet;
+// Botão de notificações desativado por enquanto - só funciona com domínio
+// próprio verificado no Resend. A função openNotifSheet() segue definida
+// pra reativar quando o momento for certo.
 
 /* ---------------------------------------------------------------- notificações */
 function openNotifSheet(){
