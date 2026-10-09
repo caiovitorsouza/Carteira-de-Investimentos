@@ -1258,9 +1258,7 @@ details.tip.action .tip-tag{color: var(--accent);}
         <span class="pill" id="heroPill">—</span>
         <span id="heroMeta"></span>
       </div>
-      <!-- Gráfico de evolução do patrimônio (preenchido pelo JS) -->
-      <div id="histChart" class="hist-chart" hidden></div>
-      <!-- Link do simulador - aparece sempre (fora do chart) -->
+      <!-- Link do simulador -->
       <button class="hc-proj" id="simBtn">💭 Projetar com aportes mensais →</button>
     </section>
 
@@ -1688,7 +1686,7 @@ function render(){
   $('assetsSub').textContent = n > 0 ? 'Cotações atualizadas automaticamente.' : '';
 
   renderAssets();
-  renderHistChart();
+  // renderHistChart(); — removido temporariamente, voltar quando acumular histórico
   renderProfile();
   renderTips();
   $('heroUpd').textContent = n > 0 ? 'ao vivo' : '';
