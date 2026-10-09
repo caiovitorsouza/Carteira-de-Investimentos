@@ -48,7 +48,7 @@ marketRouter.get('/explore', async (req, res, next) => {
           FROM instruments i LEFT JOIN market_quotes q ON q.ticker = i.ticker
          WHERE i.active AND i.kind = $1
          ORDER BY i.avg_volume DESC NULLS LAST
-         LIMIT 8`;
+         LIMIT 5`;
     } else if (filter === 'alta') {
       sql = `
         SELECT ${baseCols}
