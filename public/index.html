@@ -3330,9 +3330,6 @@ function openFiiAcaoAdd(){
             : nomeSetorAcao(it.ticker, it.sector);
           if (seg) chips.appendChild(el('span', 'ex-chip', seg));
 
-          const volFmt = fmtVolume(it.avg_volume);
-          if (volFmt) chips.appendChild(el('span', 'ex-chip ex-chip-muted', '💱 ' + volFmt + '/dia'));
-
           if (it.dy_12m != null && Number(it.dy_12m) > 0){
             const dy = Number(it.dy_12m);
             const chip = el('span', 'ex-chip ex-chip-accent', 'DY ' + dy.toFixed(1) + '%');
