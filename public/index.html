@@ -1564,18 +1564,41 @@ function setupScrollReveal(){
   document.querySelectorAll('.reveal').forEach(el => _revealObserver.observe(el));
 }
 
+// Salva o state no backend. Se der conflito de versão (409), em vez de
+// descartar as mudanças locais e recarregar do servidor (comportamento que
+// fazia operações como "remover" voltarem no próximo refresh), a função
+// mantém o state local (positions, profile, settings) e só atualiza o
+// campo `version` para o atual do servidor, re-tentando o save. Isso
+// implementa "last write wins" — adequado pro caso de uso em que o mesmo
+// usuário mexe num aparelho só por vez.
 async function persist(){
-  try {
-    const r = await api.savePortfolio(state);
-    state.version = r.version;
-    // Snapshot do dia (gráfico de evolução). Fire-and-forget.
-    const total = totals().atual;
-    if (total > 0) api.snapshot(total).catch(()=>{});
+  for (let tentativa = 0; tentativa < 3; tentativa++) {
+    try {
+      const r = await api.savePortfolio(state);
+      state.version = r.version;
+      const total = totals().atual;
+      if (total > 0) api.snapshot(total).catch(()=>{});
+      return true;
+    } catch (err) {
+      if (err.status === 409 && tentativa < 2) {
+        // conflito: baixa só a versão atual do servidor e re-tenta,
+        // mantendo todas as mudanças locais (positions, profile, etc.)
+        try {
+          const remote = await api.getPortfolio();
+          state.version = remote.version;
+          continue;
+        } catch { /* se não conseguiu nem buscar, cai no erro abaixo */ }
+      }
+      if (err.status === 409) {
+        toast('Carteira foi alterada em outro aparelho — recarrego aqui');
+        try { state = await api.getPortfolio(); render(); } catch {}
+        return false;
+      }
+      toast('Não consegui salvar — tente de novo');
+      return false;
+    }
   }
-  catch (err) {
-    if (err.status === 409) { toast('Carteira atualizada em outro aparelho'); setTimeout(async () => { state = await api.getPortfolio(); render(); }, 900); }
-    else toast('Não consegui salvar');
-  }
+  return false;
 }
 
 /* ---------------------------------------------------------------- cálculos */
@@ -3277,8 +3300,18 @@ function openNotifSheet(){
 $('refreshBtn').onclick = async () => {
   const b = $('refreshBtn');
   b.disabled = true;
-  try { await api.refresh(); state = await api.getPortfolio(); render(); countUpHero(); toast('Cotações atualizadas'); }
-  catch { toast('Não consegui atualizar'); }
+  try {
+    // 1) Garante que mudanças locais estão salvas antes de recarregar
+    //    (evita que remove/aporte/venda ainda não persistidos sejam perdidos)
+    await persist();
+    // 2) Atualiza cotações no servidor
+    await api.refresh();
+    // 3) Recarrega estado do banco (que agora tem o save do passo 1)
+    state = await api.getPortfolio();
+    render();
+    countUpHero();
+    toast('Cotações atualizadas');
+  } catch { toast('Não consegui atualizar'); }
   finally { b.disabled = false; }
 };
 
