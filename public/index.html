@@ -3151,35 +3151,28 @@ function openFiiAcaoAdd(){
   openSheet((body, close) => {
     buildAddHead(body, close, 'Adicionar FII ou Ação', 'Digite o código (ex: MXRF11, PETR4) ou explore a lista abaixo.');
 
-    // Seção "Explorar ativos" — recolhida por default
+    // Seção "Mais negociados" — recolhida por default
     const explore = document.createElement('details');
     explore.className = 'explore-section';
     explore.style.marginTop = '14px';
     explore.innerHTML = `
       <summary>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/></svg>
-        Explorar ativos
+        Ver os mais negociados
         <svg class="chev-x" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
       </summary>
       <div style="margin-top:10px;">
-        <div style="display:flex;gap:4px;background:var(--surface);padding:4px;border-radius:999px;width:fit-content;margin-bottom:10px;">
+        <div style="display:flex;gap:4px;background:var(--surface);padding:4px;border-radius:999px;width:fit-content;margin-bottom:12px;">
           <button class="explore-tab active" data-explore-kind="fii">FIIs</button>
           <button class="explore-tab" data-explore-kind="acao">Ações</button>
-        </div>
-        <div class="explore-tabs" id="exploreFilters">
-          <button class="explore-tab active" data-explore-filter="volume">Mais negociados</button>
-          <button class="explore-tab" data-explore-filter="alta">Em alta hoje</button>
-          <button class="explore-tab" data-explore-filter="dy">Maior rendimento</button>
-          <button class="explore-tab" data-explore-filter="pvp">Mais baratos (P/VP)</button>
-          <button class="explore-tab" data-explore-filter="diversificar">Diversificar</button>
         </div>
         <div class="explore-list" id="exploreList">
           <div class="explore-loading">Carregando…</div>
         </div>
         <p class="explore-disclaim">
-          <b>Isso não é recomendação de compra.</b> Os ativos são listados por critérios objetivos
-          (volume, variação, DY, P/VP) a partir dos dados do mercado. Pesquise antes de decidir —
-          leia o relatório, veja o histórico, entenda os riscos.
+          Lista dos ativos com maior volume de negociação na B3. <b>Isso não é
+          recomendação de compra</b> — serve pra conhecer o que o mercado mais
+          negocia. Pesquise antes de decidir.
         </p>
       </div>
     `;
@@ -3206,20 +3199,16 @@ function openFiiAcaoAdd(){
     body.appendChild(err);
     body.appendChild(ok);
 
-    // -------- Lógica da seção Explorar --------
-    let explKind = 'fii', explFilter = 'volume';
+    // -------- Lógica da seção Mais Negociados --------
+    let explKind = 'fii';
     const exploreList = explore.querySelector('#exploreList');
 
     const carregarExplore = async () => {
       exploreList.innerHTML = '<div class="explore-loading">Carregando…</div>';
       try {
-        const r = await api.explore(explFilter, explKind);
+        const r = await api.explore('volume', explKind);
         if (!r.results || !r.results.length){
-          exploreList.innerHTML = '<div class="explore-empty">' +
-            (explFilter === 'diversificar'
-              ? 'Você já tem ' + (explKind === 'fii' ? 'FIIs' : 'ações') + ' de todos os segmentos principais. Bom trabalho!'
-              : 'Nada disponível agora. Tenta outro filtro.') +
-            '</div>';
+          exploreList.innerHTML = '<div class="explore-empty">Nada disponível agora.</div>';
           return;
         }
         exploreList.innerHTML = '';
@@ -3233,29 +3222,13 @@ function openFiiAcaoAdd(){
 
           const meta = el('div', 'meta');
           if (it.price != null) meta.appendChild(el('div', 'pr', brl.format(Number(it.price))));
-          // Mostra a métrica em destaque conforme o filtro
-          let mtDiv = el('div', 'mt');
-          if (explFilter === 'alta' && it.change_pct != null){
-            const v = Number(it.change_pct);
-            mtDiv.className = 'mt ' + (v >= 0 ? 'gain' : 'loss');
-            mtDiv.textContent = (v >= 0 ? '+' : '') + v.toFixed(2) + '% hoje';
-          } else if (explFilter === 'dy' && it.dy_12m != null){
-            const dy = Number(it.dy_12m);
-            mtDiv.className = 'mt' + (dy > 15 ? ' warn' : '');
-            mtDiv.textContent = 'DY ' + dy.toFixed(1) + '%' + (dy > 15 ? ' ⚠' : '');
-          } else if (explFilter === 'pvp' && it.pvp != null){
-            mtDiv.textContent = 'P/VP ' + Number(it.pvp).toFixed(2);
-          } else if (it.segment || it.sector){
-            mtDiv.textContent = it.segment || it.sector || '';
-          }
-          if (mtDiv.textContent) meta.appendChild(mtDiv);
+          if (it.segment || it.sector) meta.appendChild(el('div', 'mt', it.segment || it.sector));
           btn.appendChild(meta);
 
           btn.onclick = () => {
-            // Fecha a seção explorar e simula uma seleção
+            // Fecha a seção explorar e dispara o fluxo normal de escolha
             explore.open = false;
             inp.value = it.ticker;
-            // Dispara o fluxo normal de escolha chamando choose() diretamente
             choose({
               ticker: it.ticker,
               name: it.name || it.ticker,
@@ -3275,25 +3248,6 @@ function openFiiAcaoAdd(){
         explore.querySelectorAll('[data-explore-kind]').forEach(x => x.classList.remove('active'));
         b.classList.add('active');
         explKind = b.dataset.exploreKind;
-        // P/VP só existe pra FII — desabilita visualmente se ação
-        const pvpBtn = explore.querySelector('[data-explore-filter="pvp"]');
-        if (pvpBtn){
-          pvpBtn.style.display = explKind === 'fii' ? '' : 'none';
-          if (explKind !== 'fii' && explFilter === 'pvp'){
-            explFilter = 'volume';
-            explore.querySelectorAll('[data-explore-filter]').forEach(x => x.classList.toggle('active', x.dataset.exploreFilter === 'volume'));
-          }
-        }
-        carregarExplore();
-      };
-    });
-
-    // Tabs de filter
-    explore.querySelectorAll('[data-explore-filter]').forEach(b => {
-      b.onclick = () => {
-        explore.querySelectorAll('[data-explore-filter]').forEach(x => x.classList.remove('active'));
-        b.classList.add('active');
-        explFilter = b.dataset.exploreFilter;
         carregarExplore();
       };
     });
