@@ -1,50 +1,34 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
-  <!-- fundo escuro Linear -->
-  <rect width="1200" height="630" fill="#0B0D0E"/>
-
-  <!-- grid sutil -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
   <defs>
-    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#A3E635" stroke-width="0.5" opacity="0.08"/>
-    </pattern>
-    <radialGradient id="glow" cx="80%" cy="20%" r="60%">
-      <stop offset="0%" stop-color="#A3E635" stop-opacity="0.14"/>
-      <stop offset="60%" stop-color="#A3E635" stop-opacity="0"/>
+    <radialGradient id="a1" cx="18%" cy="20%" r="45%">
+      <stop offset="0%" stop-color="#10B981" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#10B981" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="a2" cx="85%" cy="85%" r="50%">
+      <stop offset="0%" stop-color="#A7F3D0" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#A7F3D0" stop-opacity="0"/>
     </radialGradient>
   </defs>
-  <rect width="1200" height="630" fill="url(#grid)"/>
-  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect width="1200" height="630" fill="#F8FAFC"/>
+  <rect width="1200" height="630" fill="url(#a1)"/>
+  <rect width="1200" height="630" fill="url(#a2)"/>
 
-  <!-- logo (topo esquerdo) -->
   <g transform="translate(80,80)">
-    <rect width="48" height="48" rx="11" fill="#A3E635"/>
-    <path d="M12 32 L20 24 L26 30 L38 18" stroke="#0B0D0E" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-    <path d="M28 18 L38 18 L38 28" stroke="#0B0D0E" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-    <text x="68" y="35" font-family="'Inter Tight', Inter, sans-serif" font-size="34" font-weight="700" fill="#E8EBED" letter-spacing="-1.5">rendum</text>
+    <rect width="52" height="52" rx="12" fill="#059669"/>
+    <path d="M12 35 L21 26 L28 33 L41 19" stroke="#FFFFFF" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <path d="M31 19 L41 19 L41 29" stroke="#FFFFFF" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <text x="70" y="37" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="34" font-weight="700" fill="#1E293B" letter-spacing="-1">Rendum</text>
   </g>
 
-  <!-- eyebrow (direita) -->
-  <text x="1120" y="112" font-family="'JetBrains Mono', monospace" font-size="18" fill="#787F85" letter-spacing="2.5" text-anchor="end">— CARTEIRA PESSOAL · B3 —</text>
-
-  <!-- headline -->
-  <g transform="translate(80,290)">
-    <text font-family="'Inter Tight', Inter, sans-serif" font-size="78" font-weight="700" letter-spacing="-3">
-      <tspan x="0" y="0" fill="#E8EBED">O </tspan>
-      <tspan fill="#A3E635">rendimento</tspan>
-      <tspan fill="#E8EBED"> que você planta.</tspan>
-    </text>
-    <text x="0" y="90" font-family="'Inter Tight', Inter, sans-serif" font-size="78" font-weight="700" letter-spacing="-3" fill="#787F85">Recolhido com calma.</text>
+  <g font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-weight="700" letter-spacing="-2.5">
+    <text x="80" y="300" font-size="68" fill="#1E293B">Sua carteira clara.</text>
+    <text x="80" y="380" font-size="68" fill="#1E293B">Seu próximo passo <tspan fill="#059669">consciente</tspan>.</text>
   </g>
+  <text x="80" y="450" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="26" fill="#475569">Acompanhe seus investimentos, organize seus aportes e</text>
+  <text x="80" y="486" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="26" fill="#475569">visualize sua evolução em um só lugar.</text>
 
-  <!-- footer -->
-  <g transform="translate(80,530)">
-    <circle cx="7" cy="7" r="7" fill="#A3E635"/>
-    <circle cx="7" cy="7" r="10" fill="#A3E635" opacity="0.25"/>
-    <text x="24" y="13" font-family="'JetBrains Mono', monospace" font-size="20" fill="#A3E635" letter-spacing="2.4">RENDUM.APP</text>
+  <g transform="translate(860,500)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M0,70 L28,63 L52,67 L78,54 L102,58 L128,43 L152,47 L178,30 L202,35 L260,6" stroke="#059669" stroke-width="5"/>
   </g>
-
-  <g transform="translate(1120,530)" text-anchor="end">
-    <rect x="-180" y="-26" width="180" height="52" rx="26" fill="#A3E635"/>
-    <text x="-90" y="8" font-family="'Inter Tight', Inter, sans-serif" font-size="22" font-weight="700" fill="#0B0D0E" text-anchor="middle" letter-spacing="-0.6">Começar grátis →</text>
-  </g>
+  <text x="80" y="560" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="20" fill="#64748B">rendum.caiovitormsouza.workers.dev</text>
 </svg>

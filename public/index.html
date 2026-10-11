@@ -3,14 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Rendum — Carteira em tempo real</title>
-<meta name="description" content="O rendimento que você planta — recolhido com calma. FIIs, ações e renda fixa em um só lugar.">
-<meta property="og:title" content="Rendum — Investir com previsibilidade">
-<meta property="og:description" content="O rendimento que você planta. Recolhido com calma.">
+<title>Rendum — Sua carteira clara</title>
+<meta name="description" content="Acompanhe seus investimentos, organize seus aportes e visualize sua evolução em um só lugar. FIIs, ações e renda fixa.">
+<meta property="og:title" content="Rendum — Sua carteira clara. Seu próximo passo consciente.">
+<meta property="og:description" content="Acompanhe seus investimentos, organize seus aportes e visualize sua evolução em um só lugar.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://rendi.caiovitormsouza.workers.dev">
-<meta property="og:image" content="/og-image.svg">
+<meta property="og:url" content="https://rendum.caiovitormsouza.workers.dev">
+<meta property="og:site_name" content="Rendum">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:image" content="https://rendum.caiovitormsouza.workers.dev/og-image.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Rendum — Sua carteira clara. Seu próximo passo consciente.">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://rendum.caiovitormsouza.workers.dev/og-image.png">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -125,27 +132,39 @@ input:focus, textarea:focus, select:focus{outline:none; border-color:var(--accen
   min-height:100dvh;
   display:grid;
   grid-template-columns: 1fr;
-  padding:24px;
+  padding:24px 16px;
   position: relative;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 15% 10%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 40%),
-    radial-gradient(circle at 85% 85%, color-mix(in srgb, var(--amber) 10%, transparent), transparent 45%),
-    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--accent) 3%, transparent), transparent 60%),
-    var(--bg);
+  isolation: isolate;
+  background:#FBFDFC;
 }
-/* padrão sutil de "papel" sobre o fundo */
+/* Aurora suave: uma camada, 3 gradientes, ~20s por ciclo */
 .auth::before{
-  content: '';
-  position: absolute; inset: 0;
-  background-image:
-    radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--accent) 14%, transparent) 1px, transparent 0);
-  background-size: 32px 32px;
-  opacity: .25;
-  pointer-events: none;
-  mask-image: radial-gradient(ellipse at 50% 50%, black 20%, transparent 80%);
-  -webkit-mask-image: radial-gradient(ellipse at 50% 50%, black 20%, transparent 80%);
+  content:'';
+  position:absolute; inset:-25%;
+  z-index:0;
+  pointer-events:none;
+  background:
+    radial-gradient(38% 32% at 22% 28%, rgba(16,185,129,.16), transparent 70%),
+    radial-gradient(34% 30% at 78% 18%, rgba(110,231,183,.22), transparent 72%),
+    radial-gradient(46% 40% at 60% 82%, rgba(209,250,229,.60), transparent 72%);
+  filter: blur(30px);
+  animation: aurora 20s ease-in-out infinite alternate;
+  will-change: transform;
 }
+@keyframes aurora{
+  0%  { transform: translate3d(0,0,0) rotate(0deg); }
+  50% { transform: translate3d(3%,-2%,0) rotate(5deg); }
+  100%{ transform: translate3d(-2%,3%,0) rotate(-3deg); }
+}
+html.page-hidden .auth::before{ animation-play-state: paused; }
+@media (max-width: 919px){
+  /* celular: decoração estática e discreta, foco no formulário */
+  .auth::before{ animation:none; opacity:.55; filter:blur(24px); }
+}
+.auth-side, .auth-card{ animation: authIn .35s ease-out both; }
+.auth-card{ animation-delay:.05s; }
+@keyframes authIn{ from{ opacity:0; transform: translateY(6px); } to{ opacity:1; transform:none; } }
 @media (min-width: 920px){
   .auth{
     grid-template-columns: 1.1fr 1fr;
@@ -169,11 +188,6 @@ input:focus, textarea:focus, select:focus{outline:none; border-color:var(--accen
   padding: 5px 12px; border-radius: 999px;
   background: var(--accent-soft); color: var(--accent);
   margin-bottom: 24px;
-}
-.auth-eyebrow .pulse{
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--accent);
-  animation: pulse 2s infinite;
 }
 @keyframes pulse{
   0%, 100%{ opacity: 1; transform: scale(1);}
@@ -214,37 +228,36 @@ input:focus, textarea:focus, select:focus{outline:none; border-color:var(--accen
   fill: none;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-dasharray: 1000;
-  stroke-dashoffset: 1000;
-  animation: draw 2.4s cubic-bezier(.4,.1,.2,1) .3s forwards;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 1.5s cubic-bezier(.4,.1,.2,1) .2s 1 forwards;
 }
 .auth-art .ln-area{
-  fill: color-mix(in srgb, var(--accent) 12%, transparent);
+  fill: color-mix(in srgb, var(--accent) 10%, transparent);
   opacity: 0;
-  animation: fade 1.2s ease .6s forwards;
+  animation: fade .6s ease 1.2s 1 forwards;
 }
 .auth-art .ln-dot{
   fill: var(--accent);
   opacity: 0;
-  animation: pop 0.4s cubic-bezier(.3,1.5,.5,1) 1.9s forwards;
+  animation: fade .3s ease 1.6s 1 forwards;
 }
 .auth-art .ln-grid{
-  stroke: var(--line);
+  stroke: #E2E8F0;
   stroke-width: 1;
   stroke-dasharray: 2 3;
-  opacity: 0;
-  animation: fade 1s ease .9s forwards;
 }
-.auth-art .ln-lbl{
-  font-family: var(--f-mono);
-  font-size: 10px;
-  fill: var(--muted);
-  opacity: 0;
-  animation: fade 1s ease 1.4s forwards;
+.auth-art figcaption{
+  font-size: 12px; color: var(--muted); margin-top: 6px; text-align: right;
 }
+.auth-art{ margin: 28px 0 0; }
 @keyframes draw { to { stroke-dashoffset: 0; } }
 @keyframes fade { to { opacity: 1; } }
-@keyframes pop  { 0% { opacity: 0; transform: scale(0);} 60% { transform: scale(1.3);} 100% { opacity: 1; transform: scale(1);} }
+@media (prefers-reduced-motion: reduce){
+  .auth::before, .auth-side, .auth-card{ animation: none !important; }
+  .auth-art .ln-stroke{ animation:none !important; stroke-dashoffset:0; }
+  .auth-art .ln-area, .auth-art .ln-dot{ animation:none !important; opacity:1; }
+}
 .auth-features{
   display: grid; gap: 10px;
   margin-top: 28px;
@@ -307,7 +320,20 @@ input:focus, textarea:focus, select:focus{outline:none; border-color:var(--accen
 }
 .auth-sub{color:var(--muted); font-size:15px; margin:0 0 28px;}
 .field{display:block; margin-bottom:16px;}
-.field > span{display:block; font-size:13px; color:var(--muted); margin-bottom:6px;}
+.field > span, .field > label{display:block; font-size:13px; color:var(--ink-2); margin-bottom:6px; font-weight:500;}
+.pass-wrap{position:relative;}
+.pass-wrap input{padding-right:48px;}
+.pass-toggle{position:absolute; right:4px; top:50%; transform:translateY(-50%); width:40px; height:40px; display:grid; place-items:center; border-radius:8px; color:var(--muted);}
+.pass-toggle:hover{color:var(--ink); background:var(--surface-2);}
+.pass-toggle:focus-visible{outline:2px solid var(--accent); outline-offset:1px;}
+.pass-toggle svg{width:20px; height:20px;}
+.pass-toggle .ic-hide{display:none;}
+.pass-toggle[aria-pressed="true"] .ic-show{display:none;}
+.pass-toggle[aria-pressed="true"] .ic-hide{display:block;}
+.field-hint{font-size:12.5px; color:var(--muted); margin:6px 0 0;}
+.field-err{font-size:12.5px; color:var(--loss); margin:6px 0 0;}
+input[aria-invalid="true"]{border-color:var(--loss);}
+#authBtn[aria-busy="true"]{opacity:.75; cursor:progress;}
 .auth-foot{text-align:center; margin-top:18px; font-size:14px; color:var(--muted);}
 .auth-foot button{color:var(--accent); font-weight:600;}
 .auth-foot button:hover{text-decoration:underline;}
@@ -669,8 +695,7 @@ input:focus, textarea:focus, select:focus{outline:none; border-color:var(--accen
 
 /* Animação de "aparecer ao descer a tela" - usa IntersectionObserver */
 .reveal{
-  opacity: 0;
-  transform: translateY(20px);
+  /* visível por padrão: falha de JS/IntersectionObserver não esconde conteúdo */
   transition: opacity .7s cubic-bezier(.2,.6,.2,1), transform .7s cubic-bezier(.2,.6,.2,1);
   will-change: opacity, transform;
 }
@@ -1896,6 +1921,74 @@ details.tip.action .tip-tag{color: var(--accent);}
 .bazin-list .tk{font-weight:700;color:var(--ink);min-width:62px;font-size:14px;}
 .bazin-list .nm{flex:1;color:var(--ink-2);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .bazin-list .tp{font-size:10.5px;font-weight:600;color:#047857;background:#ECFDF5;padding:2px 7px;border-radius:999px;}
+
+/* ===== Refino final ===== */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;}
+.vis-btn{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 12px;border-radius:999px;
+  border:1px solid var(--line-strong);background:#fff;color:var(--ink-2);font-size:13px;font-weight:500;}
+.vis-btn:hover{color:var(--ink);border-color:#CBD5E1;}
+.vis-btn:focus-visible,.icon-btn:focus-visible,.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+.vis-btn svg{width:17px;height:17px;}
+.vis-btn .ic-eye{display:none;}
+.vis-btn[aria-pressed="true"] .ic-eye{display:block;}
+.vis-btn[aria-pressed="true"] .ic-eye-off{display:none;}
+@media (max-width:480px){ .vis-btn .vis-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;} .vis-btn{padding:0 10px;} }
+
+.quote-status{margin:4px 0 12px;font-family:var(--f-sans);font-size:12.5px;font-weight:500;color:var(--muted);letter-spacing:0;text-transform:none;display:inline-flex;align-items:center;gap:6px;text-align:right;}
+.quote-status .qdot{width:7px;height:7px;border-radius:50%;background:#94A3B8;flex-shrink:0;}
+.quote-status.fresh .qdot{background:var(--accent);}
+.quote-status.stale .qdot,.quote-status.nodate .qdot{background:var(--amber);}
+.quote-status.failed .qdot{background:var(--loss);}
+
+.save-banner{max-width:1200px;margin:12px auto 0;padding:12px 16px;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;
+  background:#FFF7ED;border:1px solid #FED7AA;color:#9A3412;border-radius:12px;font-size:14px;}
+.save-banner[hidden],.load-error[hidden]{display:none;}
+.btn-sm{padding:8px 14px;font-size:13.5px;}
+.load-error{max-width:560px;margin:48px auto;padding:28px 24px;background:#fff;border:1px solid #F1F5F9;border-radius:16px;box-shadow:var(--shadow-sm);text-align:center;}
+.load-error h2{font-size:20px;margin:0 0 8px;color:var(--ink);}
+.load-error p{color:var(--ink-2);font-size:14.5px;margin:0 0 18px;}
+#app.load-failed .dash,#app.load-failed .save-banner{display:none;}
+.save-banner,.load-error{margin-left:16px;margin-right:16px;}
+@media (min-width:1232px){ .save-banner{margin-left:auto;margin-right:auto;} }
+@media (min-width:592px){ .load-error{margin-left:auto;margin-right:auto;} }
+
+/* Entrada discreta dos cards principais — só uma vez, conteúdo visível por padrão */
+html.dash-enter .dash > *{animation:cardIn .26s ease-out both;}
+html.dash-enter .dash > *:nth-child(2){animation-delay:.03s}
+html.dash-enter .dash > *:nth-child(3){animation-delay:.06s}
+html.dash-enter .dash > *:nth-child(4){animation-delay:.09s}
+html.dash-enter .dash > *:nth-child(n+5){animation-delay:.12s}
+@keyframes cardIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* Proventos estimados */
+.dcal-vertical .vnote{font-size:12px;color:var(--muted);margin:8px 0 0;line-height:1.45;}
+.dcal-vertical .vsec{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:16px 0 4px;}
+.dcal-vertical .vdate.nodate{background:#F1F5F9;}
+.dcal-vertical .vdate.nodate .d{color:var(--muted);font-size:15px;}
+.dcal-vertical .vassets li{flex-wrap:wrap;}
+.dcal-vertical .vassets .src{flex-basis:100%;font-size:11.5px;color:var(--muted);}
+
+/* Bazin editável */
+.bazin-warn{font-size:12.5px;color:#92400E;background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:8px 12px;margin:0 0 14px;}
+.bazin-fields{align-items:end;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0 0 14px;}
+@media (max-width:560px){ .bazin-fields{grid-template-columns:1fr;} }
+.bazin-fields label{display:block;font-size:12.5px;color:var(--ink-2);font-weight:500;}
+.bazin-fields input{margin-top:4px;}
+.bazin-formula{font-size:12.5px;color:var(--muted);margin:0 0 12px;}
+.bazin-formula code{font-family:var(--f-mono);font-size:12px;background:var(--surface-2);padding:2px 6px;border-radius:6px;color:var(--ink-2);}
+.bazin-margem.neutro{background:var(--surface-2);color:var(--ink-2);}
+
+/* Sleep Score e projeção */
+.sleep-how{margin-top:8px;font-size:12.5px;color:var(--ink-2);}
+.sleep-how summary{cursor:pointer;color:var(--accent);font-weight:600;}
+.sleep-how p{margin:6px 0 0;line-height:1.45;}
+.sleep-body .tag.vazio{background:var(--surface-2);color:var(--muted);}
+.indep-premissas{margin:12px 0 0;padding:0 0 0 18px;font-size:12.5px;color:var(--muted);line-height:1.5;}
+
+@media (min-width:1024px){ .dash-bazin .bazin-fields{grid-template-columns:1fr;} }
+input, textarea, select{border-color:var(--line-strong);}
+/* Painéis modais */
+.sheet:focus{outline:none;}
 </style>
 </head>
 <body>
@@ -1904,49 +1997,34 @@ details.tip.action .tip-tag{color: var(--accent);}
      LOGIN / CADASTRO
      ========================================================================= -->
 <section class="auth" id="auth">
-  <!-- Painel lateral com headline + ilustração (só em desktop) -->
+  <!-- Apresentação (desktop). No celular fica oculta para priorizar o formulário. -->
   <aside class="auth-side">
-    <div class="auth-eyebrow"><span class="pulse"></span>Rendum · dados em tempo real</div>
-    <h2 class="auth-headline">Investir com <em>previsibilidade</em>. Dormir tranquilo.</h2>
-    <p class="auth-tag">
-      Acompanhe FIIs, ações e renda fixa num só lugar. Simule aportes, veja seu
-      patrimônio crescer e receba dicas feitas pro seu perfil.
-    </p>
-    <!-- Ilustração animada: linha de crescimento que se desenha -->
-    <div class="auth-art">
-      <svg viewBox="0 0 420 180" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-        <!-- grid -->
+    <div class="auth-eyebrow">Rendum · Cotações atualizadas periodicamente</div>
+    <h2 class="auth-headline">Sua carteira clara. Seu próximo passo <em>consciente</em>.</h2>
+    <p class="auth-tag">Acompanhe seus investimentos, organize seus aportes e visualize sua evolução em um só lugar.</p>
+    <figure class="auth-art">
+      <svg viewBox="0 0 420 180" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
         <line class="ln-grid" x1="30" y1="40"  x2="400" y2="40"/>
         <line class="ln-grid" x1="30" y1="90"  x2="400" y2="90"/>
         <line class="ln-grid" x1="30" y1="140" x2="400" y2="140"/>
-        <!-- labels -->
-        <text class="ln-lbl" x="18" y="43"  text-anchor="end">R$10k</text>
-        <text class="ln-lbl" x="18" y="93"  text-anchor="end">R$5k</text>
-        <text class="ln-lbl" x="18" y="143" text-anchor="end">R$0</text>
-        <!-- área sombreada embaixo da linha -->
-        <path class="ln-area" d="M30,140 C70,135 100,125 130,120 S180,100 220,85 S280,55 320,45 S380,25 400,22 L400,160 L30,160 Z"/>
-        <!-- linha de crescimento -->
-        <path class="ln-stroke" d="M30,140 C70,135 100,125 130,120 S180,100 220,85 S280,55 320,45 S380,25 400,22"/>
-        <!-- ponto final pulsante -->
-        <circle class="ln-dot" cx="400" cy="22" r="5"/>
+        <path class="ln-area" d="M30,140 L58,133 L82,137 L108,124 L132,128 L158,113 L182,117 L208,100 L232,105 L258,87 L282,92 L308,72 L332,77 L358,57 L382,61 L400,46 L400,160 L30,160 Z"/>
+        <path class="ln-stroke" pathLength="1" d="M30,140 L58,133 L82,137 L108,124 L132,128 L158,113 L182,117 L208,100 L232,105 L258,87 L282,92 L308,72 L332,77 L358,57 L382,61 L400,46"/>
+        <circle class="ln-dot" cx="400" cy="46" r="4.5"/>
       </svg>
-    </div>
+      <figcaption>Simulação ilustrativa</figcaption>
+    </figure>
     <ul class="auth-features">
       <li>
-        <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5 11-11"/></svg></span>
-        <span>Cotações atualizadas automaticamente durante o pregão.</span>
+        <span class="check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5 11-11"/></svg></span>
+        <span>FIIs, ações, Tesouro Direto, CDB, LCI e LCA na mesma visão.</span>
       </li>
       <li>
-        <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5 11-11"/></svg></span>
-        <span>Dicas e perfil de investidor personalizados pra você.</span>
+        <span class="check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5 11-11"/></svg></span>
+        <span>Em dias úteis, das 10h às 18h, o sistema tenta atualizar as cotações a cada 5 minutos. Se a fonte não responder, a última cotação disponível continua sendo exibida com a data dela.</span>
       </li>
       <li>
-        <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5 11-11"/></svg></span>
-        <span>FIIs, ações, Tesouro Direto, CDB, LCI/LCA — tudo junto.</span>
-      </li>
-      <li>
-        <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5 11-11"/></svg></span>
-        <span>Grátis. Sem anúncios. Seus dados ficam só com você.</span>
+        <span class="check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5 11-11"/></svg></span>
+        <span>Sua carteira fica armazenada na sua conta e só é acessada com seu login.</span>
       </li>
     </ul>
   </aside>
@@ -1961,18 +2039,27 @@ details.tip.action .tip-tag{color: var(--accent);}
       </div>
 
       <h1 class="auth-title" id="authTitle">Entrar</h1>
-      <p class="auth-sub" id="authSub">Fundos imobiliários, Tesouro Selic e ações — em um só lugar.</p>
+      <p class="auth-sub" id="authSub">Entre para acompanhar sua carteira.</p>
 
-      <form id="authForm" autocomplete="on" novalidate>
-        <label class="field">
-          <span>E-mail</span>
-          <input id="email" type="email" required autocomplete="email" placeholder="voce@email.com">
-        </label>
-        <label class="field">
-          <span id="passLabel">Senha</span>
-          <input id="password" type="password" required autocomplete="current-password" placeholder="mínimo 8 caracteres">
-        </label>
-        <p class="err" id="authErr"></p>
+      <form id="authForm" novalidate>
+        <div class="field">
+          <label for="email">E-mail</label>
+          <input id="email" name="email" type="email" required autocomplete="email" inputmode="email" placeholder="voce@email.com">
+          <p class="field-err" id="emailErr" hidden></p>
+        </div>
+        <div class="field">
+          <label for="password" id="passLabel">Senha</label>
+          <div class="pass-wrap">
+            <input id="password" name="password" type="password" required autocomplete="current-password" placeholder="Sua senha">
+            <button type="button" class="pass-toggle" id="passToggle" aria-controls="password" aria-pressed="false" aria-label="Mostrar senha" title="Mostrar senha">
+              <svg class="ic-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="ic-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 3l18 18"/><path d="M10.6 5.1A10.8 10.8 0 0 1 12 5c6.4 0 10 7 10 7a17.6 17.6 0 0 1-3.2 4.1M6.6 6.6A17.4 17.4 0 0 0 2 12s3.6 7 10 7a10 10 0 0 0 5.4-1.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>
+            </button>
+          </div>
+          <p class="field-hint" id="passHint" hidden>Use pelo menos 8 caracteres.</p>
+          <p class="field-err" id="passErr" hidden></p>
+        </div>
+        <p class="err" id="authErr" role="alert" aria-live="assertive"></p>
         <button class="btn btn-full" id="authBtn" type="submit">Entrar</button>
       </form>
 
@@ -1997,6 +2084,11 @@ details.tip.action .tip-tag{color: var(--accent);}
         <span>Rendum</span>
       </div>
       <div class="topbar-end">
+        <button type="button" class="vis-btn" id="visBtn" aria-pressed="false">
+          <svg class="ic-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg class="ic-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 3l18 18"/><path d="M10.6 5.1A10.8 10.8 0 0 1 12 5c6.4 0 10 7 10 7a17.6 17.6 0 0 1-3.2 4.1M6.6 6.6A17.4 17.4 0 0 0 2 12s3.6 7 10 7a10 10 0 0 0 5.4-1.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>
+          <span class="vis-label" id="visLabel">Ocultar valores</span>
+        </button>
         <button class="icon-btn" id="logoutBtn" aria-label="Sair" title="Sair">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
         </button>
@@ -2004,7 +2096,18 @@ details.tip.action .tip-tag{color: var(--accent);}
     </div>
   </header>
 
-  <main class="dash">
+  <div class="save-banner" id="saveBanner" role="alert" hidden>
+    <span id="saveBannerText">Não foi possível salvar suas últimas alterações. Elas continuam nesta tela.</span>
+    <button type="button" class="btn btn-sm" id="saveRetryBtn">Tentar salvar de novo</button>
+  </div>
+
+  <div class="load-error" id="loadError" role="alert" hidden>
+    <h2>Não foi possível carregar sua carteira</h2>
+    <p>Para evitar alterações sobre dados desconhecidos, a carteira fica indisponível até o carregamento funcionar. Verifique sua conexão e tente de novo.</p>
+    <button type="button" class="btn" id="loadRetryBtn">Tentar de novo</button>
+  </div>
+
+  <main class="dash" id="dash">
 
     <!-- LINHA 1 — Smart Insights (largura total) -->
     <div class="dash-row1">
@@ -2018,12 +2121,11 @@ details.tip.action .tip-tag{color: var(--accent);}
     <section class="dash-panel">
       <div class="hero-income">
         <div class="eyebrow">
-          <span class="live-dot" aria-hidden="true"></span>
-          <span>— Renda projetada deste mês</span>
-          <span id="heroUpd" style="margin-left:auto;letter-spacing:.1em;"></span>
+          <span>Renda projetada deste mês</span>
         </div>
         <h1 class="income-value num" id="rendaValue">R$ 0,00</h1>
         <p class="income-meta" id="rendaMeta">—</p>
+        <p class="quote-status" id="heroUpd" aria-live="polite"></p>
         <div class="pat-strip">
           <span class="pat-k">Patrimônio</span>
           <span class="pat-v num" id="heroValue">R$ 0,00</span>
@@ -2330,7 +2432,14 @@ const PERGUNTAS = [
 /* ---------------------------------------------------------------- helpers */
 const $ = (id) => document.getElementById(id);
 const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
-const brl = new Intl.NumberFormat('pt-BR', { style:'currency', currency:'BRL' });
+const brlRaw = new Intl.NumberFormat('pt-BR', { style:'currency', currency:'BRL' });
+// Ocultar valores: todo texto monetário da interface passa por brl.format.
+// Com valores ocultos devolve uma máscara — o valor real não vai pro DOM
+// (nem para textos acessíveis/tooltips). Campos editáveis não usam brl.format.
+let valuesHidden = false;
+try { valuesHidden = localStorage.getItem('rendum.ocultarValores') === '1'; } catch(e){}
+const MASK = 'R$ ••••';
+const brl = { format: (v) => valuesHidden ? MASK : brlRaw.format(v) };
 const pct = new Intl.NumberFormat('pt-BR', { minimumFractionDigits:2, maximumFractionDigits:2 });
 // Parse de valor BRL formatado: aceita "R$ 1.234,56", "1234,56", "1234.56", "1234"
 const toNum = (v) => {
@@ -2387,47 +2496,170 @@ try { localStorage.removeItem('tema'); } catch(e){}
 try { document.documentElement.removeAttribute('data-theme'); } catch(e){}
 
 /* ---------------------------------------------------------------- login */
-$('toggleBtn').onclick = () => {
-  authMode = authMode === 'login' ? 'register' : 'login';
+// Mostrar/ocultar senha — não envia o formulário, preserva valor e cursor.
+const passInp = $('password'), passToggle = $('passToggle');
+function setPassVisible(visible){
+  const focused = document.activeElement === passInp;
+  let ss = null, se = null;
+  try { ss = passInp.selectionStart; se = passInp.selectionEnd; } catch(e){}
+  passInp.type = visible ? 'text' : 'password';
+  passToggle.setAttribute('aria-pressed', visible ? 'true' : 'false');
+  const lbl = visible ? 'Ocultar senha' : 'Mostrar senha';
+  passToggle.setAttribute('aria-label', lbl);
+  passToggle.title = lbl;
+  const restore = () => { if (ss != null){ try { passInp.setSelectionRange(ss, se); } catch(e){} } };
+  restore();
+  if (focused) passInp.focus();
+  // o Chrome reposiciona o cursor depois da troca de type; restaura de novo
+  setTimeout(restore, 0);
+}
+// mousedown sem default: o foco (e o cursor) ficam no campo ao clicar no olho
+passToggle.addEventListener('mousedown', (e) => { if (document.activeElement === passInp) e.preventDefault(); });
+passToggle.addEventListener('click', (e) => { e.preventDefault(); setPassVisible(passInp.type === 'password'); });
+
+// Erros por campo (aria-invalid + aria-describedby só com o que está visível)
+const AUTH_FIELDS = { email: { inp: $('email'), err: $('emailErr') }, password: { inp: passInp, err: $('passErr') } };
+function syncDescribedBy(){
+  const e = AUTH_FIELDS.email;
+  e.inp.toggleAttribute('aria-describedby', false);
+  const both = $('authErr').dataset.both === '1' && $('authErr').textContent;
+  const eIds = []; if (!e.err.hidden) eIds.push('emailErr'); if (both) eIds.push('authErr');
+  if (eIds.length) e.inp.setAttribute('aria-describedby', eIds.join(' '));
+  const p = AUTH_FIELDS.password;
+  p.inp.toggleAttribute('aria-describedby', false);
+  const pIds = [];
+  if (!$('passHint').hidden) pIds.push('passHint');
+  if (!p.err.hidden) pIds.push('passErr');
+  if (both) pIds.push('authErr');
+  if (pIds.length) p.inp.setAttribute('aria-describedby', pIds.join(' '));
+}
+function setFieldError(name, msg){
+  const f = AUTH_FIELDS[name];
+  f.err.textContent = msg || '';
+  f.err.hidden = !msg;
+  if (msg) f.inp.setAttribute('aria-invalid', 'true'); else f.inp.removeAttribute('aria-invalid');
+  syncDescribedBy();
+}
+function setGeneralError(msg, markBoth){
+  const g = $('authErr');
+  g.textContent = msg || '';
+  g.dataset.both = markBoth && msg ? '1' : '';
+  if (markBoth && msg){
+    for (const f of Object.values(AUTH_FIELDS)) f.inp.setAttribute('aria-invalid', 'true');
+  }
+  syncDescribedBy();
+}
+function clearAuthErrors(){
+  setFieldError('email', ''); setFieldError('password', '');
+  setGeneralError('');
+}
+for (const name of Object.keys(AUTH_FIELDS)){
+  AUTH_FIELDS[name].inp.addEventListener('input', () => {
+    if (!AUTH_FIELDS[name].err.hidden) setFieldError(name, '');
+    if ($('authErr').dataset.both === '1'){ for (const f of Object.values(AUTH_FIELDS)) f.inp.removeAttribute('aria-invalid'); setGeneralError(''); }
+  });
+}
+
+function applyAuthMode(){
   const reg = authMode === 'register';
   $('authTitle').textContent = reg ? 'Criar conta' : 'Entrar';
-  $('authSub').textContent = reg ? 'Em menos de um minuto você começa a acompanhar.' : 'Fundos imobiliários, Tesouro Selic e ações — em um só lugar.';
+  $('authSub').textContent = reg ? 'Crie sua conta para começar a organizar sua carteira.' : 'Entre para acompanhar sua carteira.';
   $('authBtn').textContent = reg ? 'Criar conta' : 'Entrar';
   $('toggleText').textContent = reg ? 'Já tem conta?' : 'Ainda não tem conta?';
   $('toggleBtn').textContent = reg ? 'Entrar' : 'Criar conta';
-  $('password').autocomplete = reg ? 'new-password' : 'current-password';
-  $('password').placeholder = reg ? 'mínimo 8 caracteres' : 'sua senha';
-  $('authErr').textContent = '';
+  passInp.autocomplete = reg ? 'new-password' : 'current-password';
+  passInp.placeholder = reg ? 'Mínimo de 8 caracteres' : 'Sua senha';
+  $('passHint').hidden = !reg;
+  setPassVisible(false);   // sempre volta a ocultar ao trocar de modo
+  clearAuthErrors();
+}
+$('toggleBtn').onclick = () => {
+  if (authBusy) return;
+  authMode = authMode === 'login' ? 'register' : 'login';
+  applyAuthMode();
 };
 
+let authBusy = false;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 $('authForm').onsubmit = async (e) => {
   e.preventDefault();
-  const email = $('email').value.trim(), password = $('password').value;
-  $('authErr').textContent = ''; $('authBtn').disabled = true;
+  if (authBusy) return;                 // impede envio duplicado
+  const reg = authMode === 'register';
+  const email = $('email').value.trim(), password = passInp.value;
+  clearAuthErrors();
+
+  // validação local (mantém o que foi digitado)
+  let firstBad = null;
+  if (!email){ setFieldError('email', 'Informe seu e-mail.'); firstBad = firstBad || $('email'); }
+  else if (!EMAIL_RE.test(email)){ setFieldError('email', 'Confira o formato do e-mail (ex.: voce@email.com).'); firstBad = firstBad || $('email'); }
+  if (!password){ setFieldError('password', 'Informe sua senha.'); firstBad = firstBad || passInp; }
+  else if (reg && password.length < 8){ setFieldError('password', 'A senha precisa ter pelo menos 8 caracteres.'); firstBad = firstBad || passInp; }
+  if (firstBad){ firstBad.focus(); return; }
+
+  const btn = $('authBtn');
+  authBusy = true;
+  btn.disabled = true;
+  btn.setAttribute('aria-busy', 'true');
+  btn.textContent = reg ? 'Criando conta…' : 'Entrando…';
   try {
-    await (authMode === 'register' ? api.register(email, password) : api.login(email, password));
+    await (reg ? api.register(email, password) : api.login(email, password));
     await enterApp();
   } catch (err) {
-    const msgs = {
-      email_em_uso: 'Esse e-mail já tem conta. Faça login.',
-      credenciais_invalidas: 'E-mail ou senha incorretos.',
-      senha_curta: 'A senha precisa de ao menos 8 caracteres.',
-      email_invalido: 'E-mail inválido.',
-      dados_invalidos: 'Confira os dados e tente de novo.',
-    };
-    $('authErr').textContent = msgs[err.data?.error] || 'Não foi possível concluir. Tente de novo.';
-  } finally { $('authBtn').disabled = false; }
+    const code = err && err.data && err.data.error;
+    if (code === 'email_invalido'){ setFieldError('email', 'E-mail inválido. Confira o endereço digitado.'); $('email').focus(); }
+    else if (code === 'email_em_uso'){ setFieldError('email', 'Este e-mail já tem conta. Use “Entrar”.'); $('email').focus(); }
+    else if (code === 'senha_curta'){ setFieldError('password', 'A senha precisa ter pelo menos 8 caracteres.'); passInp.focus(); }
+    else if (code === 'credenciais_invalidas'){ setGeneralError('E-mail ou senha incorretos.', true); passInp.focus(); }
+    else if (err && err.status === 429 || code === 'muitas_tentativas'){ setGeneralError('Muitas tentativas em pouco tempo. Aguarde alguns minutos antes de tentar de novo.'); }
+    else if (!err || err.status == null){ setGeneralError('Não foi possível conectar ao servidor. Verifique sua internet e tente de novo.'); }
+    else if (err.status >= 500){ setGeneralError('O servidor não conseguiu concluir agora. Tente de novo em instantes.'); }
+    else if (code === 'dados_invalidos'){ setGeneralError('Confira os dados e tente de novo.'); }
+    else { setGeneralError('Não foi possível concluir. Tente de novo.'); }
+  } finally {
+    authBusy = false;
+    btn.disabled = false;
+    btn.removeAttribute('aria-busy');
+    btn.textContent = authMode === 'register' ? 'Criar conta' : 'Entrar';
+  }
 };
+applyAuthMode();
 
 $('logoutBtn').onclick = async () => { await api.logout().catch(()=>{}); location.reload(); };
 
+let _appReady = false;      // carteira carregada com sucesso
+let _dashAnimated = false;  // entrada dos cards roda uma única vez
 async function enterApp(){
-  try { state = await api.getPortfolio(); }
-  catch { state = { version:0, positions:[], profile:null, hist:[] }; }
   $('auth').classList.add('hide');
   $('app').classList.remove('hide');
-  render();  // render imediato com estado atual
-  countUpHero();
+  const app = $('app');
+  let snap;
+  try {
+    snap = await api.getPortfolio();
+  } catch (err) {
+    if (err && err.status === 401){
+      // sessão expirou: volta pro login sem montar carteira
+      $('app').classList.add('hide');
+      $('auth').classList.remove('hide');
+      return;
+    }
+    // Não transforma a falha em carteira vazia: bloqueia o painel e oferece retry.
+    _appReady = false;
+    app.classList.add('load-failed');
+    $('loadError').hidden = false;
+    $('loadRetryBtn').focus();
+    return;
+  }
+  state = snap;
+  _appReady = true;
+  app.classList.remove('load-failed');
+  $('loadError').hidden = true;
+  applyValuesVisibility();
+  if (!_dashAnimated && !matchMedia('(prefers-reduced-motion: reduce)').matches){
+    _dashAnimated = true;
+    document.documentElement.classList.add('dash-enter');
+    setTimeout(() => document.documentElement.classList.remove('dash-enter'), 700);
+  }
+  render();
   setupScrollReveal();
   // Carrega taxas depois (não bloqueia render inicial). Re-renderiza só se
   // as taxas mudarem valor em relação ao fallback — evita flicker desnecessário.
@@ -2436,6 +2668,33 @@ async function enterApp(){
     if (JSON.stringify(TAXAS) !== taxasAntes) render();
   });
 }
+
+$('loadRetryBtn').onclick = async () => {
+  const b = $('loadRetryBtn');
+  b.disabled = true; b.textContent = 'Carregando…';
+  try { await enterApp(); }
+  finally { b.disabled = false; b.textContent = 'Tentar de novo'; }
+};
+
+// Pausa a decoração contínua quando a aba está oculta
+document.addEventListener('visibilitychange', () => {
+  document.documentElement.classList.toggle('page-hidden', document.hidden);
+});
+
+/* ---------------------------------------------------------------- ocultar valores */
+function applyValuesVisibility(){
+  const b = $('visBtn');
+  b.setAttribute('aria-pressed', valuesHidden ? 'true' : 'false');
+  $('visLabel').textContent = valuesHidden ? 'Mostrar valores' : 'Ocultar valores';
+  b.title = valuesHidden ? 'Mostrar valores' : 'Ocultar valores';
+}
+$('visBtn').onclick = () => {
+  valuesHidden = !valuesHidden;
+  try { localStorage.setItem('rendum.ocultarValores', valuesHidden ? '1' : '0'); } catch(e){}
+  applyValuesVisibility();
+  if (_appReady) render();
+};
+applyValuesVisibility();
 
 // Observer global pra elementos .reveal
 let _revealObserver = null;
@@ -2464,11 +2723,21 @@ function setupScrollReveal(){
 // campo `version` para o atual do servidor, re-tentando o save. Isso
 // implementa "last write wins" — adequado pro caso de uso em que o mesmo
 // usuário mexe num aparelho só por vez.
-async function persist(){
+let _unsaved = false;
+let _persistChain = Promise.resolve();
+// Serializa os salvamentos: nunca dois PUT simultâneos com a mesma versão.
+function persist(){
+  const run = _persistChain.then(() => _persistOnce());
+  _persistChain = run.catch(() => {});
+  return run;
+}
+async function _persistOnce(){
+  if (!_appReady) return false;   // nunca salva sobre estado desconhecido
   for (let tentativa = 0; tentativa < 3; tentativa++) {
     try {
       const r = await api.savePortfolio(state);
       state.version = r.version;
+      setUnsaved(false);
       const total = totals().atual;
       if (total > 0) api.snapshot(total).catch(()=>{});
       return true;
@@ -2483,16 +2752,42 @@ async function persist(){
         } catch { /* se não conseguiu nem buscar, cai no erro abaixo */ }
       }
       if (err.status === 409) {
-        toast('Carteira foi alterada em outro aparelho — recarrego aqui');
-        try { state = await api.getPortfolio(); render(); } catch {}
+        toast('Carteira foi alterada em outro aparelho — recarreguei a versão salva');
+        try { state = await api.getPortfolio(); setUnsaved(false); render(); } catch { setUnsaved(true); }
         return false;
       }
-      toast('Não consegui salvar — tente de novo');
+      setUnsaved(true);
       return false;
     }
   }
+  setUnsaved(true);
   return false;
 }
+function setUnsaved(v){
+  _unsaved = v;
+  const b = $('saveBanner'); if (b) b.hidden = !v;
+}
+// Salva e só então confirma. Em falha, as alterações continuam na tela e o
+// banner oferece "Tentar salvar de novo" (reenvia a carteira inteira — não
+// reaplica a operação, então não duplica).
+async function salvar(msgOk){
+  const ok = await persist();
+  if (ok === true) toast(msgOk);
+  else if (_unsaved) toast('Não foi possível salvar. Suas alterações continuam aqui.');
+  return ok === true;
+}
+$('saveRetryBtn').onclick = async () => {
+  const b = $('saveRetryBtn');
+  if (b.disabled) return;
+  b.disabled = true; b.textContent = 'Salvando…';
+  const ok = await persist();
+  b.disabled = false; b.textContent = 'Tentar salvar de novo';
+  if (ok === true) toast('Alterações salvas');
+  else toast('Ainda não foi possível salvar. Tente de novo em instantes.');
+};
+window.addEventListener('beforeunload', (e) => {
+  if (_unsaved){ e.preventDefault(); e.returnValue = ''; }
+});
 
 /* ---------------------------------------------------------------- cálculos */
 // Enriquece posição: FII/ação OU renda fixa
@@ -2608,7 +2903,7 @@ function render(){
       const e = enrich(p);
       return (p.kind === 'fii' || p.kind === 'acao') && e.renda > 0;
     }).length;
-    $('rendaMeta').textContent = `${pagantes} ${pagantes===1?'ativo pagante':'ativos pagantes'} · próximos pagamentos à direita.`;
+    $('rendaMeta').textContent = `Estimativa com ${pagantes} ${pagantes===1?'ativo pagante':'ativos pagantes'}. Veja os proventos estimados por data.`;
   } else {
     $('rendaMeta').textContent = n > 0
       ? 'Nenhum ativo seu paga dividendo ainda. Adicione um FII pra começar.'
@@ -2617,7 +2912,6 @@ function render(){
 
   // Patrimônio sutil (strip de baixo do hero)
   $('heroValue').textContent = brl.format(t.atual);
-  $('heroValue').dataset.target = t.atual;
   const patDelta = $('patDelta');
   if (n === 0 || ganho === 0){
     patDelta.textContent = '';
@@ -2651,8 +2945,48 @@ function render(){
   renderIndependence(t);
   renderBazin();
 
-  $('heroUpd').textContent = n > 0 ? 'ao vivo' : '';
+  renderQuoteStatus();
 }
+
+// Situação das cotações com base em quotedAt (hora em que o servidor obteve a
+// cotação) — nunca a hora em que a tela carregou.
+function _fmtDataHora(d){
+  const hoje = new Date();
+  const mesmoDia = d.toDateString() === hoje.toDateString();
+  const hm = d.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+  return mesmoDia ? `hoje às ${hm}` : `${d.toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit' })} às ${hm}`;
+}
+function renderQuoteStatus(){
+  const box = $('heroUpd'); if (!box) return;
+  const mkt = state.positions.filter(p => p.ticker);
+  if (!mkt.length){ box.className = 'quote-status'; box.innerHTML = ''; return; }
+  const datas = [], semData = [];
+  for (const p of mkt){
+    const d = p.quotedAt ? new Date(p.quotedAt) : null;
+    if (d && !isNaN(d)) datas.push(d); else semData.push(p);
+  }
+  const STALE_MS = 24 * 60 * 60 * 1000;
+  let cls = 'quote-status', txt;
+  if (!datas.length){
+    cls += ' nodate'; txt = 'Cotações sem data disponível';
+  } else {
+    const maisAntiga = new Date(Math.min(...datas));
+    const maisRecente = new Date(Math.max(...datas));
+    const velhas = datas.filter(d => Date.now() - d > STALE_MS).length;
+    txt = `Cotações de ${_fmtDataHora(maisRecente)}`;
+    if (velhas){ cls += ' stale'; txt = `Cotação mais antiga: ${_fmtDataHora(maisAntiga)}`; }
+    else if (Date.now() - maisRecente < 30*60*1000) cls += ' fresh';
+    if (semData.length) { cls += semData.length && !velhas ? ' nodate' : ''; txt += ` · ${semData.length} sem cotação`; }
+  }
+  if (_lastRefresh && _lastRefresh.failed !== 0 && _lastRefresh.failed != null){
+    cls = 'quote-status failed';
+    txt += _lastRefresh.failed < 0 ? ' · última atualização falhou' : ` · ${_lastRefresh.failed} não ${_lastRefresh.failed===1?'atualizou':'atualizaram'} agora`;
+  }
+  box.className = cls;
+  box.innerHTML = '<span class="qdot" aria-hidden="true"></span>';
+  box.appendChild(document.createTextNode(txt));
+}
+
 
 // Empty state verde emerald, chamativo
 function renderEmptyState(){
@@ -2664,7 +2998,7 @@ function renderEmptyState(){
       <h2>Adicionar o primeiro ativo para destravar as projeções</h2>
       <p>Com um ativo já dá pra ver sua independência financeira, o calendário de dividendos e o seu Sleep Score.</p>
       <button class="btn-emerald" id="emptyAddBtn">+ Adicionar meu primeiro ativo</button>
-      <p class="hint">Comece com Tesouro Selic se não souber por onde — é seguro, líquido e paga todo mês.</p>
+      <p class="hint">Em dúvida sobre os tipos de ativo? O glossário no fim da página explica cada um.</p>
     </div>
   `;
   $('emptyAddBtn').onclick = () => $('addBtn').click();
@@ -2690,7 +3024,7 @@ function calcularSleepScore(positions){
     const e = enrich(p);
     return s + (e.atual || e.aplicado || 0);
   }, 0);
-  if (total === 0) return { score: 0, level: 'calmo', rendaFixaPct: 0, message: 'Carteira vazia — nada pra tirar seu sono.' };
+  if (total === 0) return { score: null, level: 'vazio', rendaFixaPct: 0, message: 'Adicione ativos para ver este indicador.' };
 
   let weighted = 0;
   let rfTotal = 0;
@@ -2705,37 +3039,48 @@ function calcularSleepScore(positions){
   let level, message;
   if (score >= 75){
     level = 'calmo';
-    message = 'Carteira estável. Oscilação do mercado dificilmente te acorda à noite.';
+    message = 'Pelos tipos de ativo, a carteira pende para renda fixa, que costuma oscilar menos que renda variável.';
   } else if (score >= 50){
     level = 'moderado';
-    message = 'Equilíbrio razoável. Em meses ruins oscila, mas tem lastro.';
+    message = 'Pelos tipos de ativo, a carteira combina renda fixa e renda variável.';
   } else {
     level = 'volatil';
-    message = 'Carteira concentrada em ativos voláteis. Pense em aumentar a reserva em renda fixa.';
+    message = 'Pelos tipos de ativo, a maior parte está em renda variável, que costuma oscilar mais.';
   }
   return { score, level, rendaFixaPct: total > 0 ? rfTotal/total : 0, message };
 }
 
 function renderSleepScore(){
   const r = calcularSleepScore(state.positions);
+  const vazio = r.score == null;
   const CIRC = 2 * Math.PI * 36;
-  const offset = CIRC - (r.score/100) * CIRC;
-  const html = `
-    <div class="sleep-ring">
-      <svg viewBox="0 0 86 86">
+  const offset = vazio ? CIRC : CIRC - (r.score/100) * CIRC;
+  const tag = vazio ? 'Sem dados'
+    : r.level === 'calmo' ? 'Tende a oscilar menos'
+    : r.level === 'moderado' ? 'Oscilação intermediária' : 'Tende a oscilar mais';
+  const box = $('sleepCard');
+  const key = String(r.score) + '|' + r.level;
+  if (box.dataset.key === key) return;   // evita recriar (preserva foco/estado)
+  box.dataset.key = key;
+  const howOpen = box.querySelector('details.sleep-how')?.open ? ' open' : '';
+  box.innerHTML = `
+    <div class="sleep-ring" role="img" aria-label="${vazio ? 'Sleep Score: sem dados' : 'Sleep Score: ' + r.score + ' de 100'}">
+      <svg viewBox="0 0 86 86" aria-hidden="true">
         <circle class="track" cx="43" cy="43" r="36"></circle>
-        <circle class="fill ${r.level}" cx="43" cy="43" r="36"
-          stroke-dasharray="${CIRC}" stroke-dashoffset="${offset}"></circle>
+        ${vazio ? '' : `<circle class="fill ${r.level}" cx="43" cy="43" r="36" stroke-dasharray="${CIRC}" stroke-dashoffset="${offset}"></circle>`}
       </svg>
-      <div class="label"><span class="n">${r.score}</span><span class="l">/100</span></div>
+      <div class="label" aria-hidden="true"><span class="n">${vazio ? '—' : r.score}</span>${vazio ? '' : '<span class="l">/100</span>'}</div>
     </div>
     <div class="sleep-body">
       <h4>Sleep Score</h4>
-      <span class="tag ${r.level}">${r.level === 'calmo' ? 'Calmo' : r.level === 'moderado' ? 'Moderado' : 'Volátil'}</span>
+      <span class="tag ${r.level}">${tag}</span>
       <p>${r.message}</p>
+      <details class="sleep-how"${howOpen}>
+        <summary>Como calculamos?</summary>
+        <p>É um indicador simplificado: cada tipo de ativo recebe uma nota fixa (ex.: Tesouro Selic 100, CDB 85, FII 60, ação 30) e a nota final é a média ponderada pelo valor de cada posição. Não mede a volatilidade histórica dos seus ativos nem garante estabilidade.</p>
+      </details>
     </div>
   `;
-  $('sleepCard').innerHTML = html;
 }
 
 // ---------- 2) Smart Insights ----------
@@ -2762,8 +3107,8 @@ function gerarInsights(positions){
 
   if (liquidez === 0){
     out.push({ tone:'attention', icon:'shield',
-      title:'Sua carteira ainda não tem reserva de emergência',
-      body:'Nenhum valor em Tesouro Selic ou CDB de liquidez. Esse é o lastro que deixa você dormir tranquilo em meses ruins.' });
+      title:'Nenhum Tesouro Selic ou CDB cadastrado',
+      body:'O Rendum só enxerga o que está cadastrado aqui. Se sua reserva de emergência está em outro lugar, tudo certo; se não, vale planejar uma. Lembre que nem todo CDB tem liquidez diária.' });
   }
 
   const concentrados = rv.filter(x => x.v / total > _CONC_LIMITE).sort((a,b) => b.v - a.v);
@@ -2784,13 +3129,13 @@ function gerarInsights(positions){
   if (soFii){
     out.push({ tone:'info', icon:'balance',
       title:'Sua carteira é 100% FII',
-      body:'FII paga renda mensal, mas oscila no curto prazo. Uma base em renda fixa traz previsibilidade.' });
+      body:'FIIs costumam pagar proventos mensais, mas a cota oscila no curto prazo. Combinar com renda fixa pode trazer mais previsibilidade.' });
   }
 
   if (!temRv && liquidez > 0){
     out.push({ tone:'good', icon:'shield',
-      title:'Base de segurança montada',
-      body:'Sua carteira está toda em renda fixa. Quando quiser renda mensal crescente, FIIs são o próximo passo natural.' });
+      title:'Carteira toda em renda fixa',
+      body:'Renda fixa costuma oscilar menos que renda variável, mas também tem riscos (emissor, prazo, liquidez). Se um dia quiser diversificar, compare as opções com calma.' });
   }
 
   if (new Date().getDate() <= 5){
@@ -2829,43 +3174,71 @@ function renderInsights(){
 // ---------- 3) Dividend Calendar (versão vertical estilo Nubank, pro aside) ----------
 const _MES_SIGLA = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
 
+// Lê uma data de calendário SEM fuso: "2026-09-15", "2026-09-15T00:00:00.000Z"
+// ou "15/09/2026" viram {y,m,d}. Qualquer outra coisa (ou data impossível) → null.
+function parseDataCalendario(v){
+  if (v == null || v === '') return null;
+  const str = String(v).trim();
+  let y, m, d, mt;
+  if ((mt = str.match(/^(\d{4})-(\d{2})-(\d{2})/))) { y = +mt[1]; m = +mt[2]; d = +mt[3]; }
+  else if ((mt = str.match(/^(\d{2})\/(\d{2})\/(\d{4})$/))) { d = +mt[1]; m = +mt[2]; y = +mt[3]; }
+  else return null;
+  if (m < 1 || m > 12 || d < 1) return null;
+  const diasNoMes = new Date(y, m, 0).getDate();
+  if (d > diasNoMes || y < 1990 || y > 2100) return null;
+  return { y, m, d };
+}
+
 function renderDividendCalendar(){
   const hoje = new Date();
-  const year = hoje.getFullYear(), month = hoje.getMonth();
-  const diasNoMes = new Date(year, month+1, 0).getDate();
-  const mesSigla = _MES_SIGLA[month];
+  const year = hoje.getFullYear(), month = hoje.getMonth() + 1;   // 1-12
+  const mesSigla = _MES_SIGLA[month-1];
+  const esc = (t) => String(t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const fmtData = (dt) => `${String(dt.d).padStart(2,'0')}/${String(dt.m).padStart(2,'0')}/${dt.y}`;
 
-  // Coleta FIIs/ações com dividendo. Projeta dia pelo p.dpag ou dia 15.
-  const items = [];
+  // Período apresentado: o mês atual. Cada item recebe a origem do valor e da data.
+  const doMes = [], semData = [], futuros = [];
   for (const p of state.positions){
     if (p.kind !== 'fii' && p.kind !== 'acao') continue;
     const e = enrich(p);
     if (!e.renda || e.renda <= 0) continue;
-    let diaPag = 15;
-    if (p.dpag){ try { diaPag = new Date(p.dpag).getDate(); } catch {} }
-    diaPag = Math.max(1, Math.min(diasNoMes, diaPag));
-    items.push({
+    const it = {
       ticker: p.ticker || p.nome,
-      sub: p.kind === 'fii' ? 'FII' : 'Ação',
-      dia: diaPag,
       valor: e.renda,
-    });
+      origemValor: p.d > 0 ? 'último provento registrado' : (p.kind === 'fii' ? 'estimado pelo segmento' : 'estimado pelo setor'),
+    };
+    const dt = parseDataCalendario(p.dpag);
+    if (dt && dt.y === year && dt.m === month){
+      it.dt = dt; it.origemData = 'data de pagamento registrada';
+      doMes.push(it);
+    } else if (dt && (dt.y > year || (dt.y === year && dt.m > month))){
+      it.dt = dt; futuros.push(it);           // outro mês: fora do total deste mês
+    } else {
+      // Sem data, data inválida ou de um mês anterior: não inventamos o dia.
+      it.nota = dt ? `último pagamento registrado em ${fmtData(dt)}` : (p.dpag ? 'data informada inválida' : 'sem data informada');
+      semData.push(it);
+    }
   }
-  // Agrupa por dia: um bloco "Dia X" com todos os ativos e o total do dia
+
+  // Agrupa os do mês por dia
   const porDia = new Map();
-  for (const it of items){
-    if (!porDia.has(it.dia)) porDia.set(it.dia, []);
-    porDia.get(it.dia).push(it);
+  for (const it of doMes){
+    if (!porDia.has(it.dt.d)) porDia.set(it.dt.d, []);
+    porDia.get(it.dt.d).push(it);
   }
   const grupos = [...porDia.entries()].sort((a,b) => a[0]-b[0])
     .map(([dia, lst]) => ({ dia, lst, soma: lst.reduce((s,x)=>s+x.valor,0) }));
-  const total = items.reduce((s,it)=>s+it.valor,0);
+  const somaSemData = semData.reduce((s,x)=>s+x.valor,0);
+  const total = grupos.reduce((s,g)=>s+g.soma,0) + somaSemData;
   const nomeMes = hoje.toLocaleDateString('pt-BR', { month:'long', year:'numeric' });
-  const esc = (t) => String(t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
-  const listaHtml = grupos.length === 0
-    ? `<div class="vempty">Nenhum pagamento previsto neste mês. Adicione um FII pagador pra começar.</div>`
-    : grupos.map(g => `
+  const itemLi = (x, extra) => `<li><span class="tk">${esc(x.ticker)}</span><span class="vv">${brl.format(x.valor)}</span><span class="src">Valor ${esc(x.origemValor)}${extra ? ' · ' + esc(extra) : ''}</span></li>`;
+
+  let listaHtml = '';
+  if (!grupos.length && !semData.length){
+    listaHtml = `<div class="vempty">Nenhum provento estimado para este mês. Adicione um FII ou ação pagadora para começar.</div>`;
+  } else {
+    listaHtml += grupos.map(g => `
       <div class="vitem vgroup${g.dia < hoje.getDate() ? ' past' : ''}">
         <div class="vdate">
           <div class="d">${String(g.dia).padStart(2,'0')}</div>
@@ -2873,20 +3246,37 @@ function renderDividendCalendar(){
         </div>
         <div class="vmain">
           <div class="vday">Dia ${g.dia}</div>
-          <ul class="vassets">${g.lst.map(x => `<li><span class="tk">${esc(x.ticker)}</span><span class="vv">${brl.format(x.valor)}</span></li>`).join('')}</ul>
+          <ul class="vassets">${g.lst.map(x => itemLi(x, x.origemData)).join('')}</ul>
         </div>
-        <div class="vamount"><span class="k">Total</span>${brl.format(g.soma)}</div>
-      </div>
-    `).join('');
+        <div class="vamount"><span class="k">Total do dia</span>${brl.format(g.soma)}</div>
+      </div>`).join('');
+    if (semData.length){
+      listaHtml += `
+      <div class="vitem vgroup">
+        <div class="vdate nodate"><div class="d">—</div><div class="m">${mesSigla}</div></div>
+        <div class="vmain">
+          <div class="vday">Data não informada</div>
+          <ul class="vassets">${semData.map(x => itemLi(x, x.nota)).join('')}</ul>
+        </div>
+        <div class="vamount"><span class="k">Subtotal</span>${brl.format(somaSemData)}</div>
+      </div>`;
+    }
+  }
+  if (futuros.length){
+    futuros.sort((a,b) => (a.dt.y - b.dt.y) || (a.dt.m - b.dt.m) || (a.dt.d - b.dt.d));
+    listaHtml += `<div class="vsec">Datas em meses seguintes (fora do total)</div>
+      <ul class="vassets">${futuros.map(x => itemLi(x, 'data registrada ' + fmtData(x.dt))).join('')}</ul>`;
+  }
 
   $('dcalBox').innerHTML = `
     <div class="vhead">
-      <h3>Próximos pagamentos</h3>
+      <h3>Proventos estimados</h3>
       <div class="mes">${nomeMes}</div>
       <div class="tot">
-        <span class="k">Total previsto</span>
+        <span class="k">Total estimado do mês</span>
         <span class="v">${brl.format(total)}</span>
       </div>
+      <p class="vnote">Estimativas, não pagamentos confirmados. Valores e datas podem mudar conforme os anúncios de cada ativo.</p>
     </div>
     <div class="vlist">${listaHtml}</div>
   `;
@@ -2926,13 +3316,13 @@ function _indepResultHtml(){
     : r.anos < 2 ? '1 ano'
     : `${r.anos} anos`;
   return `
-    <p class="lead">Nesse ritmo, você se torna independente em</p>
+    <p class="lead">Prazo estimado neste cenário</p>
     <p class="time">${tempo}</p>
     <p class="explain">
       ${_INDEP_STATE.custoMensal <= 0 ? 'Informe seus custos mensais pra calcular.'
         : r.possivel
-        ? `Com <b>${brl.format(r.patr)}</b> acumulados, a carteira passa a gerar <span class="lime">${brl.format(r.renda)}</span>/mês — o suficiente pros seus custos.`
-        : 'Nesse ritmo levaria mais de 50 anos. Tente aumentar o aporte mensal.'}
+        ? `Neste cenário, com <b>${brl.format(r.patr)}</b> acumulados, a renda passiva estimada seria de <span class="lime">${brl.format(r.renda)}</span>/mês, igual ou acima dos custos informados.`
+        : 'Neste cenário, o prazo passaria de 50 anos. Teste outros valores de aporte ou custo.'}
     </p>`;
 }
 
@@ -2959,7 +3349,11 @@ function renderIndependence(totals){
           </label>
         </div>
         <div class="indep-result" id="indepResult"></div>
-        <p class="indep-foot">Simulação com rentabilidade anual de 10% e yield passivo de 7% ao ano.</p>
+        <ul class="indep-premissas">
+          <li>Premissas fixas: rentabilidade de 10% ao ano sobre o patrimônio e yield (renda passiva) de 7% ao ano.</li>
+          <li>Valores nominais: o cálculo não desconta a inflação.</li>
+          <li>As premissas podem não se confirmar; o resultado é uma estimativa, não uma garantia.</li>
+        </ul>
       </div>
     `;
     $('indepCusto').addEventListener('input', (e) => { _INDEP_STATE.custoMensal = Math.max(0, Number(e.target.value) || 0); $('indepResult').innerHTML = _indepResultHtml(); });
@@ -2970,7 +3364,8 @@ function renderIndependence(totals){
 
 // ---------- 5) Bazin Calculator ----------
 const BAZIN_YIELD = 0.06;
-// Mock interno: div = proventos médios por cota/ação nos últimos 3 anos (R$/ano)
+// Mock interno com DADOS ILUSTRATIVOS (não são cotações atuais nem médias
+// verificadas): px = preço de referência, div = proventos anuais por ação/cota.
 const BAZIN_MOCK = {
   BBAS3:  { nome:'Banco do Brasil',        tipo:'Ação', div: 4.80, px: 56.20 },
   ITSA4:  { nome:'Itaúsa',                 tipo:'Ação', div: 1.05, px: 10.80 },
@@ -3016,72 +3411,114 @@ function _bazinSugestoes(q){
     .slice(0, 7);
 }
 
-function _renderBazinResult(ticker){
-  const tk = ticker.trim().toUpperCase();
-  const data = BAZIN_MOCK[tk];
-  const box = $('bazinOut');
-  if (!data){
-    const safe = tk.replace(/[^A-Z0-9]/g,'');
-    box.innerHTML = `<div class="bazin-erro">Não temos dados de dividendos pra "${safe}". Comece a digitar e escolha um ativo da lista.</div>`;
+// Lê número digitado em pt-BR ("1.234,56", "6,5", "56.2") → Number ou NaN
+function _numBR(v){
+  let t = String(v ?? '').trim().replace(/[R$\s%]/g, '');
+  if (!t) return NaN;
+  if (t.includes(',')) t = t.replace(/\./g, '').replace(',', '.');
+  return /^-?\d*\.?\d+$/.test(t) ? Number(t) : NaN;
+}
+const _fmtCampo = (n) => Number(n).toFixed(2).replace('.', ',');
+
+let _bazinTicker = null;   // ativo escolhido no autocomplete (só rótulo)
+function _renderBazinResult(){
+  const box = $('bazinOut'); if (!box) return;
+  const px = _numBR($('bazinPx').value);
+  const div = _numBR($('bazinDiv').value);
+  const taxa = _numBR($('bazinTaxa').value);
+  const erros = [];
+  const okPos = (n) => Number.isFinite(n) && n > 0;
+  const marca = (id, ok) => { const i = $(id); if (ok) i.removeAttribute('aria-invalid'); else i.setAttribute('aria-invalid', 'true'); };
+  const vazio = (id) => !String($(id).value).trim();
+  marca('bazinPx', vazio('bazinPx') || okPos(px));
+  marca('bazinDiv', vazio('bazinDiv') || okPos(div));
+  marca('bazinTaxa', vazio('bazinTaxa') || (okPos(taxa) && taxa <= 100));
+  if (vazio('bazinPx') && vazio('bazinDiv')){
+    box.innerHTML = '<p class="bazin-formula">Escolha um ativo na busca ou preencha os valores para calcular.</p>';
     return;
   }
-  const teto = calcularBazin(data.div);
-  const margem = ((teto - data.px) / data.px) * 100;
-  const dy = data.div / data.px * 100;
+  if (!okPos(px)) erros.push('preço de referência');
+  if (!okPos(div)) erros.push('proventos anuais');
+  if (!(okPos(taxa) && taxa <= 100)) erros.push('taxa de referência (entre 0 e 100%)');
+  if (erros.length){
+    box.innerHTML = `<div class="bazin-erro" role="status">Informe um valor positivo para: ${erros.join(', ')}.</div>`;
+    return;
+  }
+  const teto = div / (taxa / 100);
+  const dif = ((px - teto) / teto) * 100;      // quanto o preço está acima/abaixo do teto
+  const dy = div / px * 100;
+  const fmt = (n) => brlRaw.format(n);
+  const pctTxt = (n) => pct.format(Math.abs(n));
+  let frase;
+  if (Math.abs(dif) < 0.05) frase = `Com os valores informados, o preço de referência é praticamente igual ao preço-teto.`;
+  else if (dif < 0) frase = `Com os valores informados, o preço de referência está <b>${pctTxt(dif)}% abaixo</b> do preço-teto calculado (rendimento de ${pctTxt(dy)}% ao ano sobre esse preço).`;
+  else frase = `Com os valores informados, o preço de referência está <b>${pctTxt(dif)}% acima</b> do preço-teto calculado (rendimento de ${pctTxt(dy)}% ao ano sobre esse preço).`;
   box.innerHTML = `
     <div class="bazin-result">
       <div class="head">
-        <span class="tk">${tk}</span>
-        <span class="px">${data.nome} · ${brl.format(data.px)}</span>
+        <span class="tk">${_bazinTicker ? _bazinTicker : 'Valores informados'}</span>
+        <span class="px">Preço de referência: ${fmt(px)}</span>
       </div>
       <div class="bazin-grid">
         <div class="bazin-cell">
-          <div class="k">Proventos médios (3 anos)</div>
-          <div class="v">${brl.format(data.div)}/ano</div>
+          <div class="k">Proventos anuais</div>
+          <div class="v">${fmt(div)}/ano</div>
         </div>
         <div class="bazin-cell">
-          <div class="k">Preço-teto Bazin (6%)</div>
-          <div class="v lime">${brl.format(teto)}</div>
+          <div class="k">Preço-teto (${pct.format(taxa)}%)</div>
+          <div class="v lime">${fmt(teto)}</div>
         </div>
       </div>
-      <div class="bazin-margem ${margem >= 0 ? 'ok' : 'alto'}">
-        ${margem >= 0
-          ? `Hoje está <b>${margem.toFixed(1)}%</b> abaixo do teto (DY ${dy.toFixed(1)}%) — margem de segurança disponível.`
-          : `Hoje está <b>${Math.abs(margem).toFixed(1)}%</b> acima do teto (DY ${dy.toFixed(1)}%). Esperar uma queda pode valer.`}
-      </div>
+      <div class="bazin-margem neutro" role="status">${frase} Este cálculo é uma referência simplificada, não uma recomendação de compra ou venda.</div>
     </div>
   `;
 }
 
 function renderBazin(){
-  // Só renderiza o form uma vez (não substitui input digitado em re-renders)
+  // Monta o formulário uma única vez — re-renders não recriam campos (preserva foco e seleção)
   const box = $('bazinBox');
   if (box.dataset.ready === '1') return;
   box.dataset.ready = '1';
   box.innerHTML = `
     <div class="hero-card">
-      <h3 class="bazin-title">Análise de ativos · Preço-teto Bazin</h3>
-      <form class="bazin-form" id="bazinForm" autocomplete="off">
+      <p class="bazin-warn"><b>Dados ilustrativos — não são cotações atuais.</b> Os valores da lista servem só de ponto de partida; confira e edite antes de usar.</p>
+      <form class="bazin-form" id="bazinForm" autocomplete="off" novalidate>
         <div class="bazin-ac">
+          <label for="bazinInput" class="sr-only">Buscar ativo</label>
           <input type="text" id="bazinInput" placeholder="Busque: BBAS3, TAEE11, MXRF11…" maxlength="40"
             role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="bazinList">
-          <ul class="bazin-list" id="bazinList" role="listbox" hidden></ul>
+          <ul class="bazin-list" id="bazinList" role="listbox" aria-label="Sugestões de ativos" hidden></ul>
         </div>
-        <button type="submit" class="btn">Calcular</button>
+        <button type="submit" class="btn">Usar</button>
       </form>
-      <div id="bazinOut"></div>
+      <div class="bazin-fields">
+        <label>Preço de referência (R$)<input id="bazinPx" type="text" inputmode="decimal" placeholder="0,00"></label>
+        <label>Proventos anuais por ação/cota (R$)<input id="bazinDiv" type="text" inputmode="decimal" placeholder="0,00"></label>
+        <label>Taxa de referência (%)<input id="bazinTaxa" type="text" inputmode="decimal" value="6"></label>
+      </div>
+      <p class="bazin-formula">Fórmula: <code>preço-teto = proventos anuais ÷ taxa de referência</code></p>
+      <div id="bazinOut" aria-live="polite"></div>
     </div>
   `;
   const input = $('bazinInput'), list = $('bazinList');
   let sugs = [], idx = -1;
-  const fechar = () => { list.hidden = true; input.setAttribute('aria-expanded','false'); idx = -1; };
+  const fechar = () => { list.hidden = true; input.setAttribute('aria-expanded','false'); input.removeAttribute('aria-activedescendant'); idx = -1; };
+  const escAttr = (t) => String(t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const pintar = () => {
     list.innerHTML = sugs.map((x,i) => `
-      <li role="option" data-tk="${x.tk}" class="${i===idx?'active':''}" aria-selected="${i===idx}">
-        <span class="tk">${x.tk}</span><span class="nm">${x.nome}</span><span class="tp">${x.tipo}</span>
+      <li role="option" id="bazinOpt${i}" data-tk="${escAttr(x.tk)}" class="${i===idx?'active':''}" aria-selected="${i===idx}">
+        <span class="tk">${escAttr(x.tk)}</span><span class="nm">${escAttr(x.nome)}</span><span class="tp">${escAttr(x.tipo)}</span>
       </li>`).join('');
+    if (idx >= 0) input.setAttribute('aria-activedescendant', 'bazinOpt' + idx); else input.removeAttribute('aria-activedescendant');
   };
-  const escolher = (tk) => { input.value = tk; fechar(); _renderBazinResult(tk); };
+  const escolher = (tk) => {
+    const d = BAZIN_MOCK[tk]; if (!d) return;
+    input.value = tk; fechar();
+    _bazinTicker = tk;
+    $('bazinPx').value = _fmtCampo(d.px);
+    $('bazinDiv').value = _fmtCampo(d.div);
+    _renderBazinResult();
+  };
   input.addEventListener('input', () => {
     sugs = _bazinSugestoes(input.value); idx = sugs.length ? 0 : -1;
     if (!sugs.length){ fechar(); return; }
@@ -3092,9 +3529,8 @@ function renderBazin(){
     if (e.key === 'ArrowDown'){ e.preventDefault(); idx = (idx+1) % sugs.length; pintar(); }
     else if (e.key === 'ArrowUp'){ e.preventDefault(); idx = (idx-1+sugs.length) % sugs.length; pintar(); }
     else if (e.key === 'Enter' && idx >= 0){ e.preventDefault(); escolher(sugs[idx].tk); }
-    else if (e.key === 'Escape'){ fechar(); }
+    else if (e.key === 'Escape'){ e.preventDefault(); fechar(); }
   });
-  // mousedown evita que o blur feche a lista antes do clique
   list.addEventListener('mousedown', (e) => {
     const li = e.target.closest('li[data-tk]'); if (!li) return;
     e.preventDefault(); escolher(li.dataset.tk);
@@ -3102,11 +3538,20 @@ function renderBazin(){
   input.addEventListener('blur', () => setTimeout(fechar, 120));
   $('bazinForm').onsubmit = (e) => {
     e.preventDefault();
-    const t = (input.value || '').trim();
+    const t = (input.value || '').trim().toUpperCase();
     if (!t) return;
-    const exato = BAZIN_MOCK[t.toUpperCase()] ? t : (_bazinSugestoes(t)[0]?.tk || t);
-    escolher(exato);
+    const tk = BAZIN_MOCK[t] ? t : (_bazinSugestoes(t)[0]?.tk || null);
+    if (tk) escolher(tk);
+    else $('bazinOut').innerHTML = '<div class="bazin-erro" role="status">Ativo fora da lista ilustrativa. Você pode preencher os valores manualmente abaixo.</div>';
   };
+  // Edição manual: recalcula só o resultado (campos nunca são recriados)
+  for (const id of ['bazinPx','bazinDiv','bazinTaxa']){
+    $(id).addEventListener('input', () => {
+      if (id !== 'bazinTaxa' && _bazinTicker){ _bazinTicker = _bazinTicker.endsWith(' (editado)') ? _bazinTicker : _bazinTicker + ' (editado)'; }
+      _renderBazinResult();
+    });
+  }
+  _renderBazinResult();
 }
 
 // ---------- Glossário do investidor (estático, sem alertas) ----------
@@ -3462,20 +3907,8 @@ function openSimulatorSheet(){
   });
 }
 
-function countUpHero(){
-  const el = $('heroValue');
-  const target = Number(el.dataset.target || 0);
-  if (!target || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const start = performance.now(), dur = 900;
-  const tick = (now) => {
-    const p = Math.min(1, (now - start) / dur);
-    const eased = 1 - Math.pow(1 - p, 3);
-    el.textContent = brl.format(target * eased);
-    if (p < 1) requestAnimationFrame(tick);
-    else el.textContent = brl.format(target);
-  };
-  requestAnimationFrame(tick);
-}
+// countUpHero removido: saldos reais aparecem imediatamente.
+function countUpHero(){ /* no-op mantido só por compatibilidade */ }
 
 /* ---------------------------------------------------------------- render ativos */
 function renderAssets(){
@@ -3531,6 +3964,8 @@ function renderAssets(){
 function buildAssetCard(p){
   const r = enrich(p);
   const card = el('button', 'asset');
+  card.type = 'button';
+  card.dataset.pid = p.id;
   card.onclick = () => openDetails(p);
 
   const top = el('div', 'asset-top');
@@ -3606,23 +4041,95 @@ function buildAssetCard(p){
 }
 
 /* ---------------------------------------------------------------- sheet infra */
+let _sheetStack = [];
+let _lastClosed = null;
+let _sheetSeq = 0;
+const FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"]),summary';
+function _focusables(root){
+  return [...root.querySelectorAll(FOCUSABLE)].filter(n => n.offsetParent !== null || n === document.activeElement);
+}
 function openSheet(buildBody){
+  // Origem do foco: se veio de outro painel (ex.: Detalhes → Aportar), herda a origem dele.
+  let opener = document.activeElement;
+  const parentSheet = opener && opener.closest && opener.closest('.sheet');
+  if (parentSheet && parentSheet._opener) opener = parentSheet._opener;
+  else if ((!opener || opener === document.body) && _lastClosed && Date.now() - _lastClosed.at < 800) opener = _lastClosed.opener;
+  const openerPid = opener && opener.dataset ? opener.dataset.pid : null;
+  const openerId = opener && opener.id ? opener.id : null;
+
   const host = $('sheetHost');
   const bd = el('div', 'sheet-backdrop');
   const sheet = el('div', 'sheet');
+  sheet.setAttribute('role', 'dialog');
+  sheet.setAttribute('aria-modal', 'true');
+  sheet.tabIndex = -1;
+  sheet._opener = opener;
   sheet.appendChild(el('div', 'sheet-handle'));
   bd.appendChild(sheet);
   host.appendChild(bd);
+  _sheetStack.push(sheet);
+  // Fundo inerte: sem foco/teclado/clique no painel principal
+  $('app').inert = true; $('auth').inert = true;
+
+  let closed = false;
   const close = () => {
+    if (closed) return;
+    closed = true;
+    // Bloqueia novos cliques já durante a animação de saída (evita operação duplicada)
+    bd.style.pointerEvents = 'none';
+    sheet.inert = true;
     bd.classList.remove('open');
+    document.removeEventListener('keydown', key, true);
+    _sheetStack = _sheetStack.filter(x => x !== sheet);
+    _lastClosed = { at: Date.now(), opener };
     setTimeout(() => bd.remove(), 250);
-    document.removeEventListener('keydown', key);
+    if (_sheetStack.length === 0){
+      $('app').inert = false; $('auth').inert = false;
+      // Retorna o foco para quem abriu (ou equivalente re-renderizado)
+      setTimeout(() => {
+        if (_sheetStack.length) return;       // outro painel abriu nesse meio-tempo
+        let target = opener;
+        if (!target || !target.isConnected){
+          target = (openerPid && document.querySelector(`[data-pid="${CSS.escape(openerPid)}"]`))
+                || (openerId && $(openerId)) || null;
+        }
+        if (target && target.isConnected && typeof target.focus === 'function') target.focus();
+      }, 270);
+    }
   };
-  const key = (e) => { if (e.key === 'Escape') close(); };
+  const key = (e) => {
+    if (_sheetStack[_sheetStack.length-1] !== sheet) return;   // só o painel do topo
+    if (e.key === 'Escape'){ e.preventDefault(); close(); return; }
+    if (e.key === 'Tab'){
+      const f = _focusables(sheet);
+      if (!f.length){ e.preventDefault(); sheet.focus(); return; }
+      const first = f[0], last = f[f.length-1];
+      if (e.shiftKey && (document.activeElement === first || document.activeElement === sheet)){ e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+      else if (!sheet.contains(document.activeElement)){ e.preventDefault(); first.focus(); }
+    }
+  };
   bd.addEventListener('click', (e) => { if (e.target === bd) close(); });
-  document.addEventListener('keydown', key);
+  document.addEventListener('keydown', key, true);
   requestAnimationFrame(() => bd.classList.add('open'));
   buildBody(sheet, close);
+
+  // Nome acessível: primeiro título do painel
+  const title = sheet.querySelector('.sheet-head .ticker, .sheet-head h3, h2, h3');
+  if (title){
+    if (!title.id) title.id = 'sheetTitle' + (++_sheetSeq);
+    sheet.setAttribute('aria-labelledby', title.id);
+  } else {
+    sheet.setAttribute('aria-label', 'Painel');
+  }
+  sheet.querySelectorAll('.close-btn').forEach(b => {
+    if (!b.getAttribute('aria-label')) b.setAttribute('aria-label', 'Fechar');
+    if (!b.getAttribute('type')) b.type = 'button';
+    b.querySelectorAll('svg').forEach(s => s.setAttribute('aria-hidden', 'true'));
+  });
+  // Foco inicial: o painel em si (lido pelo leitor de tela); se algum build
+  // já focou um campo via setTimeout, ele assume logo depois.
+  setTimeout(() => { if (!sheet.contains(document.activeElement)) sheet.focus(); }, 0);
   return close;
 }
 
@@ -3765,7 +4272,7 @@ function openDetails(p){
     rm.onclick = async () => {
       if (!confirm('Remover ' + (p.ticker || p.nome || 'esse ativo') + ' da carteira?')) return;
       state.positions = state.positions.filter(x => x.id !== p.id);
-      close(); render(); await persist(); toast('Ativo removido');
+      close(); render(); await salvar('Ativo removido');
     };
     acts.appendChild(rm);
     body.appendChild(acts);
@@ -3889,12 +4396,12 @@ function openAporteSheet(p){
         // estava zerada (sem market_quotes), gravava 0.
         if (p.a != null && p.a > 0) alvo.a = p.a;
         else if (!alvo.a || alvo.a <= 0) alvo.a = C;
-        close(); render(); countUpHero(); toast('Aporte de ' + Q + ' cotas registrado'); await persist();
+        close(); render(); await salvar('Aporte de ' + Q + ' cotas registrado');
       } else {
         const V = toNum(valI.value);
         if (V <= 0){ err.textContent = 'Informe o valor.'; return; }
         alvo.ap = Number(((alvo.ap || 0) + V).toFixed(2));
-        close(); render(); countUpHero(); toast('Reforço de ' + brl.format(V) + ' aplicado'); await persist();
+        close(); render(); await salvar('Reforço de ' + brl.format(V) + ' aplicado');
       }
     };
     body.appendChild(ok);
@@ -3954,7 +4461,7 @@ function openSellSheet(p){
       const vl = el('label', 'field');
       vl.appendChild(el('span', null, 'Valor resgatado (R$)'));
       valI = document.createElement('input');
-      valI.placeholder = 'R$ ' + (p.ap || 0).toFixed(2).replace('.', ',');
+      valI.placeholder = brl.format(p.ap || 0);
       vl.appendChild(valI);
       form.appendChild(vl);
       aplicarMascaraMoeda(valI);
@@ -4013,7 +4520,7 @@ function openSellSheet(p){
         // DICAS CONTEXTUAIS
         if (lucro < 0){
           tipsBox.appendChild(mkDica('Está realizando prejuízo', 'warn',
-            '<p>Com essa venda você <b>realiza</b> R$ ' + Math.abs(lucro).toFixed(2) + ' de prejuízo (até agora era só "no papel").</p>' +
+            '<p>Com essa venda você <b>realiza</b> ' + brl.format(Math.abs(lucro)) + ' de prejuízo (até agora era só "no papel").</p>' +
             '<p><b>Pergunta pra si antes de confirmar:</b></p>' +
             '<ul><li>Mudou algo nos fundamentos do ativo, ou só a cotação caiu?</li>' +
             '<li>Você precisa do dinheiro agora, ou tá vendendo por emoção?</li>' +
@@ -4025,8 +4532,8 @@ function openSellSheet(p){
           tipsBox.appendChild(mkDica('IR de 20% sobre o lucro', 'warn',
             '<p>Em FII, venda com lucro tem <b>20% de IR SEMPRE</b> — não existe isenção abaixo de R$ 20 mil como em ação.</p>' +
             '<p>Lucro bruto: <b>' + brl.format(lucro) + '</b></p>' +
-            '<p>IR estimado: <b style="color:var(--loss)">R$ ' + ir.toFixed(2) + '</b></p>' +
-            '<p>Lucro líquido: <b style="color:var(--gain)">R$ ' + (lucro - ir).toFixed(2) + '</b></p>' +
+            '<p>IR estimado: <b style="color:var(--loss)">' + brl.format(ir) + '</b></p>' +
+            '<p>Lucro líquido: <b style="color:var(--gain)">' + brl.format(lucro - ir) + '</b></p>' +
             '<p>Você mesmo paga via DARF (código 6015) até o último dia útil do mês seguinte.</p>'
           ));
         }
@@ -4113,11 +4620,11 @@ function openSellSheet(p){
         if (!alvo) return;
         if (Q === p.q){
           state.positions = state.positions.filter(x => x.id !== p.id);
-          close(); render(); countUpHero(); toast('Posição zerada'); await persist();
+          close(); render(); await salvar('Posição zerada');
         } else {
           alvo.q = p.q - Q;
           // preço médio pago NÃO muda com venda
-          close(); render(); countUpHero(); toast('Venda de ' + Q + ' cotas registrada'); await persist();
+          close(); render(); await salvar('Venda de ' + Q + ' cotas registrada');
         }
       } else {
         const V = toNum(valI.value);
@@ -4127,11 +4634,11 @@ function openSellSheet(p){
         if (!alvo) return;
         if (V >= r.atual - 0.01){
           state.positions = state.positions.filter(x => x.id !== p.id);
-          close(); render(); countUpHero(); toast('Aplicação resgatada por inteiro'); await persist();
+          close(); render(); await salvar('Aplicação resgatada por inteiro');
         } else {
           // novo capital proporcional à parte não resgatada
           alvo.ap = Number((p.ap * (1 - V / r.atual)).toFixed(2));
-          close(); render(); countUpHero(); toast('Resgate de ' + brl.format(V) + ' registrado'); await persist();
+          close(); render(); await salvar('Resgate de ' + brl.format(V) + ' registrado');
         }
       }
     };
@@ -4429,7 +4936,7 @@ function openFiiAcaoAdd(){
           // só se tivermos cotação válida (> 0). Senão mantém o que já tinha.
           if (chosen._price != null && chosen._price > 0) existing.a = chosen._price;
           else if (!existing.a || existing.a <= 0) existing.a = C;
-          close(); render(); countUpHero(); toast('Aporte de ' + Q + ' cotas registrado'); await persist();
+          close(); render(); await salvar('Aporte de ' + Q + ' cotas registrado');
           return;
         }
         state.positions.push({
@@ -4442,7 +4949,7 @@ function openFiiAcaoAdd(){
           segment: chosen.kind === 'fii' ? userSegment : null,
           sector:  chosen.kind === 'acao' ? userSector : null,
         });
-        close(); render(); countUpHero(); toast('Ativo adicionado'); await persist();
+        close(); render(); await salvar('Ativo adicionado');
       };
     };
 
@@ -4563,7 +5070,7 @@ function tesouroForm(kind, label, taxaDefault){
           kind, nome: label, name: label,
           ap: V, dt: dtI.value, taxa: toNum(txI.value) || taxaDefault,
         });
-        close(); render(); countUpHero(); toast('Ativo adicionado'); await persist();
+        close(); render(); await salvar('Ativo adicionado');
       };
       body.appendChild(ok);
     } else {
@@ -4589,7 +5096,7 @@ function tesouroForm(kind, label, taxaDefault){
           kind: 'selic', nome: label, name: label,
           ap: V, dt: dtI.value, taxa: TAXAS.selic,
         });
-        close(); render(); countUpHero(); toast('Ativo adicionado'); await persist();
+        close(); render(); await salvar('Ativo adicionado');
       };
       body.appendChild(ok);
     }
@@ -4675,7 +5182,7 @@ function cdbForm(kind, label){
         kind, nome: label, name: label,
         ap: V, dt: dtI.value, taxa: toNum(txI.value) || toNum(defVal),
       });
-      close(); render(); countUpHero(); toast('Ativo adicionado'); await persist();
+      close(); render(); await salvar('Ativo adicionado');
     };
     body.appendChild(ok);
   });
@@ -4724,7 +5231,7 @@ function openFundoAdd(){
         kind: 'fundo', nome: N, name: N,
         ap: V, dt: dtI.value, taxa: T,
       });
-      close(); render(); countUpHero(); toast('Fundo adicionado'); await persist();
+      close(); render(); await salvar('Fundo adicionado');
     };
     body.appendChild(ok);
   });
@@ -4936,22 +5443,34 @@ function openNotifSheet(){
 }
 
 /* ---------------------------------------------------------------- refresh */
+let _lastRefresh = null;   // { at, tickers, ok, failed } da última tentativa nesta sessão
 $('refreshBtn').onclick = async () => {
   const b = $('refreshBtn');
+  if (b.disabled || !_appReady) return;
   b.disabled = true;
+  const txt = b.textContent; b.textContent = 'Atualizando…';
   try {
-    // 1) Garante que mudanças locais estão salvas antes de recarregar
-    //    (evita que remove/aporte/venda ainda não persistidos sejam perdidos)
-    await persist();
+    // 1) Garante que mudanças locais estão salvas antes de recarregar.
+    //    Se não salvar, NÃO recarrega (recarregar descartaria as alterações).
+    const saved = await persist();
+    if (saved !== true){
+      toast('Não atualizei: salve suas alterações primeiro (botão “Tentar salvar de novo”).');
+      return;
+    }
     // 2) Atualiza cotações no servidor
-    await api.refresh();
-    // 3) Recarrega estado do banco (que agora tem o save do passo 1)
+    let res = null;
+    try { res = await api.refresh(); }
+    catch { _lastRefresh = { at: Date.now(), tickers: 0, ok: 0, failed: -1 }; render(); toast('Não foi possível atualizar as cotações agora'); return; }
+    _lastRefresh = { at: Date.now(), ...(res || {}) };
+    // 3) Recarrega estado do banco
     state = await api.getPortfolio();
     render();
-    countUpHero();
-    toast('Cotações atualizadas');
-  } catch { toast('Não consegui atualizar'); }
-  finally { b.disabled = false; }
+    if (res && res.failed > 0 && res.ok > 0) toast(`Cotações atualizadas, exceto ${res.failed} ${res.failed===1?'ativo':'ativos'}`);
+    else if (res && res.failed > 0) toast('A fonte de cotações não respondeu. Mantive as últimas disponíveis.');
+    else if (res && res.tickers === 0) toast('Nenhum ativo de bolsa para atualizar');
+    else toast('Cotações atualizadas');
+  } catch { toast('Não consegui recarregar a carteira. Tente de novo.'); }
+  finally { b.disabled = false; b.textContent = txt; }
 };
 
 /* ---------------------------------------------------------------- dicas */
@@ -5129,8 +5648,7 @@ function openProfileSheet(){
       close();
       renderProfile();
       renderTips();
-      toast('Perfil: ' + prof.nome);
-      await persist();
+      await salvar('Perfil: ' + prof.nome);
     };
 
     render();
