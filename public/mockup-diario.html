@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup — Diário do Investidor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7F3E9;              /* papel cru moleskine */
+  --paper-shadow:#EAE4D1;
+  --line:#C9D8E0;               /* linhas azuis caderno pautado */
+  --margin:#D4848C;             /* linha vermelha de margem */
+  --ink:#1E2328;                /* tinta nanquim azul-escuro */
+  --pencil:#595754;             /* lápis */
+  --sage:#6E8E5A;               /* sage/samambaia — ganho leve */
+  --rust:#A94836;               /* rust — perda */
+  --mustard:#C98C2F;            /* amarelo mostarda — destaque */
+  --stamp:#2E6B70;              /* carimbo azul-verde */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:#D8CFB8}
+body{
+  color:var(--ink);
+  font-family:"Fraunces","Georgia",serif;font-size:17px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;padding:30px 0;
+}
+
+/* "Caderno" — página de moleskine */
+.page{
+  max-width:720px;margin:0 auto;background:var(--paper);
+  padding:50px 60px 70px 90px;
+  position:relative;
+  box-shadow:
+    0 2px 0 var(--paper-shadow),
+    0 4px 0 #DCD4BC,
+    0 6px 0 #CFC7AC,
+    0 24px 50px -20px rgba(30,35,40,.35);
+  background-image:
+    linear-gradient(to right,transparent 68px,var(--margin) 68px,var(--margin) 69px,transparent 70px),
+    repeating-linear-gradient(to bottom,transparent,transparent 31px,var(--line) 31px,var(--line) 32px);
+  background-size:100% 100%, 100% 100%;
+  background-position:0 50px;
+  background-attachment:local;
+}
+
+/* Carimbo da data no canto */
+.datestamp{
+  position:absolute;top:28px;right:36px;
+  border:2px solid var(--stamp);color:var(--stamp);
+  padding:8px 14px 7px;
+  font-family:"Inter",sans-serif;font-size:11.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  transform:rotate(4deg);
+  background:rgba(247,243,233,.5);
+}
+.datestamp small{display:block;font-size:9px;letter-spacing:.3em;margin-top:2px;opacity:.7}
+
+/* Título manuscrito */
+.heading{margin-bottom:34px;line-height:1}
+.heading .label{font-family:"Inter",sans-serif;font-size:11.5px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--pencil);margin-bottom:8px}
+.heading h1{
+  font-family:"Caveat",cursive;font-size:48px;font-weight:600;color:var(--ink);
+  letter-spacing:-.015em;line-height:1;
+}
+.heading h1 .emphasis{color:var(--mustard)}
+
+/* Patrimônio: campo manuscrito + número impresso */
+.ledger-hero{
+  padding:20px 0 28px;margin:28px 0 36px;
+  border-top:2px solid var(--ink);
+  border-bottom:1px solid var(--ink);
+  position:relative;
+}
+.ledger-hero .annotation{
+  font-family:"Caveat",cursive;font-size:22px;color:var(--pencil);
+  position:absolute;right:0;top:-18px;transform:rotate(-4deg);background:var(--paper);padding:0 6px;
+}
+.ledger-hero .row-main{display:flex;align-items:baseline;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.ledger-hero .what{font-family:"Fraunces",serif;font-weight:500;font-style:italic;font-size:19px;color:var(--pencil)}
+.ledger-hero .amount{
+  font-family:"Fraunces",serif;font-weight:500;font-size:62px;letter-spacing:-.02em;line-height:.9;
+  font-feature-settings:"onum";
+}
+.ledger-hero .amount .cur{font-size:28px;color:var(--pencil);vertical-align:0.4em;margin-right:4px;font-weight:400}
+.ledger-hero .amount .cents{color:var(--pencil);font-weight:400}
+.ledger-hero .note{
+  margin-top:14px;font-size:15px;color:var(--pencil);display:flex;gap:14px;align-items:center;flex-wrap:wrap
+}
+.ledger-hero .delta{
+  font-family:"Caveat",cursive;font-size:28px;color:var(--rust);font-weight:600;letter-spacing:0;
+}
+
+/* Underline manuscrito */
+.scribble{display:inline-block;position:relative}
+.scribble::after{
+  content:'';position:absolute;left:-4px;right:-4px;bottom:-6px;height:6px;
+  background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 10'><path d='M2 6 Q 25 1, 50 6 T 98 5' stroke='%23C98C2F' stroke-width='2' fill='none' stroke-linecap='round'/></svg>") no-repeat;
+  background-size:100% 100%;
+}
+
+/* Entrada de ledger */
+.entry-head{display:flex;align-items:center;gap:16px;margin:38px 0 18px}
+.entry-head h2{font-family:"Caveat",cursive;font-size:36px;color:var(--ink);font-weight:600;letter-spacing:-.01em;line-height:1}
+.entry-head .pageno{font-family:"Inter",sans-serif;font-size:11px;color:var(--pencil);letter-spacing:.14em;text-transform:uppercase}
+
+/* Tabela ledger — double-entry style */
+.ledger{width:100%;border-collapse:collapse;margin-top:14px;font-family:"Fraunces",serif;font-feature-settings:"onum"}
+.ledger thead th{
+  font-family:"Inter",sans-serif;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--pencil);font-weight:600;text-align:left;padding:8px 10px;
+  border-bottom:2px solid var(--ink);
+}
+.ledger thead th.n{text-align:right}
+.ledger tbody td{padding:16px 10px;vertical-align:top;border-bottom:1px dotted var(--pencil)}
+.ledger tbody td.n{text-align:right;font-size:18px;font-weight:500;font-variant-numeric:tabular-nums}
+.ledger tbody td.n .cents{color:var(--pencil);font-weight:400}
+.ledger tbody td .ticker{font-weight:600;font-size:20px;letter-spacing:-.01em}
+.ledger tbody td .sub{font-size:13.5px;color:var(--pencil);margin-top:2px;font-style:italic}
+.ledger tbody .tag{
+  display:inline-block;padding:2px 8px;background:var(--paper-shadow);color:var(--sage);
+  font-family:"Inter",sans-serif;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  margin-bottom:6px;border:1px solid var(--sage);
+}
+.ledger .neg{color:var(--rust)}
+.ledger .pos{color:var(--sage)}
+
+/* Nota marginal — como anotação à mão */
+.margin-note{
+  position:relative;margin:28px 0 10px;padding:12px 16px 12px 22px;
+  background:rgba(201,140,47,.08);
+  border-left:3px solid var(--mustard);
+  font-family:"Caveat",cursive;font-size:20px;color:var(--ink);line-height:1.25;
+}
+.margin-note::before{
+  content:'→';position:absolute;left:-14px;top:14px;color:var(--mustard);font-size:22px;font-weight:bold;
+  font-family:"Inter",sans-serif;
+}
+
+/* Rodapé — botões como ações do caderno */
+.actions{display:flex;gap:14px;justify-content:flex-end;margin-top:40px;flex-wrap:wrap}
+.btn{
+  background:var(--paper);color:var(--ink);border:1.5px solid var(--ink);
+  padding:10px 20px;font-family:"Fraunces",serif;font-size:16px;font-style:italic;
+  cursor:pointer;transition:all .15s;
+}
+.btn:hover{background:var(--mustard);border-color:var(--mustard);color:var(--paper)}
+.btn.primary{background:var(--ink);color:var(--paper)}
+.btn.primary:hover{background:var(--mustard);border-color:var(--mustard)}
+
+/* "Assinatura" no rodapé */
+.sign{
+  margin-top:50px;text-align:right;
+  font-family:"Caveat",cursive;font-size:28px;color:var(--stamp);
+  transform:rotate(-2deg);
+}
+
+@media (max-width:720px){
+  body{padding:14px 0}
+  .page{padding:34px 24px 50px 54px;background-position:0 34px}
+  .page{background-image:
+    linear-gradient(to right,transparent 38px,var(--margin) 38px,var(--margin) 39px,transparent 40px),
+    repeating-linear-gradient(to bottom,transparent,transparent 29px,var(--line) 29px,var(--line) 30px);
+  }
+  .heading h1{font-size:36px}
+  .ledger-hero .amount{font-size:44px}
+  .datestamp{top:14px;right:14px;padding:6px 10px;font-size:10px}
+  .ledger thead{display:none}
+  .ledger tbody td{display:block;padding:6px 2px;border:none}
+  .ledger tbody tr{display:block;padding:14px 0;border-bottom:1px dotted var(--pencil)}
+  .ledger tbody td.n{text-align:left}
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="datestamp">
+    11 · out · 26
+    <small>Domingo</small>
+  </div>
+
+  <div class="heading">
+    <div class="label">Diário do investidor · caderno 01</div>
+    <h1>Minha <span class="emphasis">carteira</span> hoje</h1>
+  </div>
+
+  <section class="ledger-hero">
+    <div class="annotation">patrimônio ↓</div>
+    <div class="row-main">
+      <div class="what">Total consolidado</div>
+      <div class="amount"><span class="cur">R$</span>94<span class="cents">,50</span></div>
+    </div>
+    <div class="note">
+      <span>Variação desta semana:</span>
+      <span class="delta">↘ R$ 10,50</span>
+      <span>— perdi um décimo. Vida de FII.</span>
+    </div>
+  </section>
+
+  <div class="entry-head">
+    <h2>O que tenho em carteira</h2>
+    <span class="pageno">p. 01</span>
+  </div>
+
+  <table class="ledger">
+    <thead>
+      <tr>
+        <th>Ativo</th>
+        <th class="n">Cotas</th>
+        <th class="n">Pago</th>
+        <th class="n">Hoje</th>
+        <th class="n">Resultado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <div class="tag">FII</div>
+          <div class="ticker">MXRF11</div>
+          <div class="sub">Maxi Renda — papel</div>
+        </td>
+        <td class="n">10</td>
+        <td class="n">R$ 10<span class="cents">,50</span></td>
+        <td class="n">R$ 9<span class="cents">,45</span></td>
+        <td class="n neg">−R$ 10<span class="cents">,50</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="margin-note">
+    Vai render <span class="scribble"><strong>R$ 0,78/mês</strong></span> em dividendo. Reinvestir ou guardar?
+  </div>
+
+  <div class="actions">
+    <button class="btn">Atualizar cotações</button>
+    <button class="btn primary">+ Novo lançamento</button>
+  </div>
+
+  <div class="sign">— Caio.</div>
+
+</div>
+
+</body>
+</html>

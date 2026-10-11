@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup — Modernismo Brasileiro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --concrete:#D6D3CB;        /* concreto bruto Lina Bo Bardi */
+  --concrete-dark:#B9B5AB;
+  --ipe:#E8B33F;             /* ipê amarelo */
+  --samambaia:#2B5F3D;       /* verde samambaia */
+  --terra:#B0532A;           /* terracota do interior */
+  --tinta:#0F0F0E;           /* tinta nanquim */
+  --azulejo:#4A6B7A;         /* azul azulejo português */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--concrete);color:var(--tinta);
+  font-family:"Archivo",system-ui,sans-serif;font-size:16px;line-height:1.4;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:1100px;margin:0 auto;padding:0}
+
+/* Faixa superior preta — como entrada de prédio institucional */
+.header{background:var(--tinta);color:var(--concrete);padding:14px 32px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-family:"Archivo Black",sans-serif;font-size:22px;letter-spacing:.04em;text-transform:uppercase}
+.brand span{color:var(--ipe)}
+.header .nav{display:flex;gap:24px;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--concrete-dark)}
+.header .nav a{color:inherit;text-decoration:none;transition:color .12s}
+.header .nav a:hover{color:var(--ipe)}
+
+/* Grid tipo painel de azulejo atos Bulcão — decorativo abstrato */
+.tiles{display:grid;grid-template-columns:repeat(12,1fr);height:60px;overflow:hidden}
+.tile{display:block}
+.t-y{background:var(--ipe)}
+.t-k{background:var(--tinta)}
+.t-c{background:var(--concrete-dark)}
+.t-g{background:var(--samambaia)}
+.t-b{background:var(--azulejo)}
+.t-t{background:var(--terra)}
+
+/* Container */
+.inside{padding:60px 32px 0}
+
+/* HERO — placa modernista em bloco amarelo */
+.hero{display:grid;grid-template-columns:7fr 5fr;gap:0;margin-bottom:0;position:relative}
+.hero-main{background:var(--ipe);padding:48px 44px 52px;position:relative}
+.hero-main .kick{font-family:"Space Grotesk",sans-serif;font-weight:500;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--tinta);margin-bottom:28px}
+.hero-main .num{font-family:"Archivo Black",sans-serif;font-size:112px;line-height:.9;letter-spacing:-.04em;color:var(--tinta);text-transform:uppercase}
+.hero-main .num .cur{font-size:48px;vertical-align:0.45em;margin-right:8px;letter-spacing:0}
+.hero-main .num .cents{font-size:72px}
+.hero-main .caption{font-family:"Archivo",sans-serif;font-weight:500;font-size:17px;color:var(--tinta);margin-top:28px;max-width:380px;line-height:1.4}
+.hero-main .caption b{font-weight:700}
+
+/* Painel direito — stats em grid rígido */
+.hero-side{background:var(--tinta);color:var(--concrete);display:grid;grid-template-rows:1fr 1fr}
+.hero-side .box{padding:28px 32px;display:flex;flex-direction:column;justify-content:center;position:relative}
+.hero-side .box + .box{border-top:1px solid rgba(255,255,255,.1)}
+.hero-side .k{font-family:"Space Grotesk",sans-serif;font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--concrete-dark);margin-bottom:12px}
+.hero-side .v{font-family:"Archivo Black",sans-serif;font-size:40px;letter-spacing:-.02em;line-height:1}
+.hero-side .v.terra{color:var(--terra)}
+.hero-side .v.ipe{color:var(--ipe)}
+.hero-side .v .cents{opacity:.5}
+.hero-side .meta{font-size:13px;color:var(--concrete-dark);margin-top:8px}
+
+/* CTA — barra inteira em preto */
+.cta{background:var(--tinta);padding:22px 32px;display:flex;gap:16px;flex-wrap:wrap}
+.cta button{background:transparent;color:var(--concrete);border:2px solid var(--concrete);padding:12px 24px;font-family:"Archivo",sans-serif;font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:all .15s}
+.cta button:hover{background:var(--ipe);color:var(--tinta);border-color:var(--ipe)}
+.cta button.primary{background:var(--ipe);color:var(--tinta);border-color:var(--ipe)}
+.cta button.primary:hover{background:var(--samambaia);color:var(--concrete);border-color:var(--samambaia)}
+
+/* Section title — como placa */
+.section{padding:72px 32px 24px}
+.section-title{display:flex;align-items:center;gap:28px;margin-bottom:40px}
+.section-title h2{font-family:"Archivo Black",sans-serif;font-size:38px;letter-spacing:-.015em;text-transform:uppercase;line-height:1}
+.section-title .bar{flex:1;height:6px;background:var(--tinta)}
+.section-title .label{font-family:"Space Grotesk",sans-serif;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--tinta);background:var(--ipe);padding:6px 14px;font-weight:500}
+
+/* Card de ativo — bloco modernista */
+.card{display:grid;grid-template-columns:140px 1fr auto;align-items:stretch;background:var(--concrete);border:2px solid var(--tinta);margin-bottom:20px}
+.card .side{background:var(--samambaia);color:var(--concrete);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 16px;text-align:center}
+.card .side .tipo{font-family:"Space Grotesk",sans-serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--ipe);margin-bottom:8px}
+.card .side .cod{font-family:"Archivo Black",sans-serif;font-size:28px;letter-spacing:-.02em;line-height:1}
+.card .body{padding:28px 32px;display:flex;flex-direction:column;justify-content:center}
+.card .body .nome{font-family:"Archivo",sans-serif;font-weight:600;font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--terra);margin-bottom:8px}
+.card .body .info{font-family:"Archivo Black",sans-serif;font-size:34px;line-height:1.1;letter-spacing:-.02em}
+.card .body .info .cents{opacity:.5}
+.card .body .meta{font-family:"Space Grotesk",sans-serif;font-size:13px;color:var(--tinta);margin-top:10px}
+.card .side-right{background:var(--terra);color:var(--concrete);padding:24px 28px;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;min-width:220px}
+.card .side-right .k{font-family:"Space Grotesk",sans-serif;font-size:10px;letter-spacing:.26em;text-transform:uppercase;opacity:.8;margin-bottom:6px}
+.card .side-right .v{font-family:"Archivo Black",sans-serif;font-size:30px;letter-spacing:-.02em}
+.card .side-right .div{margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.3);text-align:right;width:100%}
+.card .side-right .div .d{font-family:"Space Grotesk",sans-serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.8;margin-bottom:2px}
+.card .side-right .div .n{font-family:"Archivo Black",sans-serif;font-size:20px;color:var(--ipe)}
+
+/* Rodapé */
+.foot{background:var(--tinta);color:var(--concrete-dark);padding:28px 32px;margin-top:60px;display:flex;justify-content:space-between;font-family:"Space Grotesk",sans-serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.foot .orn{color:var(--ipe)}
+
+@media (max-width:800px){
+  .inside{padding:40px 20px 0}
+  .header{padding:12px 20px}
+  .header .nav{display:none}
+  .brand{font-size:18px}
+  .hero{grid-template-columns:1fr}
+  .hero-main{padding:36px 24px 40px}
+  .hero-main .num{font-size:68px}
+  .hero-main .num .cur{font-size:32px}
+  .hero-main .num .cents{font-size:46px}
+  .hero-side{grid-template-rows:auto auto}
+  .cta{padding:18px 20px}
+  .section{padding:48px 20px 20px}
+  .section-title h2{font-size:26px}
+  .card{grid-template-columns:1fr;border-width:2px}
+  .card .side{padding:20px}
+  .card .side-right{padding:20px;align-items:flex-start;min-width:0}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="brand">Ren<span>di</span></div>
+  <nav class="nav">
+    <a href="#">Carteira</a>
+    <a href="#">Simulador</a>
+    <a href="#">Perfil</a>
+    <a href="#">Sair</a>
+  </nav>
+</header>
+
+<!-- Painel decorativo de azulejo abstrato -->
+<div class="tiles" aria-hidden="true">
+  <span class="tile t-y"></span><span class="tile t-k"></span><span class="tile t-c"></span>
+  <span class="tile t-g"></span><span class="tile t-y"></span><span class="tile t-k"></span>
+  <span class="tile t-b"></span><span class="tile t-c"></span><span class="tile t-t"></span>
+  <span class="tile t-y"></span><span class="tile t-g"></span><span class="tile t-k"></span>
+</div>
+
+<div class="wrap">
+  <div class="inside">
+
+    <section class="hero">
+      <div class="hero-main">
+        <div class="kick">— Patrimônio · 11.10.2026</div>
+        <div class="num"><span class="cur">R$</span>94<span class="cents">,50</span></div>
+        <div class="caption">Caiu <b>R$ 10,50</b> na semana. É oscilação de curto prazo — a renda projetada continua pingando.</div>
+      </div>
+      <div class="hero-side">
+        <div class="box">
+          <div class="k">Variação (7d)</div>
+          <div class="v terra">−10,0%</div>
+          <div class="meta">− R$ 10,50 vs. anterior</div>
+        </div>
+        <div class="box">
+          <div class="k">Renda mensal</div>
+          <div class="v ipe">R$ 0<span class="cents">,78</span></div>
+          <div class="meta">1 ativo pagante · FII</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="cta">
+      <button class="primary">+ Adicionar ativo</button>
+      <button>Simular aportes</button>
+      <button>Atualizar cotações</button>
+    </div>
+
+    <section class="section">
+      <div class="section-title">
+        <h2>Posições</h2>
+        <div class="bar"></div>
+        <div class="label">01 ativo</div>
+      </div>
+
+      <div class="card">
+        <div class="side">
+          <div class="tipo">FII</div>
+          <div class="cod">MXRF<br>11</div>
+        </div>
+        <div class="body">
+          <div class="nome">Maxi Renda · Papel</div>
+          <div class="info">10 cotas × R$ 10<span class="cents">,50</span></div>
+          <div class="meta">Preço médio pago · investido R$ 105,00</div>
+        </div>
+        <div class="side-right">
+          <div class="k">Posição hoje</div>
+          <div class="v">R$ 94<span class="cents">,50</span></div>
+          <div class="div">
+            <div class="d">Dividendo mensal</div>
+            <div class="n">R$ 0,78</div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+</div>
+
+<footer class="foot">
+  <div>Rendi · Carteira do investidor comum</div>
+  <div><span class="orn">●</span> Dados em tempo real · B3</div>
+</footer>
+
+</body>
+</html>

@@ -6,46 +6,35 @@
 <title>Mockups — Escolha uma estética</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{background:#F5F2E9;color:#122018;font-family:"Inter",sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
-.wrap{max-width:1080px;margin:0 auto;padding:48px 24px 80px}
-.head{text-align:center;margin-bottom:48px}
-.head h1{font-size:32px;font-weight:600;letter-spacing:-.02em;margin-bottom:10px}
-.head p{color:#6E7A72;font-size:16px;max-width:520px;margin:0 auto}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
-.card{display:block;text-decoration:none;color:inherit;background:#fff;border-radius:16px;overflow:hidden;transition:transform .15s,box-shadow .15s;border:1px solid rgba(18,32,24,.08)}
-.card:hover{transform:translateY(-4px);box-shadow:0 20px 40px -20px rgba(18,32,24,.2)}
-.preview{aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;font-weight:600;position:relative;overflow:hidden}
-.preview .num{font-size:36px;letter-spacing:-.02em}
-.preview .num .cents{opacity:.6;font-weight:400}
+html,body{background:#1A1816;color:#EBE5D4;font-family:"Inter",sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:60px 24px 80px}
+.head{text-align:center;margin-bottom:60px}
+.head .kick{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#B88B4A;margin-bottom:14px}
+.head h1{font-family:"Fraunces",serif;font-size:48px;font-weight:600;letter-spacing:-.025em;margin-bottom:14px}
+.head p{color:#8F9A94;font-size:16.5px;max-width:580px;margin:0 auto;line-height:1.55}
 
-/* Preview — Terminal */
-.p-terminal{background:#141210;color:#F4B942}
-.p-terminal .num{font-family:"IBM Plex Mono",ui-monospace,monospace;font-weight:500}
-.p-terminal::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:#F4B942;opacity:.6}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.card{display:block;text-decoration:none;color:inherit;overflow:hidden;transition:transform .2s;border-radius:4px}
+.card:hover{transform:translateY(-6px)}
+.preview{aspect-ratio:3/4;overflow:hidden;position:relative;border:1px solid rgba(235,229,212,.12)}
+.preview iframe{width:166.6667%;height:166.6667%;border:0;transform:scale(0.6);transform-origin:top left;pointer-events:none}
 
-/* Preview — Fintech */
-.p-fintech{background:#F2F6F8;color:#1A2B2A}
-.p-fintech .num{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:44px}
+.body{padding:20px 4px 0}
+.body .numero{font-family:"Fraunces",serif;font-size:11px;letter-spacing:.3em;color:#B88B4A;margin-bottom:8px;text-transform:uppercase}
+.body h3{font-family:"Fraunces",serif;font-size:24px;font-weight:600;letter-spacing:-.015em;margin-bottom:8px}
+.body p{color:#8F9A94;font-size:14.5px;line-height:1.5;margin-bottom:12px}
+.body .refs{color:#B88B4A;font-size:12.5px;font-style:italic;line-height:1.5}
 
-/* Preview — Editorial */
-.p-editorial{background:#0E1915;color:#EBE5D4;border-bottom:2px solid #D4A574}
-.p-editorial .num{font-family:"EB Garamond",Georgia,serif;font-weight:500;font-size:52px}
-.p-editorial .num .currency{font-size:28px;color:#8F9A94;vertical-align:.3em;margin-right:4px}
+.foot{text-align:center;margin-top:72px;color:#8F9A94;font-size:14px;line-height:1.7}
+.foot code{background:rgba(184,139,74,.12);color:#D4A574;padding:3px 10px;border-radius:4px;font-family:"IBM Plex Mono",monospace;font-size:13px}
 
-.body{padding:22px 24px 26px}
-.body .name{font-size:18px;font-weight:600;letter-spacing:-.01em;margin-bottom:4px}
-.body .desc{color:#6E7A72;font-size:14px}
-.body .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
-.tag{font-size:11px;background:#F5F2E9;padding:3px 9px;border-radius:999px;color:#2A3B32;letter-spacing:.02em}
-
-.foot{text-align:center;margin-top:48px;color:#6E7A72;font-size:14px}
-.foot code{background:#fff;padding:2px 8px;border-radius:4px;font-size:13px;border:1px solid rgba(18,32,24,.1)}
-
-@media (max-width:800px){
-  .grid{grid-template-columns:1fr}
+@media (max-width:900px){
+  .grid{grid-template-columns:1fr;gap:36px}
+  .preview{aspect-ratio:4/3}
+  .head h1{font-size:34px}
 }
 </style>
 </head>
@@ -53,61 +42,48 @@ html,body{background:#F5F2E9;color:#122018;font-family:"Inter",sans-serif;line-h
 <div class="wrap">
 
   <div class="head">
-    <h1>Escolha uma estética</h1>
-    <p>Três direções diferentes aplicadas ao seu patrimônio real. Clica num card pra ver em tela cheia.</p>
+    <div class="kick">— três direções de design —</div>
+    <h1>Escolha a estética</h1>
+    <p>Cada uma puxa referência de um lugar bem específico (não "fintech genérica"). Mesmos dados em todas pra você comparar manzã com manzã.</p>
   </div>
 
   <div class="grid">
 
-    <a class="card" href="/mockup-terminal.html" target="_blank">
-      <div class="preview p-terminal">
-        <div class="num">R$ 94<span class="cents">,50</span></div>
-      </div>
+    <a class="card" href="/mockup-herbario.html" target="_blank">
+      <div class="preview"><iframe src="/mockup-herbario.html" loading="lazy"></iframe></div>
       <div class="body">
-        <div class="name">Terminal Clássico</div>
-        <div class="desc">Vibe de terminal Reuters/Bloomberg, mas com âmbar e bordô em vez do neon verde. Densidade, grid rígido, sensação de "profissional".</div>
-        <div class="tags">
-          <span class="tag">IBM Plex Mono</span>
-          <span class="tag">IBM Plex Serif</span>
-          <span class="tag">Dense</span>
-        </div>
+        <div class="numero">N° 01</div>
+        <h3>Herbário</h3>
+        <p>Catálogo botânico do séc. XVIII. Cada ativo é um espécime catalogado em papel pergaminho, com nome científico, taxonomia e observação de campo. Cormorant Garamond + IBM Plex Mono.</p>
+        <div class="refs">Ref: Linnaeus · Oliver Sacks · Natural History Museum</div>
       </div>
     </a>
 
-    <a class="card" href="/mockup-fintech.html" target="_blank">
-      <div class="preview p-fintech">
-        <div class="num">R$ 94<span class="cents">,50</span></div>
-      </div>
+    <a class="card" href="/mockup-modernismo.html" target="_blank">
+      <div class="preview"><iframe src="/mockup-modernismo.html" loading="lazy"></iframe></div>
       <div class="body">
-        <div class="name">Fintech Brasil</div>
-        <div class="desc">Branco-piscina, cantos super arredondados, serifa moderna. Trade Republic × Nubank: leveza mobile-first com personalidade brasileira (oliva + coral).</div>
-        <div class="tags">
-          <span class="tag">Fraunces</span>
-          <span class="tag">Inter</span>
-          <span class="tag">Airy</span>
-        </div>
+        <div class="numero">N° 02</div>
+        <h3>Modernismo Brasileiro</h3>
+        <p>Lina Bo Bardi encontra Athos Bulcão. Blocos de ipê amarelo, concreto bruto, verde-samambaia. Archivo Black em caixa alta. Confiante, calmo, brasileiro — sem clichê de copacabana.</p>
+        <div class="refs">Ref: SESC Pompeia · Instituto Moreira Salles · Niemeyer</div>
       </div>
     </a>
 
-    <a class="card" href="/mockup-editorial.html" target="_blank">
-      <div class="preview p-editorial">
-        <div class="num"><span class="currency">R$</span>94<span class="cents">,50</span></div>
-      </div>
+    <a class="card" href="/mockup-diario.html" target="_blank">
+      <div class="preview"><iframe src="/mockup-diario.html" loading="lazy"></iframe></div>
       <div class="body">
-        <div class="name">Editorial Noite</div>
-        <div class="desc">Diagramação de jornal financeiro impresso em papel escuro. Garamond, filetes dourados, "edição noite". Contemplativo, para investidor de longo prazo.</div>
-        <div class="tags">
-          <span class="tag">EB Garamond</span>
-          <span class="tag">Filetes dourados</span>
-          <span class="tag">Masthead</span>
-        </div>
+        <div class="numero">N° 03</div>
+        <h3>Diário do Investidor</h3>
+        <p>Caderno moleskine pautado + tabela de contabilidade manuscrita. Caveat pros rabiscos à mão, Fraunces pros números. Íntimo, pessoal, "meu caderno". Tem até carimbo de data e assinatura.</p>
+        <div class="refs">Ref: Moleskine · Hobonichi · Agnes Martin · double-entry bookkeeping</div>
       </div>
     </a>
 
   </div>
 
   <div class="foot">
-    Decidiu? Me manda <code>quero a fintech</code> (ou terminal / editorial) que eu aplico no site inteiro.
+    Decidiu? Me manda <code>quero o modernismo</code> (ou herbário / diário) que eu aplico no site inteiro.<br>
+    Pode pedir ajustes antes também — ex: "o diário mas sem a letra manuscrita" ou "o modernismo mais escuro".
   </div>
 
 </div>
