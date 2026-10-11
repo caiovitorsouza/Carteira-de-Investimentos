@@ -77,8 +77,10 @@ authRouter.post('/login', async (c) => {
   const user = rows[0];
 
   // Hash dummy pra manter tempo constante quando o email não existe.
+  // IMPORTANTE: o iter aqui tem que bater com PBKDF2_ITER (100000) — se for
+  // acima disso, Workers rejeita (NotSupportedError no verifyPassword).
   const ref = user?.password_hash
-    || 'pbkdf2$sha256$210000$ZmZmZmZmZmZmZmZmZmZmZg==$ZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmY=';
+    || 'pbkdf2$sha256$100000$ZmZmZmZmZmZmZmZmZmZmZg==$ZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmY=';
   const ok = await verifyPassword(ref, password || '');
   if (!user || !ok) return c.json({ error: 'credenciais_invalidas' }, 401);
 
