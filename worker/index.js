@@ -12,6 +12,7 @@ import { authRouter } from './routes/auth.js';
 import { marketRouter } from './routes/market.js';
 import { portfolioRouter } from './routes/portfolio.js';
 import { userRouter } from './routes/user.js';
+import { adminRouter } from './routes/admin.js';
 import { handleScheduled } from './jobs/scheduled.js';
 
 const app = new Hono();
@@ -38,6 +39,7 @@ app.route('/api/auth', authRouter);
 app.route('/api/market', marketRouter);
 app.route('/api/portfolio', portfolioRouter);
 app.route('/api/user', userRouter);
+app.route('/api/admin', adminRouter);
 
 // Erros centrais → JSON 500
 app.onError((err, c) => {
