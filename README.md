@@ -1,141 +1,89 @@
-# Carteira — plataforma Full-Stack (Node.js + Express + PostgreSQL + Brapi)
+# Carteira — plataforma Full-Stack (Cloudflare Workers + Supabase + Brapi)
 
-Evolução do seu site: em vez de guardar tudo no navegador (`localStorage`), agora
-há **contas de usuário**, os dados ficam no **banco de dados** (acessível do
-celular e do PC) e as **cotações são atualizadas sozinhas** pela API da
-[Brapi](https://brapi.dev). Adicionar um ativo virou **só digitar o ticker**:
-nome, preço, DY e P/VP vêm automáticos.
+Site de carteira de investimentos: contas de usuário, dados no banco (acessível
+do celular e do PC) e cotações atualizadas sozinhas pela API da
+[Brapi](https://brapi.dev). Adicionar um ativo é só digitar o ticker — nome,
+preço, DY e P/VP vêm automáticos.
 
-## O que tem aqui
+Deploy em Cloudflare Workers (edge, nunca dorme) + banco no Supabase.
+
+## Estrutura
 
 ```
-carteira-fullstack/
-├─ db/schema.sql            # estrutura do banco (tabelas)
-├─ src/
-│  ├─ server.js             # servidor Express (junta tudo)
-│  ├─ lib/                  # config, conexão com o banco, autenticação
-│  ├─ services/             # brapi.js (API financeira) e quotes.js (motor de cotações)
-│  ├─ repos/portfolio.js    # ler/salvar a carteira no banco
-│  ├─ routes/               # auth.js, market.js, portfolio.js (a API REST)
-│  └─ jobs/scheduler.js     # atualiza cotações sozinho, em horário de pregão
+carteira-de-investimentos/
+├─ worker/                   # backend (Hono + postgres.js, Cloudflare Workers)
+│  ├─ index.js               # entry point (fetch + scheduled)
+│  ├─ lib/                   # config, db, auth (PBKDF2 via Web Crypto)
+│  ├─ middleware/            # requireAuth
+│  ├─ repos/portfolio.js     # ler/salvar carteira no Postgres
+│  ├─ routes/                # auth, market, portfolio, user
+│  ├─ services/              # brapi, quotes, rates, email
+│  └─ jobs/scheduled.js      # cron triggers (cotações, taxas BCB, e-mails)
+├─ public/                   # front-end (index.html + api.js)
+├─ db/schema.sql             # schema do Postgres (rodar no Supabase SQL Editor)
 ├─ scripts/
-│  ├─ migrate.js            # cria as tabelas
-│  └─ sync-instruments.js   # baixa a lista de ações/FIIs (para o autocompletar)
-├─ public/                  # front-end (index.html + api.js)
-├─ dev/mock-server.js       # servidor de DEMONSTRAÇÃO (sem banco, dados na memória)
-└─ test/api.test.js         # testes automáticos das rotas
+│  ├─ migrate.js             # aplica o schema localmente (idempotente)
+│  └─ sync-instruments.js    # baixa catálogo B3 da Brapi -> tabela instruments
+├─ wrangler.toml             # config do Cloudflare Worker
+└─ DEPLOY_CLOUDFLARE.md      # passo a passo do deploy
 ```
 
----
-
-## Jeito mais rápido de ver funcionando (sem instalar banco)
-
-Serve para ver login + busca com autocompletar + cotação automática na hora.
-Os dados ficam só na memória e somem quando você fecha.
+## Setup rápido
 
 ```bash
-cd carteira-fullstack
-npm install            # instala as dependências
-npm run mock           # sobe o servidor de demonstração
-```
-
-Abra **http://localhost:3000**, crie uma conta e adicione, por exemplo, `HGLG11`.
-
----
-
-## Rodar de verdade (com PostgreSQL)
-
-### 1. Pré-requisitos
-- **Node.js 20+** → https://nodejs.org
-- **PostgreSQL 14+** → https://www.postgresql.org/download/
-  (ou, mais fácil, um banco gratuito na nuvem: [Neon](https://neon.tech) ou [Supabase](https://supabase.com))
-- Um **token da Brapi** (grátis) → https://brapi.dev/dashboard
-
-### 2. Configurar
-```bash
-cd carteira-fullstack
+# 1. Dependências
 npm install
+
+# 2. Variáveis locais (pra rodar os scripts)
 cp .env.example .env
-```
-Abra o arquivo `.env` e preencha:
-- `DATABASE_URL` com o endereço do seu banco
-  (ex.: `postgres://usuario:senha@localhost:5432/carteira`;
-  os bancos da nuvem te dão essa linha pronta — se for da nuvem, ponha também `PG_SSL=true`).
-- `BRAPI_TOKEN` com o seu token da Brapi.
-- `BRAPI_PLAN` com `free` (ou `pro`, se você assinar — o plano Pro libera o P/VP de todos os FIIs).
+# edita .env e coloca:
+#   DATABASE_URL=postgresql://postgres.<ref>:<senha>@aws-0-sa-east-1.pooler.supabase.com:6543/postgres
+#   BRAPI_TOKEN=<seu token>
 
-### 3. Criar as tabelas e carregar o catálogo de ativos
-```bash
-npm run db:migrate          # cria as tabelas no banco
-npm run sync:instruments    # baixa ações e FIIs da B3 (alimenta o autocompletar)
-```
+# 3. Prepara o banco
+npm run db:migrate          # cria as tabelas (idempotente)
+npm run sync:instruments    # sincroniza catálogo B3 (~2 min)
 
-### 4. Ligar
-```bash
-ENABLE_SCHEDULER=1 npm start
-```
-Abra **http://localhost:3000**. O `ENABLE_SCHEDULER=1` liga o robô que atualiza
-as cotações a cada 5 min em horário de pregão (ajustável em `QUOTE_REFRESH_CRON`).
+# 4. Login no Cloudflare
+npx wrangler login
 
-### Testes
-```bash
-npm run mock      # num terminal
-npm test          # noutro terminal
+# 5. Secrets do Worker (cola o valor quando pedir)
+npx wrangler secret put DATABASE_URL
+npx wrangler secret put BRAPI_TOKEN
+
+# 6. Deploy
+npm run deploy
 ```
 
----
+URL final: `https://carteira-de-investimentos.<seu-subdominio>.workers.dev`.
 
-## A API REST (resumo)
+Passo a passo detalhado: [DEPLOY_CLOUDFLARE.md](./DEPLOY_CLOUDFLARE.md).
 
-| Método | Rota | O que faz |
-|---|---|---|
-| POST | `/api/auth/register` | cria conta (`{email, password}`) e já loga |
-| POST | `/api/auth/login` | entra |
-| POST | `/api/auth/logout` | sai |
-| GET | `/api/auth/me` | diz quem está logado |
-| GET | `/api/market/search?q=mxrf` | autocompletar de tickers |
-| GET | `/api/market/quote/:ticker` | cotação de um ativo |
-| GET | `/api/portfolio` | carrega a carteira (posições + cotações + perfil) |
-| PUT | `/api/portfolio` | salva a carteira (com controle de versão) |
-| POST | `/api/portfolio/refresh` | força atualizar as cotações agora |
+## Comandos
 
-A sessão fica num **cookie** `httpOnly` (não some ao fechar a aba e o navegador
-não deixa JavaScript malicioso ler o token). A senha é guardada com **argon2id**,
-nunca em texto puro.
+| Comando | O que faz |
+|---|---|
+| `npm run dev` | Roda o worker local em `http://localhost:8787` |
+| `npm run deploy` | Publica a versão atual no Cloudflare |
+| `npm run tail` | Mostra logs do worker ao vivo |
+| `npm run db:migrate` | Aplica `db/schema.sql` no banco (precisa do `.env`) |
+| `npm run sync:instruments` | Baixa catálogo da Brapi pro banco (precisa do `.env`) |
 
----
+## Stack
 
-## Como o banco foi pensado
+- **Backend:** Cloudflare Workers + [Hono](https://hono.dev) + [postgres.js](https://github.com/porsager/postgres)
+- **Banco:** [Supabase](https://supabase.com) (Postgres com Transaction Pooler)
+- **Dados de mercado:** [Brapi.dev](https://brapi.dev) (cotações B3)
+- **Taxas macro:** [BCB SGS](https://api.bcb.gov.br) (Selic, CDI, IPCA — grátis)
+- **E-mail (opcional):** [Resend](https://resend.com)
+- **Scheduler:** Cloudflare Cron Triggers
+- **Auth:** PBKDF2-SHA256 via Web Crypto + cookies de sessão
 
-- **`users`** — conta: e-mail, hash da senha e um `portfolio_version` (um número
-  que sobe a cada gravação, para dois aparelhos não sobrescreverem um ao outro).
-- **`sessions`** — logins ativos (guarda só o hash do token do cookie).
-- **`instruments`** — catálogo de todos os ativos da B3 (é o que alimenta a busca).
-- **`market_quotes`** — cache das cotações: preço, DY, P/VP, último dividendo.
-  É **compartilhado**: uma consulta à Brapi serve a todos os usuários que têm
-  aquele ativo, economizando chamadas à API.
-- **`positions`** — a carteira de cada um: para FII/ação guarda só **quantidade**
-  e **preço médio** (o resto é lido do cache); renda fixa guarda o valor aplicado.
-- **`user_documents`** — perfil de investidor, taxas e preferências, em JSON.
-- **`portfolio_snapshots`** — um ponto por dia para o gráfico de evolução.
+## Agendamentos
 
-Por que separar `positions` de `market_quotes`? Porque o preço do MXRF11 é o
-mesmo para todo mundo (fica no cache, atualizado uma vez), enquanto *quantas
-cotas você tem* é só seu. Assim o robô atualiza o preço **uma vez** e todas as
-carteiras já veem o valor novo.
+Configurados em `wrangler.toml` (horários em UTC):
 
----
-
-## Observações honestas
-
-- A **API de FIIs da Brapi (P/VP, DY 12m)** é do plano **Pro**. Nos planos
-  gratuitos o site funciona com **preço e dividendos** (o P/VP fica vazio até você
-  assinar, ou você digita à mão). O sandbox da Brapi libera `MXRF11` e `HGLG11`
-  para teste sem token.
-- Cotações da Brapi têm **atraso** (não são tempo real ao segundo) — é o normal
-  para esse tipo de serviço e suficiente para acompanhar a carteira.
-- O front em `public/` é uma base enxuta com **login, lista de ativos, adicionar
-  por ticker e dicas em accordions**. Dá para trazer de volta as telas ricas das
-  versões anteriores (perfil, projeção, mercado) ligando-as às rotas em `api.js`.
-- Isto é uma ferramenta de acompanhamento e educação, **não é recomendação de
-  investimento**.
+- **Cotações** — a cada 5 min, 10h–18h BRT, dias úteis
+- **Taxas BCB** — 9h BRT dias úteis
+- **E-mail semanal** — domingo 19h BRT (só se `EMAIL_ENABLED=true`)
+- **E-mail mensal** — primeiro dia útil 9h BRT (só se `EMAIL_ENABLED=true`)

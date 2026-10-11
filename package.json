@@ -10,9 +10,8 @@
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "tail": "wrangler tail",
-    "test": "node --test test/",
-    "sync:instruments": "node scripts/sync-instruments.js",
-    "db:migrate": "node scripts/migrate.js"
+    "sync:instruments": "node --env-file=.env scripts/sync-instruments.js",
+    "db:migrate": "node --env-file=.env scripts/migrate.js"
   },
   "dependencies": {
     "hono": "^4.6.14",
