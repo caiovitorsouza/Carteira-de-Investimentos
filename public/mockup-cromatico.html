@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup — Mínimo cromático</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FAFAF7;
+  --ink:#171716;
+  --dim:#73706A;
+  --rule:#E7E5DF;
+  --accent:#2F5A3C;        /* oliva — única cor */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--paper);color:var(--ink);
+  font-family:"Inter",-apple-system,sans-serif;font-size:16px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  font-feature-settings:"ss01"}
+.wrap{max-width:680px;margin:0 auto;padding:64px 32px 100px}
+
+/* Topbar */
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:88px}
+.brand{font-family:"Fraunces",serif;font-weight:500;font-size:21px;letter-spacing:-.02em}
+.topbar nav{display:flex;gap:28px}
+.topbar nav a{color:var(--dim);text-decoration:none;font-size:14px;font-weight:400;transition:color .15s}
+.topbar nav a:hover{color:var(--ink)}
+
+/* Hero */
+.hero{margin-bottom:72px}
+.hero .greet{font-family:"Fraunces",serif;font-weight:300;font-style:italic;font-size:21px;color:var(--dim);margin-bottom:16px}
+.hero .money{font-family:"Fraunces",serif;font-weight:400;font-size:86px;letter-spacing:-.035em;line-height:1;margin-bottom:24px}
+.hero .money .cents{color:var(--dim);font-weight:300}
+.hero .meta{display:flex;gap:28px;align-items:baseline;flex-wrap:wrap;color:var(--dim);font-size:15px}
+.hero .meta .down{color:var(--ink)}
+
+/* CTA — texto com borda inferior fina + um verde discreto */
+.actions{display:flex;gap:24px;margin-top:36px}
+.actions .btn{background:none;border:none;padding:0;cursor:pointer;color:var(--ink);
+  font-family:inherit;font-size:15px;font-weight:500;
+  border-bottom:1px solid var(--ink);padding-bottom:3px;transition:all .15s}
+.actions .btn:hover{color:var(--accent);border-color:var(--accent)}
+.actions .btn.primary{color:var(--accent);border-color:var(--accent)}
+.actions .btn.primary:hover{opacity:.75}
+
+/* Divisor */
+.div{border-top:1px solid var(--rule);margin:72px 0 36px}
+
+/* Seção de posições */
+.sect{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:28px}
+.sect h2{font-family:"Fraunces",serif;font-weight:400;font-size:28px;letter-spacing:-.02em}
+.sect .count{color:var(--dim);font-size:14px}
+
+.position{padding:28px 0;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center}
+.position:last-child{border-bottom:none}
+.position .left .ticker{font-family:"Fraunces",serif;font-weight:400;font-size:28px;letter-spacing:-.02em;line-height:1.1;margin-bottom:4px}
+.position .left .name{color:var(--dim);font-size:14px;margin-bottom:14px}
+.position .left .stats{display:flex;gap:18px;color:var(--dim);font-size:13.5px;flex-wrap:wrap}
+.position .left .stats .k{color:var(--ink)}
+.position .right{text-align:right}
+.position .right .val{font-family:"Fraunces",serif;font-weight:400;font-size:28px;letter-spacing:-.02em;line-height:1.1}
+.position .right .val .cents{color:var(--dim)}
+.position .right .delta{color:var(--dim);font-size:13.5px;margin-top:6px}
+
+/* Insight — único bloquinho com accent */
+.insight{margin-top:60px;padding:24px 28px;background:#F0EEE7;border-left:2px solid var(--accent)}
+.insight .k{color:var(--accent);font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:500;margin-bottom:8px}
+.insight .body{font-family:"Fraunces",serif;font-weight:300;font-style:italic;font-size:19px;line-height:1.5;color:var(--ink)}
+.insight .body b{font-weight:500;font-style:normal}
+
+.footer{margin-top:88px;padding-top:28px;border-top:1px solid var(--rule);display:flex;justify-content:space-between;color:var(--dim);font-size:13px}
+.footer span.dot{color:var(--accent);margin-right:4px}
+
+@media (max-width:600px){
+  .wrap{padding:40px 22px 72px}
+  .topbar{margin-bottom:60px}
+  .hero .money{font-size:60px}
+  .position{grid-template-columns:1fr;gap:14px}
+  .position .right{text-align:left}
+  .position .right .val{font-size:22px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="topbar">
+    <div class="brand">Rendi</div>
+    <nav>
+      <a href="#">Carteira</a>
+      <a href="#">Simular</a>
+      <a href="#">Sair</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <p class="greet">Boa noite, Caio.</p>
+    <h1 class="money">R$ 94<span class="cents">,50</span></h1>
+    <div class="meta">
+      <span><span class="down">Semana em queda.</span> R$ 10,50 abaixo (−10%).</span>
+      <span>R$ 0,78 por mês projetado.</span>
+    </div>
+    <div class="actions">
+      <button class="btn primary">Adicionar ativo</button>
+      <button class="btn">Simular aportes</button>
+      <button class="btn">Atualizar cotações</button>
+    </div>
+  </section>
+
+  <div class="div"></div>
+
+  <div class="sect">
+    <h2>Posições</h2>
+    <span class="count">1 ativo</span>
+  </div>
+
+  <div class="position">
+    <div class="left">
+      <div class="ticker">MXRF11</div>
+      <div class="name">Maxi Renda · FII de papel</div>
+      <div class="stats">
+        <span><span class="k">10</span> cotas</span>
+        <span>médio <span class="k">R$ 10,50</span></span>
+        <span>hoje <span class="k">R$ 9,45</span></span>
+      </div>
+    </div>
+    <div class="right">
+      <div class="val">R$ 94<span class="cents">,50</span></div>
+      <div class="delta">−R$ 10,50 · −10%</div>
+    </div>
+  </div>
+
+  <aside class="insight">
+    <div class="k">Observação</div>
+    <div class="body">Oscilação de curto prazo não muda a tese — o dividendo mensal continua pingando. <b>Em 10 anos de aportes constantes, isso vira capital.</b></div>
+  </aside>
+
+  <footer class="footer">
+    <span>Rendi · 2026</span>
+    <span><span class="dot">●</span> dados ao vivo</span>
+  </footer>
+
+</div>
+</body>
+</html>

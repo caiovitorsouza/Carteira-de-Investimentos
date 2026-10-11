@@ -6,33 +6,34 @@
 <title>Mockups — Escolha uma estética</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Fraunces:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{background:#1A1816;color:#EBE5D4;font-family:"Inter",sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
-.wrap{max-width:1180px;margin:0 auto;padding:60px 24px 80px}
-.head{text-align:center;margin-bottom:60px}
-.head .kick{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#B88B4A;margin-bottom:14px}
-.head h1{font-family:"Fraunces",serif;font-size:48px;font-weight:600;letter-spacing:-.025em;margin-bottom:14px}
-.head p{color:#8F9A94;font-size:16.5px;max-width:580px;margin:0 auto;line-height:1.55}
+html,body{background:#FAFAF7;color:#171716;font-family:"Inter",sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:72px 32px 100px}
+.head{text-align:center;margin-bottom:72px}
+.head .kick{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:#73706A;margin-bottom:16px}
+.head h1{font-family:"Fraunces",serif;font-size:52px;font-weight:400;letter-spacing:-.03em;margin-bottom:16px}
+.head p{color:#73706A;font-size:16px;max-width:520px;margin:0 auto}
 
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
-.card{display:block;text-decoration:none;color:inherit;overflow:hidden;transition:transform .2s;border-radius:4px}
-.card:hover{transform:translateY(-6px)}
-.preview{aspect-ratio:3/4;overflow:hidden;position:relative;border:1px solid rgba(235,229,212,.12)}
+.card{display:block;text-decoration:none;color:inherit;overflow:hidden;transition:transform .2s}
+.card:hover{transform:translateY(-4px)}
+.preview{aspect-ratio:3/4;overflow:hidden;position:relative;border:1px solid #E7E5DF;background:#fff}
 .preview iframe{width:166.6667%;height:166.6667%;border:0;transform:scale(0.6);transform-origin:top left;pointer-events:none}
 
-.body{padding:20px 4px 0}
-.body .numero{font-family:"Fraunces",serif;font-size:11px;letter-spacing:.3em;color:#B88B4A;margin-bottom:8px;text-transform:uppercase}
-.body h3{font-family:"Fraunces",serif;font-size:24px;font-weight:600;letter-spacing:-.015em;margin-bottom:8px}
-.body p{color:#8F9A94;font-size:14.5px;line-height:1.5;margin-bottom:12px}
-.body .refs{color:#B88B4A;font-size:12.5px;font-style:italic;line-height:1.5}
+.body{padding:20px 2px 0}
+.body .numero{font-family:"Fraunces",serif;font-size:14px;color:#2F5A3C;margin-bottom:6px;font-weight:500}
+.body h3{font-family:"Fraunces",serif;font-size:22px;font-weight:500;letter-spacing:-.015em;margin-bottom:8px}
+.body .princ{color:#171716;font-size:14px;font-weight:500;margin-bottom:8px}
+.body p{color:#73706A;font-size:14px;line-height:1.55;margin-bottom:12px}
+.body .refs{color:#2F5A3C;font-size:12.5px;font-style:italic}
 
-.foot{text-align:center;margin-top:72px;color:#8F9A94;font-size:14px;line-height:1.7}
-.foot code{background:rgba(184,139,74,.12);color:#D4A574;padding:3px 10px;border-radius:4px;font-family:"IBM Plex Mono",monospace;font-size:13px}
+.foot{text-align:center;margin-top:88px;color:#73706A;font-size:14.5px;line-height:1.7}
+.foot code{background:rgba(47,90,60,.1);color:#2F5A3C;padding:3px 10px;border-radius:3px;font-family:"IBM Plex Mono",monospace;font-size:13px}
 
 @media (max-width:900px){
-  .grid{grid-template-columns:1fr;gap:36px}
+  .grid{grid-template-columns:1fr;gap:40px}
   .preview{aspect-ratio:4/3}
   .head h1{font-size:34px}
 }
@@ -42,48 +43,51 @@ html,body{background:#1A1816;color:#EBE5D4;font-family:"Inter",sans-serif;line-h
 <div class="wrap">
 
   <div class="head">
-    <div class="kick">— três direções de design —</div>
+    <div class="kick">três interpretações de mínimo</div>
     <h1>Escolha a estética</h1>
-    <p>Cada uma puxa referência de um lugar bem específico (não "fintech genérica"). Mesmos dados em todas pra você comparar manzã com manzã.</p>
+    <p>Cada uma tem uma restrição diferente que define o resultado. Mesmos dados em todas.</p>
   </div>
 
   <div class="grid">
 
-    <a class="card" href="/mockup-herbario.html" target="_blank">
-      <div class="preview"><iframe src="/mockup-herbario.html" loading="lazy"></iframe></div>
+    <a class="card" href="/mockup-tipografico.html" target="_blank">
+      <div class="preview"><iframe src="/mockup-tipografico.html" loading="lazy"></iframe></div>
       <div class="body">
         <div class="numero">N° 01</div>
-        <h3>Herbário</h3>
-        <p>Catálogo botânico do séc. XVIII. Cada ativo é um espécime catalogado em papel pergaminho, com nome científico, taxonomia e observação de campo. Cormorant Garamond + IBM Plex Mono.</p>
-        <div class="refs">Ref: Linnaeus · Oliver Sacks · Natural History Museum</div>
+        <h3>Tipográfico puro</h3>
+        <div class="princ">Restrição: só tipografia.</div>
+        <p>Preto no branco. Uma fonte, três pesos. Zero cores, zero bordas, zero ícones. Toda hierarquia vem do tamanho e do peso. O silêncio visual é o que faz os números gritarem.</p>
+        <div class="refs">Ref: Jasper Morrison · Dieter Rams · Jony Ive</div>
       </div>
     </a>
 
-    <a class="card" href="/mockup-modernismo.html" target="_blank">
-      <div class="preview"><iframe src="/mockup-modernismo.html" loading="lazy"></iframe></div>
+    <a class="card" href="/mockup-ma.html" target="_blank">
+      <div class="preview"><iframe src="/mockup-ma.html" loading="lazy"></iframe></div>
       <div class="body">
         <div class="numero">N° 02</div>
-        <h3>Modernismo Brasileiro</h3>
-        <p>Lina Bo Bardi encontra Athos Bulcão. Blocos de ipê amarelo, concreto bruto, verde-samambaia. Archivo Black em caixa alta. Confiante, calmo, brasileiro — sem clichê de copacabana.</p>
-        <div class="refs">Ref: SESC Pompeia · Instituto Moreira Salles · Niemeyer</div>
+        <h3>Ma 間 (japonês)</h3>
+        <div class="princ">Restrição: o vazio é o conteúdo.</div>
+        <p>Espaços enormes entre elementos. Hero deslocado pra direita. Uma linha fina horizontal. Único accent — vermelho hinomaru. Serifa japonesa Shippori Mincho. Carteira silenciosa.</p>
+        <div class="refs">Ref: Kenya Hara · MUJI · Noguchi · ikebana</div>
       </div>
     </a>
 
-    <a class="card" href="/mockup-diario.html" target="_blank">
-      <div class="preview"><iframe src="/mockup-diario.html" loading="lazy"></iframe></div>
+    <a class="card" href="/mockup-cromatico.html" target="_blank">
+      <div class="preview"><iframe src="/mockup-cromatico.html" loading="lazy"></iframe></div>
       <div class="body">
         <div class="numero">N° 03</div>
-        <h3>Diário do Investidor</h3>
-        <p>Caderno moleskine pautado + tabela de contabilidade manuscrita. Caveat pros rabiscos à mão, Fraunces pros números. Íntimo, pessoal, "meu caderno". Tem até carimbo de data e assinatura.</p>
-        <div class="refs">Ref: Moleskine · Hobonichi · Agnes Martin · double-entry bookkeeping</div>
+        <h3>Mínimo cromático</h3>
+        <div class="princ">Restrição: duas cores só.</div>
+        <p>Papel quase branco, tinta, e um verde-oliva muito sutil pros interativos. Fraunces + Inter alternando. Underline fino em vez de botões. Luxo quieto — Mercury Bank, Craft Docs.</p>
+        <div class="refs">Ref: Mercury Bank · Craft · Linear · Jony Ive</div>
       </div>
     </a>
 
   </div>
 
   <div class="foot">
-    Decidiu? Me manda <code>quero o modernismo</code> (ou herbário / diário) que eu aplico no site inteiro.<br>
-    Pode pedir ajustes antes também — ex: "o diário mas sem a letra manuscrita" ou "o modernismo mais escuro".
+    Decidiu? Me manda <code>quero o tipográfico</code> (ou ma / cromático).<br>
+    Também pode pedir mistura: "o tipográfico mas com o accent verde do cromático", por exemplo.
   </div>
 
 </div>

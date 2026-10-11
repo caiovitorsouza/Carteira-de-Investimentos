@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup — Ma 間</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#F5F3EE;color:#1A1816;
+  font-family:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho",serif;
+  font-size:16px;line-height:1.5;
+  -webkit-font-smoothing:antialiased}
+
+.wrap{max-width:1000px;margin:0 auto;padding:60px 48px 120px;min-height:100vh;display:flex;flex-direction:column}
+
+/* Topbar — bem baixo, discreto */
+.topbar{display:flex;justify-content:space-between;align-items:center;font-family:"Inter",sans-serif;font-size:12px;letter-spacing:.14em;font-weight:400;color:#6B6760;text-transform:uppercase}
+.topbar .brand{color:#1A1816;font-family:"Shippori Mincho",serif;font-size:20px;font-weight:600;letter-spacing:0;text-transform:none}
+.topbar .brand .ja{color:#B91C1C;margin-right:8px}
+
+/* Hero — assimétrico, deslocado pra direita, deixa vazio à esquerda (ma) */
+.hero{flex:1;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:120px 0 100px;position:relative}
+.hero .side{opacity:0;visibility:hidden}
+.hero .main{text-align:left}
+.hero .label{font-family:"Inter",sans-serif;font-size:11px;letter-spacing:.3em;color:#6B6760;text-transform:uppercase;margin-bottom:40px}
+.hero .money{font-size:96px;font-weight:400;line-height:1;letter-spacing:-.02em;margin-bottom:60px}
+.hero .money .cur{font-size:36px;color:#6B6760;vertical-align:0.35em;margin-right:12px;font-weight:400}
+.hero .money .cents{color:#6B6760;font-weight:400}
+.hero .note{font-size:17px;color:#4A463F;max-width:360px;line-height:1.65}
+.hero .note .red{color:#B91C1C}
+
+/* Linha fina horizontal — único elemento gráfico */
+.line{width:60px;height:1px;background:#1A1816;margin:60px 0 60px}
+
+/* Posições — tabela quase invisível */
+.positions{padding-top:40px}
+.pos-label{font-family:"Inter",sans-serif;font-size:11px;letter-spacing:.3em;color:#6B6760;text-transform:uppercase;margin-bottom:48px}
+.position{display:grid;grid-template-columns:1fr 2fr 1fr;gap:48px;padding:36px 0;align-items:baseline;border-top:1px solid rgba(26,24,22,.15)}
+.position:last-child{border-bottom:1px solid rgba(26,24,22,.15)}
+.position .code{font-family:"Shippori Mincho",serif;font-size:24px;font-weight:500;letter-spacing:-.01em}
+.position .code .ja{color:#B91C1C;font-size:14px;margin-left:8px;font-weight:400}
+.position .desc{color:#4A463F;font-size:15px}
+.position .desc .sub{font-size:13.5px;color:#6B6760;margin-top:4px}
+.position .val{text-align:right;font-size:24px;font-weight:400;letter-spacing:-.015em}
+.position .val .cents{color:#6B6760}
+.position .val .delta{display:block;margin-top:4px;font-size:13.5px;color:#B91C1C;font-family:"Inter",sans-serif;font-weight:400;letter-spacing:0}
+
+/* Ações — minúsculas no rodapé */
+.actions{display:flex;justify-content:center;gap:48px;margin-top:120px;font-family:"Shippori Mincho",serif;font-size:17px}
+.actions a{color:#1A1816;text-decoration:none;position:relative;padding-bottom:4px;transition:color .2s}
+.actions a::after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:#1A1816;transform:scaleX(0);transform-origin:left;transition:transform .25s}
+.actions a:hover::after{transform:scaleX(1)}
+.actions a.primary{color:#B91C1C}
+.actions a.primary::after{background:#B91C1C}
+
+.footer{margin-top:120px;text-align:center;font-family:"Inter",sans-serif;font-size:11px;letter-spacing:.24em;color:#6B6760;text-transform:uppercase}
+.footer .seal{color:#B91C1C;font-family:"Shippori Mincho",serif;font-size:14px;letter-spacing:0;margin-bottom:12px}
+
+@media (max-width:720px){
+  .wrap{padding:36px 24px 80px}
+  .hero{grid-template-columns:1fr;padding:72px 0 60px}
+  .hero .side{display:none}
+  .hero .money{font-size:60px}
+  .hero .money .cur{font-size:28px}
+  .position{grid-template-columns:1fr;gap:14px}
+  .position .val{text-align:left}
+  .actions{gap:28px;flex-wrap:wrap}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="topbar">
+    <div class="brand"><span class="ja">◉</span>Rendi</div>
+    <div>Dom · 11 Out 2026</div>
+  </header>
+
+  <section class="hero">
+    <div class="side"></div>
+    <div class="main">
+      <div class="label">— Patrimônio</div>
+      <div class="money"><span class="cur">R$</span>94<span class="cents">,50</span></div>
+      <div class="note">Semana de recuo. Perdi <span class="red">R$ 10,50</span> em cotação, mas a renda projetada permanece — R$ 0,78 por mês.</div>
+    </div>
+  </section>
+
+  <div class="line"></div>
+
+  <section class="positions">
+    <div class="pos-label">— Posições em carteira (1)</div>
+
+    <div class="position">
+      <div class="code">MXRF11<span class="ja">·</span></div>
+      <div class="desc">
+        Maxi Renda · Fundo imobiliário de papel
+        <div class="sub">10 cotas · preço médio R$ 10,50</div>
+      </div>
+      <div class="val">
+        R$ 94<span class="cents">,50</span>
+        <span class="delta">−10,0%</span>
+      </div>
+    </div>
+  </section>
+
+  <nav class="actions">
+    <a href="#" class="primary">Adicionar ativo</a>
+    <a href="#">Atualizar cotações</a>
+    <a href="#">Simular</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="seal">間</div>
+    <div>Rendi · Carteira silenciosa</div>
+  </footer>
+
+</div>
+</body>
+</html>
