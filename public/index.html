@@ -373,7 +373,7 @@ input:focus, textarea:focus, select:focus{outline:none; border-color:var(--accen
   padding:28px 32px;
 }
 .hero-main{display:flex; flex-direction:column; justify-content:space-between;}
-.hero-side{display:grid; grid-template-rows:1fr 1fr; gap:14px;}
+.hero-side{display:grid; grid-template-rows:1fr; gap:14px;}
 .hero-stat{padding:22px 26px; display:flex; flex-direction:column; justify-content:center;}
 .hero-stat.hero-stat-lime .stat-value{color:var(--accent);}
 
@@ -482,6 +482,66 @@ input:focus, textarea:focus, select:focus{outline:none; border-color:var(--accen
    NOVOS COMPONENTES (Smart Insights, Sleep Score, Dividend Calendar,
    Independence Goal, Bazin Calculator)
    ========================================================================= */
+
+/* ----- Painel de controle (grid principal) + Tabs ----- */
+.dashboard-grid{
+  display:grid;
+  grid-template-columns:1fr;      /* mobile: empilhado */
+  gap:14px;
+  margin:40px 0;
+}
+@media (min-width: 1024px){
+  .dashboard-grid{
+    grid-template-columns:repeat(3, 1fr);  /* desktop: 3 colunas */
+  }
+  .slot-insights{grid-column:1 / -1;}       /* full width */
+  .slot-calendar{grid-column:span 2;}        /* 2 colunas */
+  .slot-sleep{grid-column:span 1;}           /* 1 coluna */
+  .slot-tabs{grid-column:1 / -1;}            /* full width */
+}
+
+/* Tabs — faixa sóbria com indicador lime no ativo */
+.tabs{
+  display:flex;
+  gap:4px;
+  border-bottom:1px solid var(--line);
+  margin-bottom:20px;
+}
+.tab{
+  padding:12px 20px;
+  font-family:var(--f-sans);
+  font-size:14px;
+  font-weight:600;
+  color:var(--muted);
+  background:transparent;
+  border:none;
+  cursor:pointer;
+  position:relative;
+  transition:color .15s;
+  letter-spacing:-.005em;
+}
+.tab:hover{color:var(--ink-2);}
+.tab.active{color:var(--accent);}
+.tab.active::after{
+  content:'';
+  position:absolute;
+  left:12px; right:12px; bottom:-1px;
+  height:2px;
+  background:var(--accent);
+  border-radius:1px 1px 0 0;
+}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* No slot-sleep, a card do SleepScore precisa flex vertical pra caber bem na 1col estreita */
+.slot-sleep .sleep-card{
+  height:100%;
+  flex-direction:column;
+  text-align:center;
+  padding:28px 24px;
+}
+.slot-sleep .sleep-body h4{text-align:center;}
+.slot-sleep .sleep-body p{max-width:none;}
 
 /* ----- Smart Insights (avisos no topo) ----- */
 .insights{display:flex;flex-direction:column;gap:10px;margin:0 0 24px;}
@@ -1694,9 +1754,6 @@ details.tip.action .tip-tag{color: var(--accent);}
   </header>
 
   <main class="container">
-    <!-- SMART INSIGHTS — avisos personalizados no topo -->
-    <div class="insights" id="insightsBox"></div>
-
     <!-- HERO — grid Linear com 3 cards -->
     <section class="hero-grid">
       <!-- Card principal: patrimônio -->
@@ -1712,15 +1769,12 @@ details.tip.action .tip-tag{color: var(--accent);}
         </div>
       </div>
 
-      <!-- Lateral: card de renda + sleep score -->
+      <!-- Lateral: card de renda mensal (SleepScore foi pro painel abaixo) -->
       <div class="hero-side">
         <div class="hero-card hero-stat hero-stat-lime">
           <div class="stat-label">Renda mensal</div>
           <div class="stat-value num" id="rendaValue">R$ 0,00</div>
           <div class="stat-meta" id="rendaMeta"></div>
-        </div>
-        <div class="hero-card sleep-card" id="sleepCard">
-          <!-- Preenchido pelo JS renderSleepScore() -->
         </div>
       </div>
     </section>
@@ -1762,37 +1816,38 @@ details.tip.action .tip-tag{color: var(--accent);}
       <div id="assetList"></div>
     </section>
 
-    <!-- DIVIDEND CALENDAR — próximos pagamentos do mês -->
-    <section class="section reveal" id="dcalSection">
-      <div class="section-head">
-        <div>
-          <h2 class="section-title">Próximos pagamentos</h2>
-          <p class="section-sub">Dividendos que vão cair na sua conta este mês.</p>
-        </div>
+    <!-- PAINEL DE CONTROLE — grid 3-col no desktop, empilhado no mobile.
+         Agrupa Smart Insights (full width), DividendCalendar (2col) +
+         SleepScore (1col), e tabs com Projeções/Análise (full width). -->
+    <section class="dashboard-grid reveal">
+      <!-- Row 1: insights full width -->
+      <div class="slot slot-insights">
+        <div class="insights" id="insightsBox"></div>
       </div>
-      <div id="dcalBox"></div>
-    </section>
 
-    <!-- INDEPENDENCE GOAL — projeção de renda passiva -->
-    <section class="section reveal">
-      <div class="section-head">
-        <div>
-          <h2 class="section-title">Independência financeira</h2>
-          <p class="section-sub">Quando a renda da carteira cobre seus custos de vida.</p>
+      <!-- Row 2: Calendar (2col) + SleepScore (1col) -->
+      <div class="slot slot-calendar">
+        <div id="dcalBox"></div>
+      </div>
+      <div class="slot slot-sleep">
+        <div class="hero-card sleep-card" id="sleepCard">
+          <!-- Preenchido por renderSleepScore() -->
         </div>
       </div>
-      <div id="indepBox"></div>
-    </section>
 
-    <!-- BAZIN CALCULATOR — preço-teto para ações -->
-    <section class="section reveal">
-      <div class="section-head">
-        <div>
-          <h2 class="section-title">Preço-teto · método Bazin</h2>
-          <p class="section-sub">O preço máximo que vale pagar numa ação pra ela render 6% ao ano em dividendos.</p>
+      <!-- Row 3: tabs Projeções / Análise de Ativos -->
+      <div class="slot slot-tabs">
+        <div class="tabs" role="tablist">
+          <button class="tab active" role="tab" data-tab="proj" aria-selected="true">Projeções</button>
+          <button class="tab" role="tab" data-tab="bazin" aria-selected="false">Análise de Ativos</button>
+        </div>
+        <div class="tab-panel active" data-panel="proj" role="tabpanel">
+          <div id="indepBox"></div>
+        </div>
+        <div class="tab-panel" data-panel="bazin" role="tabpanel" hidden>
+          <div id="bazinBox"></div>
         </div>
       </div>
-      <div id="bazinBox"></div>
     </section>
 
     <!-- PERFIL DE INVESTIDOR (NOVO) -->
@@ -2616,14 +2671,7 @@ function renderDividendCalendar(){
     `).join('');
   }
 
-  const sec = $('dcalSection');
-  // Esconde a seção quando a carteira não tem nenhum pagador
-  if (divs.length === 0 && state.positions.length === 0){
-    sec.style.display = 'none';
-    return;
-  }
-  sec.style.display = '';
-
+  // Carteira sem pagadores → mantém o card, mas mostra estado vazio
   $('dcalBox').innerHTML = `
     <div class="hero-card">
       <div class="dcal-head">
@@ -2776,6 +2824,35 @@ function renderBazin(){
     if (t) _renderBazinResult(t);
   };
 }
+
+// ---------- Tabs (Projeções / Análise de Ativos) ----------
+function setupTabs(){
+  const tabs = document.querySelectorAll('.tabs .tab');
+  if (!tabs.length) return;
+  tabs.forEach(t => {
+    t.onclick = () => {
+      const target = t.dataset.tab;
+      // Reseta todas as tabs e painéis
+      tabs.forEach(x => {
+        x.classList.remove('active');
+        x.setAttribute('aria-selected','false');
+      });
+      document.querySelectorAll('.tab-panel').forEach(p => {
+        p.classList.remove('active');
+        p.hidden = true;
+      });
+      // Ativa a selecionada
+      t.classList.add('active');
+      t.setAttribute('aria-selected','true');
+      const panel = document.querySelector(`.tab-panel[data-panel="${target}"]`);
+      if (panel){
+        panel.classList.add('active');
+        panel.hidden = false;
+      }
+    };
+  });
+}
+setupTabs();
 
 // Gráfico de evolução do patrimônio (SVG inline, sem dependência externa)
 let _histRange = 90; // dias padrão
