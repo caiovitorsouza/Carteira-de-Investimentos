@@ -358,6 +358,43 @@ input:focus, textarea:focus, select:focus{outline:none; border-color:var(--accen
 .container{max-width:860px; margin:0 auto; padding:0 22px 100px;}
 
 /* =========================================================================
+   DASH — grid principal (1 col mobile / 3 col desktop)
+   ========================================================================= */
+.dash{
+  max-width:1280px; margin:0 auto; padding:28px 24px 100px;
+  display:grid; grid-template-columns:1fr; gap:24px;
+}
+.dash > *{min-width:0;}
+.dash-row1:empty{display:none;}
+.dash-row1 .insights{margin:0;}
+@media (min-width:1024px){
+  .dash{grid-template-columns:repeat(3, minmax(0,1fr));}
+  .dash-row1, .dash-full{grid-column:1 / -1;}
+  .dash-panel{grid-column:span 2;}
+  .dash-aside{grid-column:span 1; position:sticky; top:84px; align-self:start;}
+  .dash-indep{grid-column:span 2;}
+  .dash-bazin{grid-column:span 1;}
+}
+.dash-panel{display:flex; flex-direction:column; gap:14px;}
+.dash-panel .hero-income{margin:0;}
+.dash-panel .cta-row{margin:0;}
+@media (min-width:1024px){
+  .dash-panel{display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:14px; align-content:start;}
+  .dash-panel .hero-income{grid-column:1;}
+  .dash-panel .sleep-card{grid-column:2; flex-direction:column; text-align:center; justify-content:center;}
+  .dash-panel .cta-row, .dash-panel #assetsSection{grid-column:1 / -1;}
+}
+
+/* Glossário — sanfona estática */
+.glossary{display:flex; flex-direction:column; gap:8px;}
+.glossary details{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:0 18px;}
+.glossary summary{cursor:pointer; list-style:none; padding:16px 0; font-weight:600; font-size:14.5px; color:var(--ink); display:flex; justify-content:space-between; align-items:center;}
+.glossary summary::-webkit-details-marker{display:none;}
+.glossary summary::after{content:'+'; color:var(--muted); font-size:18px; font-weight:400; transition:transform .2s;}
+.glossary details[open] summary::after{transform:rotate(45deg); color:var(--accent);}
+.glossary details p{margin:0 0 16px; color:var(--ink-2); font-size:14px; line-height:1.6;}
+
+/* =========================================================================
    APP SHELL — layout 2-col global no desktop (conteúdo + aside sticky)
    ========================================================================= */
 .app-shell{
@@ -1935,12 +1972,19 @@ details.tip.action .tip-tag{color: var(--accent);}
     </div>
   </header>
 
-  <main class="app-shell">
-    <!-- COLUNA PRINCIPAL -->
-    <div class="app-main">
+  <main class="dash">
 
-      <!-- HERO — RENDA PROJETADA é o destaque. Patrimônio é coadjuvante. -->
-      <section class="hero-income">
+    <!-- LINHA 1 — Smart Insights (largura total) -->
+    <div class="dash-row1">
+      <div class="insights" id="insightsBox"></div>
+    </div>
+
+    <!-- EMPTY STATE (carteira vazia — ocupa largura total) -->
+    <div class="dash-full" id="emptyState" style="display:none;"></div>
+
+    <!-- LINHA 2 — Painel consolidado (2 col) + Extrato de proventos (1 col) -->
+    <section class="dash-panel">
+      <div class="hero-income">
         <div class="eyebrow">
           <span class="live-dot" aria-hidden="true"></span>
           <span>— Renda projetada deste mês</span>
@@ -1954,88 +1998,41 @@ details.tip.action .tip-tag{color: var(--accent);}
           <span class="pat-delta" id="patDelta"></span>
           <span class="pat-count" id="assetsSub"></span>
         </div>
-      </section>
+      </div>
 
-      <!-- CTA bar -->
+      <div class="hero-card sleep-card" id="sleepCard"></div>
+
       <div class="cta-row">
         <button class="btn" id="addBtn">+ Adicionar ativo</button>
         <button class="btn btn-ghost" id="refreshBtn">Atualizar cotações</button>
       </div>
 
-      <!-- EMPTY STATE verde (só renderiza se carteira vazia) -->
-      <div id="emptyState" style="display:none;">
-        <!-- Preenchido por renderEmptyState() -->
-      </div>
-
-      <!-- ATIVOS -->
-      <section class="section reveal" id="assetsSection">
-        <div class="section-head">
-          <div>
-            <h2 class="section-title">Posições</h2>
-          </div>
-        </div>
+      <div id="assetsSection">
+        <h2 class="section-title" style="margin:8px 0 14px;">Posições</h2>
         <div id="assetList"></div>
-      </section>
-
-      <!-- SMART INSIGHTS -->
-      <section class="section reveal reveal-delay-1" id="insightsSection">
-        <div class="insights" id="insightsBox"></div>
-      </section>
-
-      <!-- SLEEP SCORE — substitui o antigo questionário de perfil -->
-      <section class="section reveal reveal-delay-2" id="sleepSection">
-        <div class="section-head">
-          <div>
-            <h2 class="section-title">Seu perfil, deduzido da carteira</h2>
-            <p class="section-sub">Nenhum questionário. A gente lê a composição e te diz.</p>
-          </div>
-        </div>
-        <div class="hero-card sleep-card" id="sleepCard">
-          <!-- Preenchido por renderSleepScore() -->
-        </div>
-      </section>
-
-      <!-- INDEPENDÊNCIA FINANCEIRA — substitui o simulador de slider -->
-      <section class="section reveal reveal-delay-3" id="indepSection">
-        <div class="section-head">
-          <div>
-            <h2 class="section-title">Projeção de longo prazo</h2>
-            <p class="section-sub">Quando a renda da carteira cobre seus custos de vida.</p>
-          </div>
-        </div>
-        <div id="indepBox"></div>
-      </section>
-
-      <!-- ANÁLISE DE ATIVOS (Bazin) -->
-      <section class="section reveal">
-        <div class="section-head">
-          <div>
-            <h2 class="section-title">Análise de ativos</h2>
-            <p class="section-sub">Preço-teto pelo método Bazin — margem de segurança em dividendos.</p>
-          </div>
-        </div>
-        <div id="bazinBox"></div>
-      </section>
-
-      <!-- DICAS (preservado — conteúdo educacional, não ruidoso) -->
-      <section class="section reveal">
-        <div class="section-head">
-          <div>
-            <h2 class="section-title">Dicas e conceitos</h2>
-            <p class="section-sub">Toque pra expandir.</p>
-          </div>
-        </div>
-        <div class="tips" id="tips"></div>
-      </section>
-
-    </div>
-
-    <!-- COLUNA LATERAL (STICKY no desktop) -->
-    <aside class="app-aside">
-      <div class="dcal-vertical" id="dcalBox">
-        <!-- Preenchido por renderDividendCalendar() -->
       </div>
+    </section>
+
+    <aside class="dash-aside">
+      <div class="dcal-vertical" id="dcalBox"></div>
     </aside>
+
+    <!-- LINHA 3 — Projeção + Bazin lado a lado -->
+    <section class="dash-indep">
+      <h2 class="section-title" style="margin:0 0 14px;">Projeção de longo prazo</h2>
+      <div id="indepBox"></div>
+    </section>
+    <section class="dash-bazin">
+      <h2 class="section-title" style="margin:0 0 14px;">Análise de ativos · Bazin</h2>
+      <div id="bazinBox"></div>
+    </section>
+
+    <!-- GLOSSÁRIO — conceitos fixos, sem alertas -->
+    <section class="dash-full glossary-wrap">
+      <h2 class="section-title" style="margin:0 0 4px;">Glossário do investidor</h2>
+      <p class="section-sub" style="margin:0 0 16px;">Conceitos básicos. Os alertas da sua carteira ficam só no topo.</p>
+      <div class="glossary" id="tips"></div>
+    </section>
 
   </main>
 </div>
@@ -2710,71 +2707,66 @@ function renderSleepScore(){
 }
 
 // ---------- 2) Smart Insights ----------
-function gerarInsights(positions){
-  const total = positions.reduce((s,p) => {
-    const e = enrich(p); return s + (e.atual || e.aplicado || 0);
-  }, 0);
-  const rendaMensal = positions.reduce((s,p) => {
-    const e = enrich(p); return s + (e.renda || 0);
-  }, 0);
-  const rfTotal = positions.filter(p => ['selic','cdb','lci','lca','pre','ipca'].includes(p.kind))
-    .reduce((s,p) => { const e = enrich(p); return s + (e.aplicado || 0); }, 0);
-  const temRf = rfTotal > 0;
-  const temFii = positions.some(p => p.kind === 'fii');
-  const temAcao = positions.some(p => p.kind === 'acao');
+// Regras (método previsibilidade):
+//  - Reserva de emergência = ativos de liquidez (Selic, CDB). Alerta só se == 0.
+//  - Renda fixa concentrada NUNCA é risco — é segurança.
+//  - Risco de concentração só pra UM ativo de renda variável (FII/ação) > 20%.
+const _LIQUIDEZ_KINDS = ['selic','cdb'];
+const _RV_KINDS = ['fii','acao'];
+const _CONC_LIMITE = 0.20;
 
-  // Maior ativo (concentração)
-  let maior = null, maiorValor = 0;
-  for (const p of positions){
-    const e = enrich(p);
-    const v = e.atual || e.aplicado || 0;
-    if (v > maiorValor){ maiorValor = v; maior = p; }
-  }
-  const concentracao = total > 0 ? maiorValor/total : 0;
+function gerarInsights(positions){
+  const vals = positions.map(p => ({ p, v: enrich(p).atual || 0, r: enrich(p).renda || 0 }));
+  const total = vals.reduce((s,x) => s + x.v, 0);
+  if (total <= 0) return [];
+
+  const liquidez = vals.filter(x => _LIQUIDEZ_KINDS.includes(x.p.kind)).reduce((s,x) => s + x.v, 0);
+  const rendaMensal = vals.reduce((s,x) => s + x.r, 0);
+  const rv = vals.filter(x => _RV_KINDS.includes(x.p.kind));
+  const temRv = rv.length > 0;
+  const soFii = rv.length > 0 && rv.every(x => x.p.kind === 'fii') && rv.length === vals.length;
 
   const out = [];
-  if (total > 0 && !temRf){
-    out.push({
-      tone:'attention',
+
+  if (liquidez === 0){
+    out.push({ tone:'attention', icon:'shield',
       title:'Sua carteira ainda não tem reserva de emergência',
-      body:'Comece com Tesouro Selic — líquido, seguro, resgatável em 1 dia útil. É o lastro que te deixa dormir tranquilo.',
-      icon:'shield',
-    });
+      body:'Nenhum valor em Tesouro Selic ou CDB de liquidez. Esse é o lastro que deixa você dormir tranquilo em meses ruins.' });
   }
+
+  const concentrados = rv.filter(x => x.v / total > _CONC_LIMITE).sort((a,b) => b.v - a.v);
+  if (concentrados.length && vals.length > 1){
+    const x = concentrados[0];
+    out.push({ tone:'attention', icon:'pie',
+      title:`${Math.round(x.v/total*100)}% da carteira está em ${x.p.ticker || x.p.nome}`,
+      body:'Um único ativo de renda variável acima de 20% aumenta a oscilação. Diversifique aos poucos nos próximos aportes.' });
+  }
+
   const CONTA_LUZ = 180;
   if (rendaMensal >= CONTA_LUZ){
-    out.push({
-      tone:'good',
+    out.push({ tone:'good', icon:'spark',
       title:'Sua renda passiva já paga sua conta de luz',
-      body:`Com ${brl.format(rendaMensal)}/mês em dividendos, você cobre uma conta de ${brl.format(CONTA_LUZ)} e ainda sobra. Primeiro degrau da independência.`,
-      icon:'spark',
-    });
+      body:`São ${brl.format(rendaMensal)}/mês em proventos — o primeiro degrau da independência.` });
   }
-  if (concentracao > 0.4 && positions.length > 1){
-    const nome = maior.ticker || maior.nome || 'um ativo';
-    out.push({
-      tone:'attention',
-      title:`${Math.round(concentracao*100)}% do seu capital está em ${nome}`,
-      body:'Concentração alta aumenta risco. Diversifique aos poucos em novos aportes.',
-      icon:'pie',
-    });
-  }
-  if (new Date().getDate() <= 5 && total > 0){
-    out.push({
-      tone:'info',
-      title:'Mês novo — hora de regar a carteira',
-      body:'Aporte consistente vence timing. Mesmo R$ 100/mês fazem diferença em 10 anos.',
-      icon:'calendar',
-    });
-  }
-  if (temFii && !temAcao && !temRf){
-    out.push({
-      tone:'info',
+
+  if (soFii){
+    out.push({ tone:'info', icon:'balance',
       title:'Sua carteira é 100% FII',
-      body:'FII paga renda mensal boa, mas oscila no curto prazo. Uma base em renda fixa dá previsibilidade.',
-      icon:'balance',
-    });
+      body:'FII paga renda mensal, mas oscila no curto prazo. Uma base em renda fixa traz previsibilidade.' });
   }
+
+  if (!temRv && liquidez > 0){
+    out.push({ tone:'good', icon:'shield',
+      title:'Base de segurança montada',
+      body:'Sua carteira está toda em renda fixa. Quando quiser renda mensal crescente, FIIs são o próximo passo natural.' });
+  }
+
+  if (new Date().getDate() <= 5){
+    out.push({ tone:'info', icon:'calendar',
+      title:'Mês novo — hora do aporte',
+      body:'Constância vence timing. Mesmo R$ 100 por mês fazem diferença em 10 anos.' });
+  }
+
   return out;
 }
 
@@ -2789,6 +2781,7 @@ const _ICONS = {
 function renderInsights(){
   const ins = gerarInsights(state.positions);
   const box = $('insightsBox');
+  if (box.parentElement) box.parentElement.style.display = ins.length ? '' : 'none';
   if (ins.length === 0){ box.innerHTML = ''; return; }
   box.innerHTML = ins.map(i => `
     <div class="insight tone-${i.tone}">
@@ -2990,6 +2983,25 @@ function renderBazin(){
     const t = ($('bazinInput').value || '').trim();
     if (t) _renderBazinResult(t);
   };
+}
+
+// ---------- Glossário do investidor (estático, sem alertas) ----------
+const _GLOSSARIO = [
+  ['O que é Tesouro Selic?', 'Título público que acompanha a taxa básica de juros. Rende todo dia útil, pode ser resgatado a qualquer momento e é garantido pelo Tesouro Nacional — por isso é o lugar clássico da reserva de emergência.'],
+  ['O que são FIIs?', 'Fundos Imobiliários reúnem dinheiro de vários investidores pra comprar imóveis ou títulos do setor. Distribuem a maior parte do que recebem em proventos mensais, isentos de IR pra pessoa física.'],
+  ['A importância dos dividendos', 'Dividendos são a parte do lucro que a empresa ou fundo devolve a você. Reinvestidos, compram novas cotas que geram ainda mais renda — é a bola de neve dos juros compostos.'],
+  ['O que é Dividend Yield (DY)?', 'Quanto um ativo pagou em proventos nos últimos 12 meses dividido pelo preço atual. DY de 10% significa que R$ 100 investidos renderam R$ 10 no ano.'],
+  ['O que é P/VP?', 'Preço sobre valor patrimonial. Abaixo de 1, você paga menos do que o patrimônio do fundo vale no papel; acima de 1, paga um prêmio.'],
+  ['O que é reserva de emergência?', 'Um colchão de 6 a 12 meses de custo de vida em algo seguro e líquido. Ela existe pra você nunca precisar vender investimentos na hora errada.'],
+  ['CDB, LCI e LCA — qual a diferença?', 'Todos são empréstimos que você faz a um banco, protegidos pelo FGC até R$ 250 mil. LCI e LCA são isentas de IR; CDB tem IR regressivo de 22,5% a 15%.'],
+  ['Juros compostos', 'Rendimento que rende sobre o rendimento. Os primeiros anos parecem lentos; a partir do décimo, o dinheiro trabalha mais do que você.'],
+];
+
+function renderTips(){
+  const box = $('tips'); if (!box) return;
+  if (box.dataset.ready === '1') return;
+  box.dataset.ready = '1';
+  box.innerHTML = _GLOSSARIO.map(([q,a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join('');
 }
 
 // ---------- Tabs (Projeções / Análise de Ativos) ----------
@@ -5022,7 +5034,7 @@ function tipAccTag(title, cls, tag, bodyHtml){
   return d;
 }
 
-function renderTips(){
+function _renderTipsLegacy(){ // substituida pelo Glossario estatico
   const box = $('tips'); box.innerHTML = '';
   const t = totals();
   const n = state.positions.length;
