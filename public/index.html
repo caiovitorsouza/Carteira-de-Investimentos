@@ -21,22 +21,13 @@
    ========================================================================= */
 :root{
   /* === Rendum · Linear/dark + lime — dark-native sempre ============== */
-  --bg:#0B0D0E;             /* fundo quase-preto */
-  --surface:#15181A;        /* cartões */
-  --surface-2:#1D2124;      /* seções levantadas */
-  --ink:#E8EBED;            /* texto principal (quase branco) */
-  --ink-2:#B6BABD;          /* texto secundário */
-  --muted:#787F85;          /* legendas, labels discretas */
-  --line:#242A2E;           /* hairline sutil */
-  --line-strong:#303840;    /* separador firme */
-  --accent:#A3E635;         /* LIME ELÉTRICO — único accent vibrante */
-  --accent-ink:#0B0D0E;     /* texto sobre o lime */
-  --accent-soft:#1E2A14;    /* fundo de badges lime (verde profundo) */
-  --accent-dk:#84CC16;      /* lime hover/pressed */
-  --gain:#A3E635;           /* ganhos usam o próprio accent */
-  --loss:#F43F5E;           /* perdas — rose vibrante */
-  --gain-soft:#1E2A14;
-  --loss-soft:#2E1216;
+  /* === Rendum · Light mode absoluto (slate + emerald) ============== */
+  --bg:#F8FAFC; --surface:#FFFFFF; --surface-2:#F1F5F9;
+  --ink:#1E293B; --ink-2:#475569; --muted:#64748B;
+  --line:#F1F5F9; --line-strong:#E2E8F0;
+  --accent:#059669; --accent-ink:#FFFFFF; --accent-soft:#ECFDF5; --accent-dk:#047857;
+  --gain:#059669; --loss:#E11D48; --gain-soft:#ECFDF5; --loss-soft:#FFF1F2;
+  --shadow-sm:0 1px 2px rgba(15,23,42,.05);
   --amber:#F59E0B;          /* indicador "ao vivo" */
 
   /* Fontes — Inter em todos os pesos. --f-serif é alias de Inter Tight
@@ -46,7 +37,7 @@
   --f-sans: "Inter", system-ui, -apple-system, Segoe UI, sans-serif;
   --f-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  color-scheme: dark;
+  color-scheme: light;
   padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
 }
@@ -68,10 +59,7 @@ body{
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeLegibility;
   overflow-x: hidden; /* evita scroll horizontal em celular por qualquer motivo */
-  /* Grainy texture sutil + lime glow discreto no topo — identidade Linear */
-  background-image:
-    radial-gradient(ellipse 70% 50% at 50% 0%,rgba(163,230,53,.04),transparent 60%),
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  background-image:none;
   background-attachment:fixed;
 }
 img, svg{max-width: 100%;}
@@ -1864,6 +1852,50 @@ details.tip.action .tip-tag{color: var(--accent);}
 .toggle.on{ background: var(--accent); }
 .toggle.on::before{ transform: translateX(18px); }
 
+
+/* ===== Light mode absoluto + componentes v2 ===== */
+.hero-card,.hero-income,.dcal-vertical,.indep-card,.insight,.glossary details,.asset,.empty-emerald{
+  box-shadow:var(--shadow-sm);}
+.hero-card,.hero-income,.dcal-vertical,.indep-card{background:#fff;border:1px solid #F1F5F9;}
+.topbar{background:rgba(255,255,255,.85)!important;border-bottom:1px solid #E2E8F0;}
+.dash{gap:24px;}
+.insight.tone-info{border-left-color:#3B82F6;background:#EFF6FF;}
+.insight.tone-info .insight-icon{background:#DBEAFE;color:#2563EB;}
+.sleep-ring .fill.moderado{stroke:#3B82F6;}
+.sleep-body .tag.moderado{background:#DBEAFE;color:#2563EB;}
+.indep-result{background:#F8FAFC;border-color:#E2E8F0;}
+/* empty state emerald-50 */
+.empty-emerald{background:#ECFDF5!important;border:1px solid #A7F3D0!important;color:#064E3B;}
+.empty-emerald::before,.empty-emerald::after{display:none;}
+.empty-emerald h2{color:#065F46;}
+.empty-emerald p{color:#047857;}
+.empty-emerald .hint{color:#059669;}
+.empty-emerald .icon{background:#10B981;}
+.empty-emerald .icon svg{color:#fff;}
+.empty-emerald .btn-emerald{background:#10B981;color:#fff;border-radius:999px;}
+.empty-emerald .btn-emerald:hover{background:#059669;}
+/* calendário agrupado */
+.dcal-vertical .vgroup{align-items:flex-start;}
+.dcal-vertical .vgroup.past{opacity:.55;}
+.dcal-vertical .vdate{background:#ECFDF5;}
+.dcal-vertical .vdate .d{color:#047857;}
+.dcal-vertical .vday{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+.dcal-vertical .vassets{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;}
+.dcal-vertical .vassets li{display:flex;justify-content:space-between;gap:8px;font-size:13.5px;}
+.dcal-vertical .vassets .tk{font-weight:600;color:var(--ink);font-size:13.5px;}
+.dcal-vertical .vassets .vv{color:var(--ink-2);font-variant-numeric:tabular-nums;}
+.dcal-vertical .vamount{display:flex;flex-direction:column;align-items:flex-end;white-space:nowrap;}
+.dcal-vertical .vamount .k{font-size:10px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.06em;}
+/* bazin autocomplete */
+.bazin-title{font-size:15px;font-weight:700;color:var(--ink);margin:0 0 14px;}
+.bazin-ac{position:relative;flex:1;min-width:0;}
+.bazin-list{position:absolute;z-index:30;top:calc(100% + 6px);left:0;right:0;margin:0;padding:6px;list-style:none;
+  background:#fff;border:1px solid #E2E8F0;border-radius:12px;box-shadow:0 10px 24px rgba(15,23,42,.08);max-height:300px;overflow:auto;}
+.bazin-list li{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;}
+.bazin-list li.active,.bazin-list li:hover{background:#F1F5F9;}
+.bazin-list .tk{font-weight:700;color:var(--ink);min-width:62px;font-size:14px;}
+.bazin-list .nm{flex:1;color:var(--ink-2);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.bazin-list .tp{font-size:10.5px;font-weight:600;color:#047857;background:#ECFDF5;padding:2px 7px;border-radius:999px;}
 </style>
 </head>
 <body>
@@ -2629,9 +2661,9 @@ function renderEmptyState(){
       <div class="icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6M12 22v-6M4.93 4.93l4.24 4.24M14.83 14.83l4.24 4.24M2 12h6M22 12h-6M4.93 19.07l4.24-4.24M14.83 9.17l4.24-4.24"/></svg>
       </div>
-      <h2>Comece a plantar sua carteira</h2>
-      <p>Adicione seu primeiro ativo pra <b>destravar</b> as projeções de independência, o calendário de dividendos e o Sleep Score deduzido do seu perfil.</p>
-      <button class="btn-emerald" id="emptyAddBtn">+ Adicionar primeiro ativo</button>
+      <h2>Adicionar o primeiro ativo para destravar as projeções</h2>
+      <p>Com um ativo já dá pra ver sua independência financeira, o calendário de dividendos e o seu Sleep Score.</p>
+      <button class="btn-emerald" id="emptyAddBtn">+ Adicionar meu primeiro ativo</button>
       <p class="hint">Comece com Tesouro Selic se não souber por onde — é seguro, líquido e paga todo mês.</p>
     </div>
   `;
@@ -2819,23 +2851,31 @@ function renderDividendCalendar(){
       valor: e.renda,
     });
   }
-  items.sort((a,b) => a.dia - b.dia);
+  // Agrupa por dia: um bloco "Dia X" com todos os ativos e o total do dia
+  const porDia = new Map();
+  for (const it of items){
+    if (!porDia.has(it.dia)) porDia.set(it.dia, []);
+    porDia.get(it.dia).push(it);
+  }
+  const grupos = [...porDia.entries()].sort((a,b) => a[0]-b[0])
+    .map(([dia, lst]) => ({ dia, lst, soma: lst.reduce((s,x)=>s+x.valor,0) }));
   const total = items.reduce((s,it)=>s+it.valor,0);
   const nomeMes = hoje.toLocaleDateString('pt-BR', { month:'long', year:'numeric' });
+  const esc = (t) => String(t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
-  const listaHtml = items.length === 0
+  const listaHtml = grupos.length === 0
     ? `<div class="vempty">Nenhum pagamento previsto neste mês. Adicione um FII pagador pra começar.</div>`
-    : items.map(it => `
-      <div class="vitem">
+    : grupos.map(g => `
+      <div class="vitem vgroup${g.dia < hoje.getDate() ? ' past' : ''}">
         <div class="vdate">
-          <div class="d">${String(it.dia).padStart(2,'0')}</div>
+          <div class="d">${String(g.dia).padStart(2,'0')}</div>
           <div class="m">${mesSigla}</div>
         </div>
         <div class="vmain">
-          <div class="tk">${it.ticker}</div>
-          <div class="sub">${it.sub}</div>
+          <div class="vday">Dia ${g.dia}</div>
+          <ul class="vassets">${g.lst.map(x => `<li><span class="tk">${esc(x.ticker)}</span><span class="vv">${brl.format(x.valor)}</span></li>`).join('')}</ul>
         </div>
-        <div class="vamount">${brl.format(it.valor)}</div>
+        <div class="vamount"><span class="k">Total</span>${brl.format(g.soma)}</div>
       </div>
     `).join('');
 
@@ -2870,95 +2910,144 @@ function calcularIndependencia({ patrimonioAtual, aporteMensal, rentabilidadeAnu
   return { meses: MAX, anos: 50, patr, renda: patr*yMensal, possivel: false };
 }
 
-function renderIndependence(totals){
-  const patrimonio = totals.atual || 0;
+let _INDEP_PATR = 0;
+
+function _indepResultHtml(){
   const r = calcularIndependencia({
-    patrimonioAtual: patrimonio,
+    patrimonioAtual: _INDEP_PATR,
     aporteMensal: _INDEP_STATE.aporteMensal,
     rentabilidadeAnual: 0.10,
     yieldAnualPassivo: 0.07,
     custoMensal: _INDEP_STATE.custoMensal,
   });
-  const tempo = !r.possivel ? 'mais de 50 anos'
-    : r.anos < 1 ? `${r.meses} meses`
+  const tempo = _INDEP_STATE.custoMensal <= 0 ? '—'
+    : !r.possivel ? 'mais de 50 anos'
+    : r.anos < 1 ? `${r.meses} ${r.meses === 1 ? 'mês' : 'meses'}`
     : r.anos < 2 ? '1 ano'
     : `${r.anos} anos`;
+  return `
+    <p class="lead">Nesse ritmo, você se torna independente em</p>
+    <p class="time">${tempo}</p>
+    <p class="explain">
+      ${_INDEP_STATE.custoMensal <= 0 ? 'Informe seus custos mensais pra calcular.'
+        : r.possivel
+        ? `Com <b>${brl.format(r.patr)}</b> acumulados, a carteira passa a gerar <span class="lime">${brl.format(r.renda)}</span>/mês — o suficiente pros seus custos.`
+        : 'Nesse ritmo levaria mais de 50 anos. Tente aumentar o aporte mensal.'}
+    </p>`;
+}
 
-  $('indepBox').innerHTML = `
-    <div class="indep-card">
-      <div class="indep-head">
-        <h3>Independência financeira</h3>
-        <p>Projeta quando a renda passiva da carteira cobre seus custos.</p>
+function renderIndependence(totals){
+  _INDEP_PATR = (totals && totals.atual) || 0;
+  const box = $('indepBox');
+  // Inputs são criados UMA vez; depois só o resultado é atualizado (mantém foco).
+  if (box.dataset.ready !== '1'){
+    box.dataset.ready = '1';
+    box.innerHTML = `
+      <div class="indep-card">
+        <div class="indep-head">
+          <h3>Independência financeira</h3>
+          <p>Projeta quando a renda passiva da carteira cobre seus custos.</p>
+        </div>
+        <div class="indep-inputs">
+          <label class="indep-field">
+            <span>Seus custos mensais</span>
+            <div class="wrap"><input id="indepCusto" type="number" inputmode="decimal" min="0" step="100" value="${_INDEP_STATE.custoMensal}"></div>
+          </label>
+          <label class="indep-field">
+            <span>Aporte mensal</span>
+            <div class="wrap"><input id="indepAporte" type="number" inputmode="decimal" min="0" step="100" value="${_INDEP_STATE.aporteMensal}"></div>
+          </label>
+        </div>
+        <div class="indep-result" id="indepResult"></div>
+        <p class="indep-foot">Simulação com rentabilidade anual de 10% e yield passivo de 7% ao ano.</p>
       </div>
-      <div class="indep-inputs">
-        <label class="indep-field">
-          <span>Seus custos mensais</span>
-          <div class="wrap"><input id="indepCusto" type="number" min="0" step="100" value="${_INDEP_STATE.custoMensal}"></div>
-        </label>
-        <label class="indep-field">
-          <span>Aporte mensal</span>
-          <div class="wrap"><input id="indepAporte" type="number" min="0" step="100" value="${_INDEP_STATE.aporteMensal}"></div>
-        </label>
-      </div>
-      <div class="indep-result">
-        <p class="lead">Nesse ritmo, você se torna independente em</p>
-        <p class="time">${tempo}</p>
-        <p class="explain">
-          ${r.possivel
-            ? `Com <b>${brl.format(r.patr)}</b> acumulados, a carteira passa a gerar <span class="lime">${brl.format(r.renda)}</span>/mês — o suficiente pros seus custos.`
-            : 'Nesse ritmo levaria mais de 50 anos. Tente aumentar o aporte mensal.'}
-        </p>
-      </div>
-      <p class="indep-foot">Simulação com rentabilidade anual de 10% e yield passivo de 7% ao ano.</p>
-    </div>
-  `;
-  $('indepCusto').oninput = (e) => { _INDEP_STATE.custoMensal = Number(e.target.value) || 0; renderIndependence(totals); };
-  $('indepAporte').oninput = (e) => { _INDEP_STATE.aporteMensal = Number(e.target.value) || 0; renderIndependence(totals); };
+    `;
+    $('indepCusto').addEventListener('input', (e) => { _INDEP_STATE.custoMensal = Math.max(0, Number(e.target.value) || 0); $('indepResult').innerHTML = _indepResultHtml(); });
+    $('indepAporte').addEventListener('input', (e) => { _INDEP_STATE.aporteMensal = Math.max(0, Number(e.target.value) || 0); $('indepResult').innerHTML = _indepResultHtml(); });
+  }
+  $('indepResult').innerHTML = _indepResultHtml();
 }
 
 // ---------- 5) Bazin Calculator ----------
 const BAZIN_YIELD = 0.06;
+// Mock interno: div = proventos médios por cota/ação nos últimos 3 anos (R$/ano)
 const BAZIN_MOCK = {
-  BBAS3: { div: 4.80, px: 56.20 },
-  ITSA4: { div: 1.05, px: 10.80 },
-  TAEE4: { div: 2.10, px: 35.90 },
-  BBSE3: { div: 2.45, px: 38.40 },
-  VIVT3: { div: 3.20, px: 48.70 },
-  CPLE6: { div: 1.80, px: 10.20 },
-  ITUB4: { div: 1.30, px: 32.50 },
+  BBAS3:  { nome:'Banco do Brasil',        tipo:'Ação', div: 4.80, px: 56.20 },
+  ITSA4:  { nome:'Itaúsa',                 tipo:'Ação', div: 1.05, px: 10.80 },
+  ITUB4:  { nome:'Itaú Unibanco',          tipo:'Ação', div: 1.30, px: 32.50 },
+  BBDC4:  { nome:'Bradesco',               tipo:'Ação', div: 1.10, px: 14.20 },
+  SANB11: { nome:'Santander Brasil',       tipo:'Ação', div: 1.60, px: 27.40 },
+  TAEE11: { nome:'Taesa',                  tipo:'Ação', div: 3.60, px: 34.80 },
+  TAEE4:  { nome:'Taesa PN',               tipo:'Ação', div: 1.20, px: 11.60 },
+  TRPL4:  { nome:'ISA CTEEP',              tipo:'Ação', div: 2.40, px: 25.10 },
+  EGIE3:  { nome:'Engie Brasil',           tipo:'Ação', div: 2.70, px: 41.30 },
+  CPLE6:  { nome:'Copel',                  tipo:'Ação', div: 0.80, px: 10.20 },
+  CMIG4:  { nome:'Cemig',                  tipo:'Ação', div: 1.15, px: 11.40 },
+  BBSE3:  { nome:'BB Seguridade',          tipo:'Ação', div: 2.45, px: 38.40 },
+  CXSE3:  { nome:'Caixa Seguridade',       tipo:'Ação', div: 0.95, px: 14.60 },
+  VIVT3:  { nome:'Telefônica Vivo',        tipo:'Ação', div: 3.20, px: 48.70 },
+  PETR4:  { nome:'Petrobras',              tipo:'Ação', div: 5.10, px: 37.20 },
+  VALE3:  { nome:'Vale',                   tipo:'Ação', div: 4.20, px: 58.90 },
+  SAPR11: { nome:'Sanepar',                tipo:'Ação', div: 1.70, px: 27.80 },
+  KLBN11: { nome:'Klabin',                 tipo:'Ação', div: 1.25, px: 20.40 },
+  KNCR11: { nome:'Kinea Rendimentos Imob.',tipo:'FII',  div: 12.40, px: 103.50 },
+  MXRF11: { nome:'Maxi Renda',             tipo:'FII',  div: 1.15, px: 9.60 },
+  HGLG11: { nome:'CSHG Logística',         tipo:'FII',  div: 13.20, px: 158.00 },
+  KNRI11: { nome:'Kinea Renda Imobiliária',tipo:'FII',  div: 11.40, px: 142.00 },
+  XPML11: { nome:'XP Malls',               tipo:'FII',  div: 10.80, px: 104.00 },
+  VISC11: { nome:'Vinci Shopping Centers', tipo:'FII',  div: 9.60, px: 101.00 },
+  CPTS11: { nome:'Capitânia Securities',   tipo:'FII',  div: 0.95, px: 7.70 },
+  HGBS11: { nome:'Hedge Brasil Shopping',  tipo:'FII',  div: 1.75, px: 19.50 },
+  BTLG11: { nome:'BTG Pactual Logística',  tipo:'FII',  div: 9.30, px: 99.00 },
+  IRDM11: { nome:'Iridium Recebíveis',     tipo:'FII',  div: 9.10, px: 72.00 },
 };
 
 function calcularBazin(div){ return div > 0 ? div / BAZIN_YIELD : 0; }
 
+function _bazinSugestoes(q){
+  q = (q || '').trim().toUpperCase();
+  if (!q) return [];
+  const norm = (t) => t.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase();
+  const qn = norm(q);
+  return Object.entries(BAZIN_MOCK)
+    .map(([tk, d]) => ({ tk, ...d, score: tk.startsWith(q) ? 0 : tk.includes(q) ? 1 : norm(d.nome).includes(qn) ? 2 : 9 }))
+    .filter(x => x.score < 9)
+    .sort((a,b) => a.score - b.score || a.tk.localeCompare(b.tk))
+    .slice(0, 7);
+}
+
 function _renderBazinResult(ticker){
-  const data = BAZIN_MOCK[ticker.toUpperCase()];
+  const tk = ticker.trim().toUpperCase();
+  const data = BAZIN_MOCK[tk];
   const box = $('bazinOut');
   if (!data){
-    box.innerHTML = `<div class="bazin-erro">Não temos dados históricos de dividendos pra "${ticker}". Tente: BBAS3, ITSA4, TAEE4, BBSE3, VIVT3.</div>`;
+    const safe = tk.replace(/[^A-Z0-9]/g,'');
+    box.innerHTML = `<div class="bazin-erro">Não temos dados de dividendos pra "${safe}". Comece a digitar e escolha um ativo da lista.</div>`;
     return;
   }
   const teto = calcularBazin(data.div);
   const margem = ((teto - data.px) / data.px) * 100;
+  const dy = data.div / data.px * 100;
   box.innerHTML = `
     <div class="bazin-result">
       <div class="head">
-        <span class="tk">${ticker.toUpperCase()}</span>
-        <span class="px">Preço hoje: ${brl.format(data.px)}</span>
+        <span class="tk">${tk}</span>
+        <span class="px">${data.nome} · ${brl.format(data.px)}</span>
       </div>
       <div class="bazin-grid">
         <div class="bazin-cell">
-          <div class="k">Dividendo médio (3 anos)</div>
+          <div class="k">Proventos médios (3 anos)</div>
           <div class="v">${brl.format(data.div)}/ano</div>
         </div>
         <div class="bazin-cell">
-          <div class="k">Preço-teto Bazin</div>
+          <div class="k">Preço-teto Bazin (6%)</div>
           <div class="v lime">${brl.format(teto)}</div>
         </div>
       </div>
       <div class="bazin-margem ${margem >= 0 ? 'ok' : 'alto'}">
         ${margem >= 0
-          ? `Hoje a ação está <b>${margem.toFixed(1)}%</b> abaixo do teto — margem de segurança disponível.`
-          : `Hoje a ação está <b>${Math.abs(margem).toFixed(1)}%</b> acima do teto. Esperar uma queda pode valer.`}
+          ? `Hoje está <b>${margem.toFixed(1)}%</b> abaixo do teto (DY ${dy.toFixed(1)}%) — margem de segurança disponível.`
+          : `Hoje está <b>${Math.abs(margem).toFixed(1)}%</b> acima do teto (DY ${dy.toFixed(1)}%). Esperar uma queda pode valer.`}
       </div>
     </div>
   `;
@@ -2971,17 +3060,52 @@ function renderBazin(){
   box.dataset.ready = '1';
   box.innerHTML = `
     <div class="hero-card">
-      <form class="bazin-form" id="bazinForm">
-        <input type="text" id="bazinInput" placeholder="Ex: BBAS3" maxlength="6" autocomplete="off">
+      <h3 class="bazin-title">Análise de ativos · Preço-teto Bazin</h3>
+      <form class="bazin-form" id="bazinForm" autocomplete="off">
+        <div class="bazin-ac">
+          <input type="text" id="bazinInput" placeholder="Busque: BBAS3, TAEE11, MXRF11…" maxlength="40"
+            role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="bazinList">
+          <ul class="bazin-list" id="bazinList" role="listbox" hidden></ul>
+        </div>
         <button type="submit" class="btn">Calcular</button>
       </form>
       <div id="bazinOut"></div>
     </div>
   `;
+  const input = $('bazinInput'), list = $('bazinList');
+  let sugs = [], idx = -1;
+  const fechar = () => { list.hidden = true; input.setAttribute('aria-expanded','false'); idx = -1; };
+  const pintar = () => {
+    list.innerHTML = sugs.map((x,i) => `
+      <li role="option" data-tk="${x.tk}" class="${i===idx?'active':''}" aria-selected="${i===idx}">
+        <span class="tk">${x.tk}</span><span class="nm">${x.nome}</span><span class="tp">${x.tipo}</span>
+      </li>`).join('');
+  };
+  const escolher = (tk) => { input.value = tk; fechar(); _renderBazinResult(tk); };
+  input.addEventListener('input', () => {
+    sugs = _bazinSugestoes(input.value); idx = sugs.length ? 0 : -1;
+    if (!sugs.length){ fechar(); return; }
+    pintar(); list.hidden = false; input.setAttribute('aria-expanded','true');
+  });
+  input.addEventListener('keydown', (e) => {
+    if (list.hidden || !sugs.length) return;
+    if (e.key === 'ArrowDown'){ e.preventDefault(); idx = (idx+1) % sugs.length; pintar(); }
+    else if (e.key === 'ArrowUp'){ e.preventDefault(); idx = (idx-1+sugs.length) % sugs.length; pintar(); }
+    else if (e.key === 'Enter' && idx >= 0){ e.preventDefault(); escolher(sugs[idx].tk); }
+    else if (e.key === 'Escape'){ fechar(); }
+  });
+  // mousedown evita que o blur feche a lista antes do clique
+  list.addEventListener('mousedown', (e) => {
+    const li = e.target.closest('li[data-tk]'); if (!li) return;
+    e.preventDefault(); escolher(li.dataset.tk);
+  });
+  input.addEventListener('blur', () => setTimeout(fechar, 120));
   $('bazinForm').onsubmit = (e) => {
     e.preventDefault();
-    const t = ($('bazinInput').value || '').trim();
-    if (t) _renderBazinResult(t);
+    const t = (input.value || '').trim();
+    if (!t) return;
+    const exato = BAZIN_MOCK[t.toUpperCase()] ? t : (_bazinSugestoes(t)[0]?.tk || t);
+    escolher(exato);
   };
 }
 
