@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup — Monocromático verde</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF2E6;         /* fundo verde-pálido */
+  --surface:#E1E8D2;    /* superfície 1 tom + saturado */
+  --surface-2:#D1DBBE;  /* superfície 2 tons */
+  --ink:#1B2E1F;        /* texto profundo */
+  --ink-dim:#4D6150;    /* texto secundário */
+  --accent:#4F7A3C;     /* verde vibrante — único toque forte */
+  --accent-dk:#2F5A24;
+  --rust:#8F3A2A;       /* ÚNICA cor fora da família: perda */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);
+  font-family:"Inter",-apple-system,sans-serif;font-size:16px;line-height:1.5;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:720px;margin:0 auto;padding:60px 32px 100px}
+
+/* Topbar */
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:72px}
+.brand{display:flex;align-items:center;gap:10px;font-family:"Fraunces",serif;font-weight:600;font-size:22px;letter-spacing:-.02em}
+.brand .dot{width:12px;height:12px;background:var(--accent);border-radius:50%}
+.topbar nav{display:flex;gap:28px}
+.topbar nav a{color:var(--ink-dim);text-decoration:none;font-size:14px;font-weight:500;transition:color .15s}
+.topbar nav a:hover{color:var(--ink)}
+
+/* Hero — card verde-pálido com números grandes */
+.hero{background:var(--surface);padding:40px 44px 44px;border-radius:16px;margin-bottom:28px}
+.hero .label{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim);font-weight:600;margin-bottom:20px}
+.hero .money{font-family:"Fraunces",serif;font-weight:500;font-size:88px;line-height:1;letter-spacing:-.035em;margin-bottom:24px}
+.hero .money .cents{color:var(--ink-dim);font-weight:400}
+.hero .status{display:flex;flex-wrap:wrap;gap:12px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--surface-2);color:var(--ink);padding:7px 14px;border-radius:999px;font-size:13.5px;font-weight:500}
+.chip.rust{background:transparent;color:var(--rust);border:1px solid var(--rust)}
+.chip.accent{background:var(--accent);color:var(--bg)}
+
+/* Ações */
+.actions{display:flex;gap:10px;margin-bottom:52px;flex-wrap:wrap}
+.btn{background:var(--accent);color:var(--bg);border:none;padding:12px 22px;border-radius:999px;font-family:inherit;font-weight:600;font-size:14.5px;cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--accent-dk)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+.btn.ghost:hover{background:var(--ink);color:var(--bg)}
+
+/* Section head */
+.sect{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px}
+.sect h2{font-family:"Fraunces",serif;font-weight:500;font-size:22px;letter-spacing:-.02em}
+.sect .count{color:var(--ink-dim);font-size:13.5px;font-weight:500}
+
+/* Position card */
+.position{background:var(--surface);padding:24px 28px;border-radius:14px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;margin-bottom:12px}
+.position .left .head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.position .left .ticker{font-family:"Fraunces",serif;font-weight:600;font-size:22px;letter-spacing:-.015em}
+.position .left .tag{background:var(--accent);color:var(--bg);font-size:10.5px;font-weight:700;letter-spacing:.08em;padding:2px 9px;border-radius:999px;text-transform:uppercase}
+.position .left .name{color:var(--ink-dim);font-size:14px;margin-bottom:12px}
+.position .left .meta{display:flex;gap:18px;font-size:13px;color:var(--ink-dim);flex-wrap:wrap}
+.position .left .meta b{color:var(--ink);font-weight:600}
+.position .right{text-align:right}
+.position .right .val{font-family:"Fraunces",serif;font-weight:500;font-size:26px;letter-spacing:-.02em;line-height:1.1}
+.position .right .val .cents{color:var(--ink-dim)}
+.position .right .delta{color:var(--rust);font-size:13.5px;font-weight:600;margin-top:4px}
+
+/* Rodapé */
+.footer{display:flex;justify-content:space-between;color:var(--ink-dim);font-size:13px;margin-top:60px;padding-top:24px;border-top:1px solid var(--surface-2)}
+.footer .live{display:flex;align-items:center;gap:6px}
+.footer .live::before{content:'';width:7px;height:7px;background:var(--accent);border-radius:50%;animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.4}}
+
+@media (max-width:620px){
+  .wrap{padding:36px 20px 60px}
+  .hero{padding:28px 24px}
+  .hero .money{font-size:58px}
+  .position{grid-template-columns:1fr;gap:14px}
+  .position .right{text-align:left}
+  .position .right .val{font-size:22px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="topbar">
+    <div class="brand"><span class="dot"></span>Rendi</div>
+    <nav>
+      <a href="#">Carteira</a>
+      <a href="#">Simular</a>
+      <a href="#">Sair</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="label">Patrimônio hoje</div>
+    <div class="money">R$ 94<span class="cents">,50</span></div>
+    <div class="status">
+      <span class="chip rust">▼ R$ 10,50 na semana</span>
+      <span class="chip accent">R$ 0,78/mês projetado</span>
+      <span class="chip">1 ativo</span>
+    </div>
+  </section>
+
+  <div class="actions">
+    <button class="btn">Adicionar ativo</button>
+    <button class="btn ghost">Simular aportes</button>
+    <button class="btn ghost">Atualizar</button>
+  </div>
+
+  <div class="sect">
+    <h2>Posições</h2>
+    <span class="count">1 ativo</span>
+  </div>
+
+  <div class="position">
+    <div class="left">
+      <div class="head">
+        <span class="ticker">MXRF11</span>
+        <span class="tag">FII</span>
+      </div>
+      <div class="name">Maxi Renda — Fundo imobiliário de papel</div>
+      <div class="meta">
+        <span><b>10</b> cotas</span>
+        <span>médio <b>R$ 10,50</b></span>
+        <span>hoje <b>R$ 9,45</b></span>
+      </div>
+    </div>
+    <div class="right">
+      <div class="val">R$ 94<span class="cents">,50</span></div>
+      <div class="delta">−10,0%</div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <span>Rendi · 2026</span>
+    <span class="live">cotações ao vivo</span>
+  </footer>
+
+</div>
+</body>
+</html>

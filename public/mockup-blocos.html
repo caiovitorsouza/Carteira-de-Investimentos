@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockup — Blocos de cor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FAFAF7;
+  --ink:#171618;
+  --dim:#6E6D73;
+  --rule:#EBEAE4;
+
+  /* Blocos cromáticos por tipo */
+  --coral:#F08A5D;        /* patrimônio total (hero) */
+  --coral-dk:#D96A3E;
+  --olive:#5B8C3E;        /* FII */
+  --azulejo:#4A6B7A;      /* ação */
+  --mostarda:#E8B33F;     /* renda fixa */
+  --plum:#6B3B5E;         /* perdas (sutil, não gritante) */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--paper);color:var(--ink);
+  font-family:"Inter",-apple-system,sans-serif;font-size:16px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  font-feature-settings:"ss01","cv11"}
+.wrap{max-width:720px;margin:0 auto;padding:36px 24px 80px}
+
+/* Topbar */
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:36px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:19px;letter-spacing:-.02em}
+.brand .logo{width:28px;height:28px;background:var(--coral);border-radius:8px;position:relative;overflow:hidden}
+.brand .logo::after{content:'';position:absolute;top:50%;left:0;right:0;height:50%;background:var(--olive)}
+.topbar .user{color:var(--dim);font-size:14px}
+.topbar .user a{color:var(--ink);text-decoration:none;font-weight:500}
+
+/* Hero — bloco coral forte */
+.hero{background:var(--coral);color:var(--ink);padding:36px 32px 40px;border-radius:20px;margin-bottom:14px;position:relative;overflow:hidden}
+.hero::after{
+  content:'';position:absolute;right:-60px;bottom:-60px;width:240px;height:240px;border-radius:50%;
+  background:var(--coral-dk);opacity:.5;z-index:0;
+}
+.hero .inner{position:relative;z-index:1}
+.hero .greet{font-size:14px;font-weight:600;opacity:.85;margin-bottom:14px}
+.hero .money{font-weight:800;font-size:72px;letter-spacing:-.045em;line-height:1;margin-bottom:16px}
+.hero .money .cents{opacity:.55;font-weight:700}
+.hero .delta{display:inline-flex;align-items:center;gap:6px;background:rgba(0,0,0,.15);color:var(--ink);padding:7px 14px;border-radius:999px;font-size:13.5px;font-weight:600}
+
+/* Linha de 3 blocos — stats */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:28px}
+.stat{padding:20px 20px 22px;border-radius:16px;color:var(--paper)}
+.stat.olive{background:var(--olive)}
+.stat.mostarda{background:var(--mostarda);color:var(--ink)}
+.stat.plum{background:var(--plum)}
+.stat .k{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;opacity:.85;margin-bottom:10px}
+.stat .v{font-weight:700;font-size:24px;letter-spacing:-.02em;line-height:1}
+.stat .v .cents{opacity:.55;font-weight:600}
+
+/* CTA bar */
+.cta{display:flex;gap:10px;margin-bottom:40px;flex-wrap:wrap}
+.btn{background:var(--ink);color:var(--paper);border:none;padding:12px 22px;border-radius:999px;font-family:inherit;font-weight:600;font-size:14.5px;cursor:pointer;transition:transform .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+.btn.ghost:hover{background:var(--ink);color:var(--paper)}
+
+/* Section */
+.sect{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px}
+.sect h2{font-weight:700;font-size:20px;letter-spacing:-.02em}
+.sect .count{color:var(--dim);font-size:13.5px}
+
+/* Position — card com faixa colorida à esquerda */
+.position{display:grid;grid-template-columns:6px 1fr auto;background:#fff;border:1px solid var(--rule);border-radius:16px;overflow:hidden;margin-bottom:10px}
+.position .spine{background:var(--olive)}
+.position .body{padding:20px 24px;display:flex;flex-direction:column;gap:4px}
+.position .body .head{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.position .body .ticker{font-weight:700;font-size:19px;letter-spacing:-.01em}
+.position .body .tag{background:rgba(91,140,62,.14);color:var(--olive);font-size:10.5px;font-weight:700;letter-spacing:.08em;padding:2px 9px;border-radius:999px;text-transform:uppercase}
+.position .body .name{color:var(--dim);font-size:13.5px}
+.position .body .meta{display:flex;gap:16px;color:var(--dim);font-size:13px;margin-top:10px;flex-wrap:wrap}
+.position .body .meta b{color:var(--ink)}
+.position .right{padding:20px 26px;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:4px;border-left:1px solid var(--rule);min-width:150px}
+.position .right .val{font-weight:700;font-size:22px;letter-spacing:-.02em}
+.position .right .val .cents{color:var(--dim);font-weight:600}
+.position .right .delta{color:var(--plum);font-size:13px;font-weight:600}
+
+/* Dica — bloco mostarda (afetivo) */
+.insight{background:var(--mostarda);color:var(--ink);padding:20px 26px;border-radius:16px;margin-top:28px;display:flex;gap:16px;align-items:flex-start}
+.insight .icon{font-size:22px;line-height:1;flex-shrink:0}
+.insight .text{font-size:14.5px;line-height:1.5}
+.insight .text b{font-weight:700}
+
+/* Rodapé */
+.footer{display:flex;justify-content:space-between;color:var(--dim);font-size:13px;margin-top:60px}
+
+@media (max-width:600px){
+  .wrap{padding:24px 18px 60px}
+  .hero{padding:26px 22px 30px}
+  .hero .money{font-size:50px}
+  .stats{grid-template-columns:1fr}
+  .position{grid-template-columns:6px 1fr}
+  .position .right{border-left:none;border-top:1px solid var(--rule);align-items:flex-start;grid-column:1 / -1}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="topbar">
+    <div class="brand"><span class="logo"></span>Rendi</div>
+    <div class="user">Oi, <a href="#">Caio</a></div>
+  </header>
+
+  <section class="hero">
+    <div class="inner">
+      <div class="greet">Patrimônio hoje</div>
+      <div class="money">R$ 94<span class="cents">,50</span></div>
+      <div class="delta">▼ R$ 10,50 na semana · −10,0%</div>
+    </div>
+  </section>
+
+  <div class="stats">
+    <div class="stat olive">
+      <div class="k">Fiis</div>
+      <div class="v">1 ativo</div>
+    </div>
+    <div class="stat mostarda">
+      <div class="k">Renda mensal</div>
+      <div class="v">R$ 0<span class="cents">,78</span></div>
+    </div>
+    <div class="stat plum">
+      <div class="k">Resultado</div>
+      <div class="v">− R$ 10<span class="cents">,50</span></div>
+    </div>
+  </div>
+
+  <div class="cta">
+    <button class="btn">+ Adicionar ativo</button>
+    <button class="btn ghost">Simular aportes</button>
+    <button class="btn ghost">Atualizar</button>
+  </div>
+
+  <div class="sect">
+    <h2>Posições</h2>
+    <span class="count">1 ativo</span>
+  </div>
+
+  <div class="position">
+    <div class="spine"></div>
+    <div class="body">
+      <div class="head">
+        <span class="ticker">MXRF11</span>
+        <span class="tag">FII</span>
+      </div>
+      <div class="name">Maxi Renda — Fundo imobiliário de papel</div>
+      <div class="meta">
+        <span><b>10</b> cotas</span>
+        <span>médio <b>R$ 10,50</b></span>
+        <span>hoje <b>R$ 9,45</b></span>
+      </div>
+    </div>
+    <div class="right">
+      <div class="val">R$ 94<span class="cents">,50</span></div>
+      <div class="delta">−10,0%</div>
+    </div>
+  </div>
+
+  <div class="insight">
+    <div class="icon">💡</div>
+    <div class="text">A oscilação de curto prazo não muda a tese. O dividendo continua pingando — <b>em 10 anos de aportes, R$ 0,78/mês vira muito mais que R$ 94,50.</b></div>
+  </div>
+
+  <footer class="footer">
+    <span>Rendi · 2026</span>
+    <span>Dom. 11 de outubro</span>
+  </footer>
+
+</div>
+</body>
+</html>
