@@ -358,46 +358,100 @@ input:focus, textarea:focus, select:focus{outline:none; border-color:var(--accen
 .container{max-width:860px; margin:0 auto; padding:0 22px 100px;}
 
 /* =========================================================================
-   HERO — o patrimônio é a estrela da página
+   HERO — grid Linear: 1 card grande de patrimônio + 2 cards de stats
    ========================================================================= */
-.hero{
-  padding:48px 0 44px;
-  border-bottom:1px solid var(--line);
+.hero-grid{
+  display:grid;
+  grid-template-columns:1.6fr 1fr;
+  gap:14px;
+  padding:36px 0 20px;
 }
+.hero-card{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:28px 32px;
+}
+.hero-main{display:flex; flex-direction:column; justify-content:space-between;}
+.hero-side{display:grid; grid-template-rows:1fr 1fr; gap:14px;}
+.hero-stat{padding:22px 26px; display:flex; flex-direction:column; justify-content:center;}
+.hero-stat.hero-stat-lime .stat-value{color:var(--accent);}
+
 .hero-eyebrow{
-  font-size:13px;
+  font-family:var(--f-mono);
+  font-size:11.5px;
+  font-weight:600;
+  letter-spacing:.14em;
+  text-transform:uppercase;
   color:var(--muted);
-  margin-bottom:10px;
+  margin-bottom:18px;
   display:flex; align-items:center; gap:10px;
 }
+.hero-eyebrow #heroUpd{margin-left:auto; letter-spacing:.1em;}
 .live-dot{
-  width:8px; height:8px; border-radius:50%;
-  background:var(--amber);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--amber) 25%, transparent);
+  width:7px; height:7px; border-radius:50%;
+  background:var(--accent);
+  box-shadow:0 0 8px var(--accent);
 }
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.live-dot{animation: pulse 2.4s ease-in-out infinite;}
+.live-dot{animation: pulse 2s ease-in-out infinite;}
 
 .hero-value{
-  font-family:var(--f-serif);
-  font-variation-settings: "opsz" 144, "wght" 600;
-  font-size: clamp(44px, 10vw, 72px);
+  font-family:var(--f-serif);        /* Inter Tight */
+  font-weight:700;
+  font-size: clamp(42px, 7vw, 68px);
   line-height:1;
-  letter-spacing:-0.035em;
-  margin:0;
+  letter-spacing:-0.045em;
+  margin:0 0 14px;
   color:var(--ink);
 }
-.hero-change{
-  display:flex; align-items:center; gap:14px;
-  margin-top:16px;
-  font-size:15px;
-  color:var(--ink-2);
-}
-.hero-change .pill{font-size:14px;}
-.hero-meta{
-  margin-top:4px;
-  font-size:14px;
+.hero-sub{
   color:var(--muted);
+  font-size:14.5px;
+  line-height:1.5;
+}
+.hero-sub .down{color:var(--loss); font-weight:600;}
+.hero-sub .up{color:var(--accent); font-weight:600;}
+
+/* Cards de stats laterais */
+.stat-label{
+  font-family:var(--f-mono);
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:10px;
+}
+.stat-value{
+  font-family:var(--f-serif);        /* Inter Tight */
+  font-weight:700;
+  font-size:28px;
+  line-height:1;
+  letter-spacing:-.025em;
+  color:var(--ink);
+}
+.stat-value .cents{color:var(--muted); font-weight:600;}
+.stat-value.loss{color:var(--loss);}
+.stat-meta{
+  font-size:12.5px;
+  color:var(--muted);
+  margin-top:6px;
+}
+
+/* CTA bar embaixo do hero */
+.cta-row{
+  display:flex;
+  gap:10px;
+  margin:14px 0 44px;
+  flex-wrap:wrap;
+}
+
+@media (max-width:720px){
+  .hero-grid{grid-template-columns:1fr;}
+  .hero-side{grid-template-rows:auto auto; grid-template-columns:1fr 1fr; gap:10px;}
+  .hero-card{padding:22px 20px;}
+  .hero-stat{padding:16px 18px;}
 }
 
 /* =========================================================================
@@ -1527,55 +1581,68 @@ details.tip.action .tip-tag{color: var(--accent);}
   </header>
 
   <main class="container">
-    <!-- HERO -->
-    <section class="hero">
-      <div class="hero-eyebrow">
-        <span class="live-dot" aria-hidden="true"></span>
-        <span id="heroEyebrowLabel">Seu patrimônio</span>
-        <span id="heroUpd" style="margin-left:auto;"></span>
-      </div>
-      <h1 class="hero-value num" id="heroValue">R$ 0,00</h1>
-      <div class="hero-change">
-        <span class="pill" id="heroPill">—</span>
-        <span id="heroMeta"></span>
-      </div>
-
-      <!-- Simulação temporal: toggle + slider -->
-      <div id="timeSimBox" class="time-sim">
-        <button class="time-sim-toggle" id="timeSimToggle">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-          <span id="timeSimToggleLabel">Simular com o tempo passando</span>
-        </button>
-        <div class="time-sim-panel" id="timeSimPanel" hidden>
-          <div class="time-sim-head">
-            <span>Daqui a <b id="timeSimMonthsLabel">0 meses</b></span>
-            <span class="time-sim-gain" id="timeSimGain"></span>
+    <!-- HERO — grid Linear com 3 cards -->
+    <section class="hero-grid">
+      <!-- Card principal: patrimônio -->
+      <div class="hero-card hero-main">
+        <div>
+          <div class="hero-eyebrow">
+            <span class="live-dot" aria-hidden="true"></span>
+            <span id="heroEyebrowLabel">— Patrimônio consolidado</span>
+            <span id="heroUpd"></span>
           </div>
-          <input type="range" min="0" max="240" step="1" value="0" class="time-sim-slider" id="timeSimSlider" aria-label="Meses no futuro">
-          <div class="time-sim-marks">
-            <span>hoje</span><span>5 anos</span><span>10 anos</span><span>15 anos</span><span>20 anos</span>
-          </div>
-          <div class="time-sim-note" id="timeSimNote"></div>
+          <h1 class="hero-value num" id="heroValue">R$ 0,00</h1>
+          <div class="hero-sub" id="heroSubText">Carteira vazia.</div>
         </div>
       </div>
 
-      <!-- Link do simulador de aportes mensais -->
-      <button class="hc-proj" id="simBtn">💭 Projetar com aportes mensais →</button>
+      <!-- Lateral: 2 cards de stat -->
+      <div class="hero-side">
+        <div class="hero-card hero-stat">
+          <div class="stat-label">Variação 7d</div>
+          <div class="stat-value num" id="varValue">—</div>
+          <div class="stat-meta" id="varMeta"></div>
+        </div>
+        <div class="hero-card hero-stat hero-stat-lime">
+          <div class="stat-label">Renda mensal</div>
+          <div class="stat-value num" id="rendaValue">R$ 0,00</div>
+          <div class="stat-meta" id="rendaMeta"></div>
+        </div>
+      </div>
     </section>
+
+    <!-- CTA bar -->
+    <div class="cta-row">
+      <button class="btn" id="addBtn">+ Adicionar ativo</button>
+      <button class="btn btn-ghost" id="simBtn">Simular aportes</button>
+      <button class="btn btn-ghost" id="refreshBtn">Atualizar cotações</button>
+    </div>
+
+    <!-- Simulação temporal — fica abaixo da CTA, acessível mas discreta -->
+    <div id="timeSimBox" class="time-sim" style="margin-bottom:28px;">
+      <button class="time-sim-toggle" id="timeSimToggle">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        <span id="timeSimToggleLabel">Simular com o tempo passando</span>
+      </button>
+      <div class="time-sim-panel" id="timeSimPanel" hidden>
+        <div class="time-sim-head">
+          <span>Daqui a <b id="timeSimMonthsLabel">0 meses</b></span>
+          <span class="time-sim-gain" id="timeSimGain"></span>
+        </div>
+        <input type="range" min="0" max="240" step="1" value="0" class="time-sim-slider" id="timeSimSlider" aria-label="Meses no futuro">
+        <div class="time-sim-marks">
+          <span>hoje</span><span>5 anos</span><span>10 anos</span><span>15 anos</span><span>20 anos</span>
+        </div>
+        <div class="time-sim-note" id="timeSimNote"></div>
+      </div>
+    </div>
 
     <!-- ATIVOS -->
     <section class="section reveal">
       <div class="section-head">
         <div>
-          <h2 class="section-title">Ativos</h2>
+          <h2 class="section-title">Posições</h2>
           <p class="section-sub" id="assetsSub"></p>
-        </div>
-        <div style="display:flex;gap:8px;">
-          <button class="btn-text" id="refreshBtn" title="Atualizar cotações">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="vertical-align:middle;"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/></svg>
-            Atualizar
-          </button>
-          <button class="btn btn-sm" id="addBtn">Adicionar</button>
         </div>
       </div>
       <div id="assetList"></div>
@@ -2135,27 +2202,50 @@ function render(){
   const t = totals();
   const ganho = t.atual - t.inv;
   const pctg = t.inv > 0 ? ganho/t.inv*100 : 0;
+  const n = state.positions.length;
 
+  // Card principal — patrimônio
   $('heroValue').textContent = brl.format(t.atual);
   $('heroValue').dataset.target = t.atual;
 
-  const pill = $('heroPill');
-  if (state.positions.length === 0){
-    pill.className = 'pill'; pill.textContent = 'Carteira vazia';
+  let subText = '';
+  if (n === 0){
+    subText = 'Carteira vazia. Comece pelo botão <b>Adicionar ativo</b> aí embaixo.';
+  } else if (ganho === 0){
+    subText = `${n} ${n===1?'ativo':'ativos'} em carteira — resultado zerado por enquanto.`;
   } else {
-    pill.className = 'pill ' + (ganho >= 0 ? 'gain' : 'loss');
-    pill.textContent = (ganho >= 0 ? '+ ' : '− ') + brl.format(Math.abs(ganho)) + ' (' + (ganho>=0?'+':'−') + pct.format(Math.abs(pctg)) + '%)';
+    const direcao = ganho >= 0 ? 'up' : 'down';
+    const seta = ganho >= 0 ? '▲' : '▼';
+    const sinal = ganho >= 0 ? '+' : '−';
+    subText = `${n} ${n===1?'ativo':'ativos'} · <span class="${direcao}">${seta} ${sinal} ${brl.format(Math.abs(ganho))}</span> (${sinal} ${pct.format(Math.abs(pctg))}%)`;
   }
-  const n = state.positions.length;
-  const meta = [];
-  if (n > 0) meta.push(n + (n===1 ? ' ativo' : ' ativos'));
-  if (t.renda > 0) meta.push(brl.format(t.renda) + '/mês projetado');
-  $('heroMeta').textContent = meta.join(' · ');
+  $('heroSubText').innerHTML = subText;
 
-  $('assetsSub').textContent = n > 0 ? 'Cotações atualizadas automaticamente.' : '';
+  // Card lateral 1 — Variação 7d (usando resultado total como proxy quando não há snapshot)
+  const varV = $('varValue');
+  const varM = $('varMeta');
+  if (n === 0){
+    varV.textContent = '—';
+    varV.className = 'stat-value num';
+    varM.textContent = '';
+  } else {
+    const sinal = ganho >= 0 ? '+' : '−';
+    varV.textContent = sinal + pct.format(Math.abs(pctg)) + '%';
+    varV.className = 'stat-value num ' + (ganho >= 0 ? '' : 'loss');
+    varM.textContent = brl.format(t.inv) + ' → ' + brl.format(t.atual);
+  }
+
+  // Card lateral 2 — Renda mensal
+  $('rendaValue').textContent = brl.format(t.renda);
+  if (t.renda > 0){
+    $('rendaMeta').textContent = n + ' ' + (n===1?'ativo':'ativos') + ' pagantes';
+  } else {
+    $('rendaMeta').textContent = n > 0 ? 'sem dividendo registrado' : '';
+  }
+
+  $('assetsSub').textContent = n > 0 ? n + (n===1 ? ' ativo em carteira' : ' ativos em carteira') : '';
 
   renderAssets();
-  // renderHistChart(); — removido temporariamente, voltar quando acumular histórico
   renderProfile();
   renderTips();
   $('heroUpd').textContent = n > 0 ? 'ao vivo' : '';
