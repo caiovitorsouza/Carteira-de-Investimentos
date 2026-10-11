@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mockups — Escolha uma estética</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#F5F2E9;color:#122018;font-family:"Inter",sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:48px 24px 80px}
+.head{text-align:center;margin-bottom:48px}
+.head h1{font-size:32px;font-weight:600;letter-spacing:-.02em;margin-bottom:10px}
+.head p{color:#6E7A72;font-size:16px;max-width:520px;margin:0 auto}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.card{display:block;text-decoration:none;color:inherit;background:#fff;border-radius:16px;overflow:hidden;transition:transform .15s,box-shadow .15s;border:1px solid rgba(18,32,24,.08)}
+.card:hover{transform:translateY(-4px);box-shadow:0 20px 40px -20px rgba(18,32,24,.2)}
+.preview{aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;font-weight:600;position:relative;overflow:hidden}
+.preview .num{font-size:36px;letter-spacing:-.02em}
+.preview .num .cents{opacity:.6;font-weight:400}
+
+/* Preview — Terminal */
+.p-terminal{background:#141210;color:#F4B942}
+.p-terminal .num{font-family:"IBM Plex Mono",ui-monospace,monospace;font-weight:500}
+.p-terminal::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:#F4B942;opacity:.6}
+
+/* Preview — Fintech */
+.p-fintech{background:#F2F6F8;color:#1A2B2A}
+.p-fintech .num{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:44px}
+
+/* Preview — Editorial */
+.p-editorial{background:#0E1915;color:#EBE5D4;border-bottom:2px solid #D4A574}
+.p-editorial .num{font-family:"EB Garamond",Georgia,serif;font-weight:500;font-size:52px}
+.p-editorial .num .currency{font-size:28px;color:#8F9A94;vertical-align:.3em;margin-right:4px}
+
+.body{padding:22px 24px 26px}
+.body .name{font-size:18px;font-weight:600;letter-spacing:-.01em;margin-bottom:4px}
+.body .desc{color:#6E7A72;font-size:14px}
+.body .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.tag{font-size:11px;background:#F5F2E9;padding:3px 9px;border-radius:999px;color:#2A3B32;letter-spacing:.02em}
+
+.foot{text-align:center;margin-top:48px;color:#6E7A72;font-size:14px}
+.foot code{background:#fff;padding:2px 8px;border-radius:4px;font-size:13px;border:1px solid rgba(18,32,24,.1)}
+
+@media (max-width:800px){
+  .grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head">
+    <h1>Escolha uma estética</h1>
+    <p>Três direções diferentes aplicadas ao seu patrimônio real. Clica num card pra ver em tela cheia.</p>
+  </div>
+
+  <div class="grid">
+
+    <a class="card" href="/mockup-terminal.html" target="_blank">
+      <div class="preview p-terminal">
+        <div class="num">R$ 94<span class="cents">,50</span></div>
+      </div>
+      <div class="body">
+        <div class="name">Terminal Clássico</div>
+        <div class="desc">Vibe de terminal Reuters/Bloomberg, mas com âmbar e bordô em vez do neon verde. Densidade, grid rígido, sensação de "profissional".</div>
+        <div class="tags">
+          <span class="tag">IBM Plex Mono</span>
+          <span class="tag">IBM Plex Serif</span>
+          <span class="tag">Dense</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="card" href="/mockup-fintech.html" target="_blank">
+      <div class="preview p-fintech">
+        <div class="num">R$ 94<span class="cents">,50</span></div>
+      </div>
+      <div class="body">
+        <div class="name">Fintech Brasil</div>
+        <div class="desc">Branco-piscina, cantos super arredondados, serifa moderna. Trade Republic × Nubank: leveza mobile-first com personalidade brasileira (oliva + coral).</div>
+        <div class="tags">
+          <span class="tag">Fraunces</span>
+          <span class="tag">Inter</span>
+          <span class="tag">Airy</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="card" href="/mockup-editorial.html" target="_blank">
+      <div class="preview p-editorial">
+        <div class="num"><span class="currency">R$</span>94<span class="cents">,50</span></div>
+      </div>
+      <div class="body">
+        <div class="name">Editorial Noite</div>
+        <div class="desc">Diagramação de jornal financeiro impresso em papel escuro. Garamond, filetes dourados, "edição noite". Contemplativo, para investidor de longo prazo.</div>
+        <div class="tags">
+          <span class="tag">EB Garamond</span>
+          <span class="tag">Filetes dourados</span>
+          <span class="tag">Masthead</span>
+        </div>
+      </div>
+    </a>
+
+  </div>
+
+  <div class="foot">
+    Decidiu? Me manda <code>quero a fintech</code> (ou terminal / editorial) que eu aplico no site inteiro.
+  </div>
+
+</div>
+</body>
+</html>
