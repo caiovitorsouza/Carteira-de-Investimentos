@@ -7,7 +7,11 @@
 //   pbkdf2$sha256$<iter>$<salt_b64>$<hash_b64>
 // (compatível com Werkzeug, Django etc. — mas aqui parseamos manualmente)
 
-const PBKDF2_ITER = 210000;
+// Cloudflare Workers tem um limite de 100.000 iteracoes pro PBKDF2 via Web
+// Crypto API (NotSupportedError acima disso). A recomendacao OWASP 2024 era
+// 600k, mas 100k com salt aleatorio de 16 bytes ainda e seguro pra um
+// projeto desse porte.
+const PBKDF2_ITER = 100000;
 const PBKDF2_KEYLEN = 32; // bytes = 256 bits
 const SALT_LEN = 16;      // bytes
 
