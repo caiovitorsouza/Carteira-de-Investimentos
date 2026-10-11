@@ -358,7 +358,189 @@ input:focus, textarea:focus, select:focus{outline:none; border-color:var(--accen
 .container{max-width:860px; margin:0 auto; padding:0 22px 100px;}
 
 /* =========================================================================
-   HERO — grid Linear: 1 card grande de patrimônio + 2 cards de stats
+   APP SHELL — layout 2-col global no desktop (conteúdo + aside sticky)
+   ========================================================================= */
+.app-shell{
+  max-width:1240px;
+  margin:0 auto;
+  padding:28px 24px 100px;
+  display:grid;
+  grid-template-columns:1fr;
+  gap:28px;
+}
+@media (min-width:1024px){
+  .app-shell{grid-template-columns:minmax(0, 2fr) minmax(300px, 1fr);}
+}
+.app-main{min-width:0;}
+.app-aside{min-width:0;}
+@media (min-width:1024px){
+  .app-aside{
+    position:sticky;
+    top:84px;
+    align-self:start;
+    max-height:calc(100vh - 110px);
+    overflow-y:auto;
+    scrollbar-width:thin;
+  }
+  .app-aside::-webkit-scrollbar{width:6px;}
+  .app-aside::-webkit-scrollbar-thumb{background:var(--line); border-radius:3px;}
+}
+
+/* =========================================================================
+   HERO — Renda Mensal em destaque (patrimônio é coadjuvante)
+   ========================================================================= */
+.hero-income{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:28px 32px;
+  margin-bottom:14px;
+}
+.hero-income .eyebrow{
+  font-family:var(--f-mono);
+  font-size:11.5px;
+  font-weight:600;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:14px;
+  display:flex;align-items:center;gap:10px;
+}
+.hero-income .income-value{
+  font-family:var(--f-serif);
+  font-weight:700;
+  font-size:clamp(44px, 7vw, 72px);
+  line-height:1;
+  letter-spacing:-.045em;
+  color:var(--accent);
+  margin:0 0 10px;
+}
+.hero-income .income-meta{
+  color:var(--ink-2);
+  font-size:14.5px;
+}
+.hero-income .pat-strip{
+  display:flex;align-items:baseline;gap:10px;
+  padding-top:20px;margin-top:20px;
+  border-top:1px solid var(--line);
+  flex-wrap:wrap;
+}
+.hero-income .pat-strip .pat-k{
+  font-family:var(--f-mono);
+  font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600;
+}
+.hero-income .pat-strip .pat-v{
+  font-family:var(--f-sans);
+  font-size:16px;font-weight:600;letter-spacing:-.01em;color:var(--ink);
+  font-variant-numeric:tabular-nums;
+}
+.hero-income .pat-strip .pat-delta{
+  font-size:13.5px;font-weight:600;
+}
+.hero-income .pat-strip .pat-delta.gain{color:var(--accent);}
+.hero-income .pat-strip .pat-delta.loss{color:var(--loss);}
+.hero-income .pat-strip .pat-count{
+  margin-left:auto;font-size:13px;color:var(--muted);
+}
+
+/* =========================================================================
+   EMPTY STATE — emerald, convidativo pra adicionar 1º ativo
+   ========================================================================= */
+.empty-emerald{
+  position:relative;overflow:hidden;
+  border-radius:16px;padding:40px 36px;
+  background:linear-gradient(135deg,
+    color-mix(in srgb, var(--accent) 18%, var(--surface)),
+    color-mix(in srgb, var(--accent) 6%, var(--surface))
+  );
+  border:1px solid color-mix(in srgb, var(--accent) 30%, var(--line));
+  text-align:center;
+}
+.empty-emerald::before,.empty-emerald::after{
+  content:'';position:absolute;border-radius:50%;pointer-events:none;
+}
+.empty-emerald::before{
+  width:220px;height:220px;top:-80px;right:-60px;
+  background:radial-gradient(circle, color-mix(in srgb, var(--accent) 30%, transparent), transparent 70%);
+}
+.empty-emerald::after{
+  width:180px;height:180px;bottom:-70px;left:-40px;
+  background:radial-gradient(circle, color-mix(in srgb, var(--accent) 20%, transparent), transparent 70%);
+}
+.empty-emerald > *{position:relative;z-index:1;}
+.empty-emerald .icon{
+  width:62px;height:62px;border-radius:16px;background:var(--accent);
+  display:grid;place-items:center;margin:0 auto 20px;
+  box-shadow:0 0 0 6px color-mix(in srgb, var(--accent) 15%, transparent);
+}
+.empty-emerald .icon svg{width:28px;height:28px;color:var(--accent-ink);}
+.empty-emerald h2{
+  font-family:var(--f-serif);font-weight:700;letter-spacing:-.025em;
+  font-size:28px;margin:0 0 10px;color:var(--ink);
+}
+.empty-emerald p{
+  color:var(--ink-2);font-size:15px;line-height:1.55;
+  max-width:420px;margin:0 auto 24px;
+}
+.empty-emerald .btn-emerald{
+  background:var(--accent);color:var(--accent-ink);
+  padding:14px 28px;border-radius:999px;font-weight:600;font-size:15px;
+  border:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
+  transition:transform .15s, box-shadow .15s;
+  box-shadow:0 10px 25px -8px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+.empty-emerald .btn-emerald:hover{
+  transform:translateY(-1px);
+  box-shadow:0 14px 30px -8px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+.empty-emerald .hint{font-size:12.5px;color:var(--muted);margin-top:14px;}
+
+/* =========================================================================
+   DIVIDEND CALENDAR — versão vertical / estilo Nubank pra aside
+   ========================================================================= */
+.dcal-vertical{
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px 24px;
+}
+.dcal-vertical .vhead{margin-bottom:18px;}
+.dcal-vertical .vhead h3{
+  font-family:var(--f-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+  margin:0 0 4px;font-weight:600;
+}
+.dcal-vertical .vhead .mes{
+  font-family:var(--f-serif);font-weight:600;font-size:20px;letter-spacing:-.015em;color:var(--ink);
+  text-transform:capitalize;
+}
+.dcal-vertical .vhead .tot{
+  display:flex;align-items:baseline;justify-content:space-between;
+  margin-top:12px;padding:12px 16px;border-radius:10px;
+  background:color-mix(in srgb, var(--accent) 10%, transparent);
+}
+.dcal-vertical .vhead .tot .k{font-size:12px;color:var(--ink-2);}
+.dcal-vertical .vhead .tot .v{font-family:var(--f-serif);font-weight:700;font-size:20px;color:var(--accent);letter-spacing:-.015em;}
+.dcal-vertical .vlist{display:flex;flex-direction:column;}
+.dcal-vertical .vitem{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 0;
+  border-bottom:1px solid var(--line);
+}
+.dcal-vertical .vitem:last-child{border-bottom:none;}
+.dcal-vertical .vdate{
+  flex-shrink:0;
+  width:46px;height:52px;border-radius:10px;background:var(--bg);
+  border:1px solid var(--line);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;
+}
+.dcal-vertical .vdate .d{font-family:var(--f-serif);font-weight:700;font-size:18px;color:var(--ink);line-height:1;}
+.dcal-vertical .vdate .m{font-family:var(--f-mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:3px;}
+.dcal-vertical .vmain{flex:1;min-width:0;}
+.dcal-vertical .vmain .tk{font-weight:600;font-size:15px;color:var(--ink);}
+.dcal-vertical .vmain .sub{font-size:12.5px;color:var(--muted);margin-top:2px;}
+.dcal-vertical .vamount{color:var(--accent);font-weight:600;font-size:15px;font-variant-numeric:tabular-nums;}
+.dcal-vertical .vempty{text-align:center;padding:28px 0;color:var(--muted);font-size:13px;}
+
+/* =========================================================================
+   HERO — grid Linear antigo (mantido se referenciado em outros lugares)
    ========================================================================= */
 .hero-grid{
   display:grid;
@@ -1753,124 +1935,108 @@ details.tip.action .tip-tag{color: var(--accent);}
     </div>
   </header>
 
-  <main class="container">
-    <!-- HERO — grid Linear com 3 cards -->
-    <section class="hero-grid">
-      <!-- Card principal: patrimônio -->
-      <div class="hero-card hero-main">
-        <div>
-          <div class="hero-eyebrow">
-            <span class="live-dot" aria-hidden="true"></span>
-            <span id="heroEyebrowLabel">— Patrimônio consolidado</span>
-            <span id="heroUpd"></span>
+  <main class="app-shell">
+    <!-- COLUNA PRINCIPAL -->
+    <div class="app-main">
+
+      <!-- HERO — RENDA PROJETADA é o destaque. Patrimônio é coadjuvante. -->
+      <section class="hero-income">
+        <div class="eyebrow">
+          <span class="live-dot" aria-hidden="true"></span>
+          <span>— Renda projetada deste mês</span>
+          <span id="heroUpd" style="margin-left:auto;letter-spacing:.1em;"></span>
+        </div>
+        <h1 class="income-value num" id="rendaValue">R$ 0,00</h1>
+        <p class="income-meta" id="rendaMeta">—</p>
+        <div class="pat-strip">
+          <span class="pat-k">Patrimônio</span>
+          <span class="pat-v num" id="heroValue">R$ 0,00</span>
+          <span class="pat-delta" id="patDelta"></span>
+          <span class="pat-count" id="assetsSub"></span>
+        </div>
+      </section>
+
+      <!-- CTA bar -->
+      <div class="cta-row">
+        <button class="btn" id="addBtn">+ Adicionar ativo</button>
+        <button class="btn btn-ghost" id="refreshBtn">Atualizar cotações</button>
+      </div>
+
+      <!-- EMPTY STATE verde (só renderiza se carteira vazia) -->
+      <div id="emptyState" style="display:none;">
+        <!-- Preenchido por renderEmptyState() -->
+      </div>
+
+      <!-- ATIVOS -->
+      <section class="section reveal" id="assetsSection">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">Posições</h2>
           </div>
-          <h1 class="hero-value num" id="heroValue">R$ 0,00</h1>
-          <div class="hero-sub" id="heroSubText">Carteira vazia.</div>
         </div>
-      </div>
+        <div id="assetList"></div>
+      </section>
 
-      <!-- Lateral: card de renda mensal (SleepScore foi pro painel abaixo) -->
-      <div class="hero-side">
-        <div class="hero-card hero-stat hero-stat-lime">
-          <div class="stat-label">Renda mensal</div>
-          <div class="stat-value num" id="rendaValue">R$ 0,00</div>
-          <div class="stat-meta" id="rendaMeta"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- CTA bar -->
-    <div class="cta-row">
-      <button class="btn" id="addBtn">+ Adicionar ativo</button>
-      <button class="btn btn-ghost" id="simBtn">Simular aportes</button>
-      <button class="btn btn-ghost" id="refreshBtn">Atualizar cotações</button>
-    </div>
-
-    <!-- Simulação temporal — fica abaixo da CTA, acessível mas discreta -->
-    <div id="timeSimBox" class="time-sim" style="margin-bottom:28px;">
-      <button class="time-sim-toggle" id="timeSimToggle">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-        <span id="timeSimToggleLabel">Simular com o tempo passando</span>
-      </button>
-      <div class="time-sim-panel" id="timeSimPanel" hidden>
-        <div class="time-sim-head">
-          <span>Daqui a <b id="timeSimMonthsLabel">0 meses</b></span>
-          <span class="time-sim-gain" id="timeSimGain"></span>
-        </div>
-        <input type="range" min="0" max="240" step="1" value="0" class="time-sim-slider" id="timeSimSlider" aria-label="Meses no futuro">
-        <div class="time-sim-marks">
-          <span>hoje</span><span>5 anos</span><span>10 anos</span><span>15 anos</span><span>20 anos</span>
-        </div>
-        <div class="time-sim-note" id="timeSimNote"></div>
-      </div>
-    </div>
-
-    <!-- ATIVOS -->
-    <section class="section reveal">
-      <div class="section-head">
-        <div>
-          <h2 class="section-title">Posições</h2>
-          <p class="section-sub" id="assetsSub"></p>
-        </div>
-      </div>
-      <div id="assetList"></div>
-    </section>
-
-    <!-- PAINEL DE CONTROLE — grid 3-col no desktop, empilhado no mobile.
-         Agrupa Smart Insights (full width), DividendCalendar (2col) +
-         SleepScore (1col), e tabs com Projeções/Análise (full width). -->
-    <section class="dashboard-grid reveal">
-      <!-- Row 1: insights full width -->
-      <div class="slot slot-insights">
+      <!-- SMART INSIGHTS -->
+      <section class="section reveal reveal-delay-1" id="insightsSection">
         <div class="insights" id="insightsBox"></div>
-      </div>
+      </section>
 
-      <!-- Row 2: Calendar (2col) + SleepScore (1col) -->
-      <div class="slot slot-calendar">
-        <div id="dcalBox"></div>
-      </div>
-      <div class="slot slot-sleep">
+      <!-- SLEEP SCORE — substitui o antigo questionário de perfil -->
+      <section class="section reveal reveal-delay-2" id="sleepSection">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">Seu perfil, deduzido da carteira</h2>
+            <p class="section-sub">Nenhum questionário. A gente lê a composição e te diz.</p>
+          </div>
+        </div>
         <div class="hero-card sleep-card" id="sleepCard">
           <!-- Preenchido por renderSleepScore() -->
         </div>
-      </div>
+      </section>
 
-      <!-- Row 3: tabs Projeções / Análise de Ativos -->
-      <div class="slot slot-tabs">
-        <div class="tabs" role="tablist">
-          <button class="tab active" role="tab" data-tab="proj" aria-selected="true">Projeções</button>
-          <button class="tab" role="tab" data-tab="bazin" aria-selected="false">Análise de Ativos</button>
+      <!-- INDEPENDÊNCIA FINANCEIRA — substitui o simulador de slider -->
+      <section class="section reveal reveal-delay-3" id="indepSection">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">Projeção de longo prazo</h2>
+            <p class="section-sub">Quando a renda da carteira cobre seus custos de vida.</p>
+          </div>
         </div>
-        <div class="tab-panel active" data-panel="proj" role="tabpanel">
-          <div id="indepBox"></div>
-        </div>
-        <div class="tab-panel" data-panel="bazin" role="tabpanel" hidden>
-          <div id="bazinBox"></div>
-        </div>
-      </div>
-    </section>
+        <div id="indepBox"></div>
+      </section>
 
-    <!-- PERFIL DE INVESTIDOR (NOVO) -->
-    <section class="section reveal reveal-delay-1" id="perfilSection">
-      <div class="section-head">
-        <div>
-          <h2 class="section-title">Seu perfil</h2>
-          <p class="section-sub" id="perfilSub">Responda ao questionário para dicas personalizadas.</p>
+      <!-- ANÁLISE DE ATIVOS (Bazin) -->
+      <section class="section reveal">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">Análise de ativos</h2>
+            <p class="section-sub">Preço-teto pelo método Bazin — margem de segurança em dividendos.</p>
+          </div>
         </div>
-      </div>
-      <div id="perfilBox"></div>
-    </section>
+        <div id="bazinBox"></div>
+      </section>
 
-    <!-- DICAS -->
-    <section class="section reveal reveal-delay-2">
-      <div class="section-head">
-        <div>
-          <h2 class="section-title">Dicas e conceitos</h2>
-          <p class="section-sub">Toque para expandir. Avisos personalizados aparecem no topo.</p>
+      <!-- DICAS (preservado — conteúdo educacional, não ruidoso) -->
+      <section class="section reveal">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">Dicas e conceitos</h2>
+            <p class="section-sub">Toque pra expandir.</p>
+          </div>
         </div>
+        <div class="tips" id="tips"></div>
+      </section>
+
+    </div>
+
+    <!-- COLUNA LATERAL (STICKY no desktop) -->
+    <aside class="app-aside">
+      <div class="dcal-vertical" id="dcalBox">
+        <!-- Preenchido por renderDividendCalendar() -->
       </div>
-      <div class="tips" id="tips"></div>
-    </section>
+    </aside>
+
   </main>
 </div>
 
@@ -2406,35 +2572,47 @@ function render(){
   const pctg = t.inv > 0 ? ganho/t.inv*100 : 0;
   const n = state.positions.length;
 
-  // Card principal — patrimônio
-  $('heroValue').textContent = brl.format(t.atual);
-  $('heroValue').dataset.target = t.atual;
-
-  let subText = '';
-  if (n === 0){
-    subText = 'Carteira vazia. Comece pelo botão <b>Adicionar ativo</b> aí embaixo.';
-  } else if (ganho === 0){
-    subText = `${n} ${n===1?'ativo':'ativos'} em carteira — resultado zerado por enquanto.`;
-  } else {
-    const direcao = ganho >= 0 ? 'up' : 'down';
-    const seta = ganho >= 0 ? '▲' : '▼';
-    const sinal = ganho >= 0 ? '+' : '−';
-    subText = `${n} ${n===1?'ativo':'ativos'} · <span class="${direcao}">${seta} ${sinal} ${brl.format(Math.abs(ganho))}</span> (${sinal} ${pct.format(Math.abs(pctg))}%)`;
-  }
-  $('heroSubText').innerHTML = subText;
-
-  // Card lateral — Renda mensal
+  // HERO — renda projetada é o destaque
   $('rendaValue').textContent = brl.format(t.renda);
   if (t.renda > 0){
-    $('rendaMeta').textContent = n + ' ' + (n===1?'ativo':'ativos') + ' pagantes';
+    const pagantes = state.positions.filter(p => {
+      const e = enrich(p);
+      return (p.kind === 'fii' || p.kind === 'acao') && e.renda > 0;
+    }).length;
+    $('rendaMeta').textContent = `${pagantes} ${pagantes===1?'ativo pagante':'ativos pagantes'} · próximos pagamentos à direita.`;
   } else {
-    $('rendaMeta').textContent = n > 0 ? 'sem dividendo registrado' : '';
+    $('rendaMeta').textContent = n > 0
+      ? 'Nenhum ativo seu paga dividendo ainda. Adicione um FII pra começar.'
+      : 'Nada previsto ainda — sua carteira ainda está vazia.';
   }
 
-  $('assetsSub').textContent = n > 0 ? n + (n===1 ? ' ativo em carteira' : ' ativos em carteira') : '';
+  // Patrimônio sutil (strip de baixo do hero)
+  $('heroValue').textContent = brl.format(t.atual);
+  $('heroValue').dataset.target = t.atual;
+  const patDelta = $('patDelta');
+  if (n === 0 || ganho === 0){
+    patDelta.textContent = '';
+    patDelta.className = 'pat-delta';
+  } else {
+    const sinal = ganho >= 0 ? '+' : '−';
+    patDelta.textContent = `${sinal} ${pct.format(Math.abs(pctg))}%`;
+    patDelta.className = 'pat-delta ' + (ganho >= 0 ? 'gain' : 'loss');
+  }
+  $('assetsSub').textContent = n > 0 ? `· ${n} ${n===1?'ativo':'ativos'}` : '';
 
-  renderAssets();
-  renderProfile();
+  // Empty state vs posições
+  const empty = $('emptyState');
+  const assetsSec = $('assetsSection');
+  if (n === 0){
+    renderEmptyState();
+    empty.style.display = '';
+    if (assetsSec) assetsSec.style.display = 'none';
+  } else {
+    empty.style.display = 'none';
+    if (assetsSec) assetsSec.style.display = '';
+    renderAssets();
+  }
+
   renderTips();
 
   // --- Novos componentes ---
@@ -2445,6 +2623,22 @@ function render(){
   renderBazin();
 
   $('heroUpd').textContent = n > 0 ? 'ao vivo' : '';
+}
+
+// Empty state verde emerald, chamativo
+function renderEmptyState(){
+  $('emptyState').innerHTML = `
+    <div class="empty-emerald">
+      <div class="icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6M12 22v-6M4.93 4.93l4.24 4.24M14.83 14.83l4.24 4.24M2 12h6M22 12h-6M4.93 19.07l4.24-4.24M14.83 9.17l4.24-4.24"/></svg>
+      </div>
+      <h2>Comece a plantar sua carteira</h2>
+      <p>Adicione seu primeiro ativo pra <b>destravar</b> as projeções de independência, o calendário de dividendos e o Sleep Score deduzido do seu perfil.</p>
+      <button class="btn-emerald" id="emptyAddBtn">+ Adicionar primeiro ativo</button>
+      <p class="hint">Comece com Tesouro Selic se não souber por onde — é seguro, líquido e paga todo mês.</p>
+    </div>
+  `;
+  $('emptyAddBtn').onclick = () => $('addBtn').click();
 }
 
 /* =========================================================================
@@ -2607,88 +2801,61 @@ function renderInsights(){
   `).join('');
 }
 
-// ---------- 3) Dividend Calendar ----------
+// ---------- 3) Dividend Calendar (versão vertical estilo Nubank, pro aside) ----------
+const _MES_SIGLA = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
+
 function renderDividendCalendar(){
   const hoje = new Date();
   const year = hoje.getFullYear(), month = hoje.getMonth();
   const diasNoMes = new Date(year, month+1, 0).getDate();
+  const mesSigla = _MES_SIGLA[month];
 
-  // Pega FIIs/ações com dividendo + data de pagamento. Se não tiver data real,
-  // simula pagamento no dia 15 (padrão da maioria dos FIIs).
-  const divs = [];
+  // Coleta FIIs/ações com dividendo. Projeta dia pelo p.dpag ou dia 15.
+  const items = [];
   for (const p of state.positions){
     if (p.kind !== 'fii' && p.kind !== 'acao') continue;
     const e = enrich(p);
     if (!e.renda || e.renda <= 0) continue;
-    // dpag é a data do último pagamento. Pra projetar o próximo, assumimos
-    // mesmo dia do mês. Se não tem, usa dia 15.
     let diaPag = 15;
-    if (p.dpag){
-      try { diaPag = new Date(p.dpag).getDate(); } catch {}
-    }
-    if (diaPag < 1 || diaPag > diasNoMes) diaPag = Math.min(diaPag, diasNoMes);
-    divs.push({
-      ativo: p.ticker || p.nome,
+    if (p.dpag){ try { diaPag = new Date(p.dpag).getDate(); } catch {} }
+    diaPag = Math.max(1, Math.min(diasNoMes, diaPag));
+    items.push({
+      ticker: p.ticker || p.nome,
+      sub: p.kind === 'fii' ? 'FII' : 'Ação',
       dia: diaPag,
       valor: e.renda,
     });
   }
-
-  const total = divs.reduce((s,d)=>s+d.valor,0);
-  const porDia = {};
-  for (const d of divs){
-    if (!porDia[d.dia]) porDia[d.dia] = [];
-    porDia[d.dia].push(d);
-  }
-
+  items.sort((a,b) => a.dia - b.dia);
+  const total = items.reduce((s,it)=>s+it.valor,0);
   const nomeMes = hoje.toLocaleDateString('pt-BR', { month:'long', year:'numeric' });
 
-  const timelineHtml = Array.from({length: diasNoMes}, (_, i) => {
-    const dia = i+1;
-    const has = !!porDia[dia];
-    return `<div class="dcal-day${has ? ' has' : ''}">
-      <div class="dot"></div>
-      <div class="num">${dia}</div>
-    </div>`;
-  }).join('');
-
-  let listaHtml = '';
-  if (divs.length === 0){
-    listaHtml = '<div class="dcal-empty">Nenhum pagamento previsto este mês.</div>';
-  } else {
-    const items = Object.entries(porDia)
-      .map(([dia, arr]) => arr.map(a => ({ dia: Number(dia), ...a })))
-      .flat()
-      .sort((a,b) => a.dia - b.dia);
-    listaHtml = items.map(it => `
-      <div class="dcal-item">
-        <div class="left">
-          <span class="day">${String(it.dia).padStart(2,'0')}</span>
-          <span class="nm">${it.ativo}</span>
+  const listaHtml = items.length === 0
+    ? `<div class="vempty">Nenhum pagamento previsto neste mês. Adicione um FII pagador pra começar.</div>`
+    : items.map(it => `
+      <div class="vitem">
+        <div class="vdate">
+          <div class="d">${String(it.dia).padStart(2,'0')}</div>
+          <div class="m">${mesSigla}</div>
         </div>
-        <span class="val">${brl.format(it.valor)}</span>
+        <div class="vmain">
+          <div class="tk">${it.ticker}</div>
+          <div class="sub">${it.sub}</div>
+        </div>
+        <div class="vamount">${brl.format(it.valor)}</div>
       </div>
     `).join('');
-  }
 
-  // Carteira sem pagadores → mantém o card, mas mostra estado vazio
   $('dcalBox').innerHTML = `
-    <div class="hero-card">
-      <div class="dcal-head">
-        <div>
-          <h3>Agenda do mês</h3>
-          <div class="mes">${nomeMes}</div>
-        </div>
-        <div>
-          <div class="total-label">Total previsto</div>
-          <div class="total-val">${brl.format(total)}</div>
-        </div>
+    <div class="vhead">
+      <h3>Próximos pagamentos</h3>
+      <div class="mes">${nomeMes}</div>
+      <div class="tot">
+        <span class="k">Total previsto</span>
+        <span class="v">${brl.format(total)}</span>
       </div>
-      <div class="dcal-timeline">
-        <div class="dcal-days">${timelineHtml}</div>
-      </div>
-      <div class="dcal-list">${listaHtml}</div>
     </div>
+    <div class="vlist">${listaHtml}</div>
   `;
 }
 
@@ -4428,7 +4595,9 @@ function openFundoAdd(){
 }
 
 $('addBtn').onclick = openAdd;
-$('simBtn').onclick = openSimulatorSheet;
+// simBtn removido do dashboard atual (projeção substituída pelo IndependenceGoal).
+// Se existir em algum fluxo (sheet aberto), ainda funciona.
+const _simBtn = $('simBtn'); if (_simBtn) _simBtn.onclick = openSimulatorSheet;
 // Botão de notificações desativado por enquanto - só funciona com domínio
 // próprio verificado no Resend. A função openNotifSheet() segue definida
 // pra reativar quando o momento for certo.
@@ -4480,6 +4649,7 @@ function toggleSimTemporal(){
   const panel = $('timeSimPanel');
   const btn = $('timeSimToggle');
   const label = $('timeSimToggleLabel');
+  if (!panel || !btn || !label) return; // Dashboard atual não tem simulador temporal
   panel.hidden = !_simAtivo;
   btn.classList.toggle('active', _simAtivo);
   label.textContent = _simAtivo ? 'Fechar simulação' : 'Simular com o tempo passando';
@@ -4493,7 +4663,8 @@ function toggleSimTemporal(){
 }
 
 function updateSimTemporal(){
-  const meses = Number($('timeSimSlider').value);
+  const slider = $('timeSimSlider'); if (!slider) return;
+  const meses = Number(slider.value);
   const anos = Math.floor(meses / 12);
   const mesesExtra = meses % 12;
   let timeLabel;
@@ -4530,8 +4701,10 @@ function updateSimTemporal(){
   }
 }
 
-$('timeSimToggle').onclick = toggleSimTemporal;
-$('timeSimSlider').oninput = updateSimTemporal;
+// Simulador temporal removido do dashboard (substituído pelo IndependenceGoal).
+// Guards pra não quebrar caso a função seja chamada em outro contexto.
+const _tst = $('timeSimToggle'); if (_tst) _tst.onclick = toggleSimTemporal;
+const _tss = $('timeSimSlider'); if (_tss) _tss.oninput = updateSimTemporal;
 
 /* ---------------------------------------------------------------- notificações */
 function openNotifSheet(){
@@ -4705,6 +4878,7 @@ function computeProfile(answers){
 // Renderiza o card de perfil (resumo ou call-to-action)
 function renderProfile(){
   const box = $('perfilBox');
+  if (!box) return; // seção Perfil foi removida — SleepScore faz esse papel agora
   const sub = $('perfilSub');
   if (!box) return;
   box.innerHTML = '';
