@@ -21,17 +21,17 @@ export async function handleScheduled(event, env, ctx) {
     const cron = event.cron;
     console.log('[scheduled] firing cron:', cron);
 
-    if (cron === '*/5 13-21 * * 1-5') {
+    if (cron === '*/5 13-21 * * MON-FRI') {
       // cotações a cada 5min no pregão
       const r = await refreshAllPortfolios(sql, cfg);
       console.log(`[scheduled] cotações: ${r.ok} ok, ${r.failed} falhas de ${r.tickers}`);
 
-    } else if (cron === '0 12 * * 1-5') {
+    } else if (cron === '0 12 * * MON-FRI') {
       // taxas BCB — 9h BRT dias úteis
       const r = await refreshRates(sql);
       console.log(`[scheduled] taxas BCB: ${r.ok} ok, ${r.failed} falhas`);
 
-    } else if (cron === '0 22 * * 0') {
+    } else if (cron === '0 22 * * SUN') {
       // e-mail semanal — domingo 19h BRT
       if (cfg.email.enabled) {
         const r = await runWeeklyRecap(sql, cfg);
