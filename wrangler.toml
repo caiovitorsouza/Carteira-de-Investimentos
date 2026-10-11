@@ -14,7 +14,7 @@
 # Deploy pra produção:
 #   wrangler deploy
 
-name = "carteira-de-investimentos"
+name = "rendum"
 main = "worker/index.js"
 compatibility_date = "2025-01-01"
 compatibility_flags = ["nodejs_compat"]
@@ -37,14 +37,14 @@ enabled = true
 # Vars não-secretas (os dados reais vão em `wrangler secret put ...`)
 [vars]
 ENVIRONMENT = "production"
-PUBLIC_ORIGIN = "https://carteira-de-investimentos.pages.dev"
+PUBLIC_ORIGIN = "https://rendum.caiovitormsouza.workers.dev"
 BRAPI_BASE_URL = "https://brapi.dev"
 BRAPI_PLAN = "free"
 STALE_SECONDS = "120"
 SESSION_TTL_DAYS = "30"
 COOKIE_SECURE = "true"
 EMAIL_ENABLED = "false"
-EMAIL_FROM = "Carteira <onboarding@resend.dev>"
+EMAIL_FROM = "Rendum <onboarding@resend.dev>"
 
 # Cron Triggers. Cada entrada vira um evento scheduled no fetch handler.
 # Horários em UTC (BRT = UTC-3).

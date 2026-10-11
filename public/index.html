@@ -3,84 +3,54 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Carteira</title>
-<meta name="description" content="Acompanhe seus fundos imobiliários, ações e renda fixa em um só lugar.">
+<title>Rendum — Carteira em tempo real</title>
+<meta name="description" content="O rendimento que você planta — recolhido com calma. FIIs, ações e renda fixa em um só lugar.">
+<meta property="og:title" content="Rendum — Investir com previsibilidade">
+<meta property="og:description" content="O rendimento que você planta. Recolhido com calma.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rendi.caiovitormsouza.workers.dev">
+<meta property="og:image" content="/og-image.svg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* =========================================================================
    TOKENS — paleta papel quente + verde floresta (Brasilidade editorial)
    ========================================================================= */
 :root{
-  /* light (padrão) */
-  --bg:#F5F2E9;             /* papel quente — nem cream nem branco frio */
-  --surface:#FFFFFF;        /* cartões */
-  --surface-2:#FAF7EE;      /* seções */
-  --ink:#122018;            /* near-black com tom verde */
-  --ink-2:#2E3B33;          /* texto secundário */
-  --muted:#6B7A72;          /* legendas, labels discretas */
-  --line:#E3DBC9;           /* hairline de papel */
-  --line-strong:#C9BFA8;    /* separador firme */
-  --accent:#1E5435;         /* VERDE FLORESTA — único destaque */
-  --accent-ink:#F6F2E7;     /* texto sobre o verde */
-  --accent-soft:#DCE6DD;    /* fundo de badges verdes */
-  --gain:#0F6B3E;           /* ganho (tom próximo do accent) */
-  --loss:#B13828;           /* perda — tijolo, não vermelho berrante */
-  --gain-soft:#D5E8DC;
-  --loss-soft:#F2D9D3;
-  --amber:#9A6A1F;          /* usado só no indicador "ao vivo" */
+  /* === Rendum · Linear/dark + lime — dark-native sempre ============== */
+  --bg:#0B0D0E;             /* fundo quase-preto */
+  --surface:#15181A;        /* cartões */
+  --surface-2:#1D2124;      /* seções levantadas */
+  --ink:#E8EBED;            /* texto principal (quase branco) */
+  --ink-2:#B6BABD;          /* texto secundário */
+  --muted:#787F85;          /* legendas, labels discretas */
+  --line:#242A2E;           /* hairline sutil */
+  --line-strong:#303840;    /* separador firme */
+  --accent:#A3E635;         /* LIME ELÉTRICO — único accent vibrante */
+  --accent-ink:#0B0D0E;     /* texto sobre o lime */
+  --accent-soft:#1E2A14;    /* fundo de badges lime (verde profundo) */
+  --accent-dk:#84CC16;      /* lime hover/pressed */
+  --gain:#A3E635;           /* ganhos usam o próprio accent */
+  --loss:#F43F5E;           /* perdas — rose vibrante */
+  --gain-soft:#1E2A14;
+  --loss-soft:#2E1216;
+  --amber:#F59E0B;          /* indicador "ao vivo" */
 
-  /* Fontes */
-  --f-serif: "Fraunces", Georgia, serif;
+  /* Fontes — Inter em todos os pesos. --f-serif é alias de Inter Tight
+     pra manter compatibilidade com o CSS existente que ainda referencia
+     var(--f-serif) — fica tudo sans sem precisar refatorar cada linha. */
+  --f-serif: "Inter Tight", "Inter", system-ui, sans-serif;
   --f-sans: "Inter", system-ui, -apple-system, Segoe UI, sans-serif;
   --f-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  color-scheme: light;
+  color-scheme: dark;
   padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
 }
-
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#0D1512;
-    --surface:#161F1B;
-    --surface-2:#111915;
-    --ink:#EBE6D8;
-    --ink-2:#B6B4A5;
-    --muted:#8E9A91;
-    --line:#2A332E;
-    --line-strong:#3E4A43;
-    --accent:#5CC37D;
-    --accent-ink:#0D1512;
-    --accent-soft:#1C2E24;
-    --gain:#5CC37D;
-    --loss:#E07562;
-    --gain-soft:#1E2E24;
-    --loss-soft:#2F1A17;
-    --amber:#D4A657;
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#0D1512;
-  --surface:#161F1B;
-  --surface-2:#111915;
-  --ink:#EBE6D8;
-  --ink-2:#B6B4A5;
-  --muted:#8E9A91;
-  --line:#2A332E;
-  --line-strong:#3E4A43;
-  --accent:#5CC37D;
-  --accent-ink:#0D1512;
-  --accent-soft:#1C2E24;
-  --gain:#5CC37D;
-  --loss:#E07562;
-  --gain-soft:#1E2E24;
-  --loss-soft:#2F1A17;
-  --amber:#D4A657;
-  color-scheme: dark;
-}
+/* Dark-native. Media queries e theme attribute removidos — só uma paleta. */
 
 /* =========================================================================
    BASE
@@ -98,6 +68,11 @@ body{
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeLegibility;
   overflow-x: hidden; /* evita scroll horizontal em celular por qualquer motivo */
+  /* Grainy texture sutil + lime glow discreto no topo — identidade Linear */
+  background-image:
+    radial-gradient(ellipse 70% 50% at 50% 0%,rgba(163,230,53,.04),transparent 60%),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  background-attachment:fixed;
 }
 img, svg{max-width: 100%;}
 .num{font-variant-numeric: tabular-nums;}
@@ -1453,7 +1428,7 @@ details.tip.action .tip-tag{color: var(--accent);}
 <section class="auth" id="auth">
   <!-- Painel lateral com headline + ilustração (só em desktop) -->
   <aside class="auth-side">
-    <div class="auth-eyebrow"><span class="pulse"></span>Carteira · dados em tempo real</div>
+    <div class="auth-eyebrow"><span class="pulse"></span>Rendum · dados em tempo real</div>
     <h2 class="auth-headline">Investir com <em>previsibilidade</em>. Dormir tranquilo.</h2>
     <p class="auth-tag">
       Acompanhe FIIs, ações e renda fixa num só lugar. Simule aportes, veja seu
@@ -1502,9 +1477,9 @@ details.tip.action .tip-tag{color: var(--accent);}
     <div class="auth-card">
       <div class="brand">
         <span class="brand-mark">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 17l5-5 4 4 7-8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 17 L10 11 L14 15 L20 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 7 L20 7 L20 12" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </span>
-        <span>Carteira</span>
+        <span>Rendum</span>
       </div>
 
       <h1 class="auth-title" id="authTitle">Entrar</h1>
@@ -1539,14 +1514,11 @@ details.tip.action .tip-tag{color: var(--accent);}
     <div class="topbar-in">
       <div class="brand">
         <span class="brand-mark">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 17l5-5 4 4 7-8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 17 L10 11 L14 15 L20 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 7 L20 7 L20 12" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </span>
-        <span>Carteira</span>
+        <span>Rendum</span>
       </div>
       <div class="topbar-end">
-        <button class="icon-btn" id="themeBtn" aria-label="Alternar tema" title="Alternar tema">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9c-5 0-9-4-9-9z"/></svg>
-        </button>
         <button class="icon-btn" id="logoutBtn" aria-label="Sair" title="Sair">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
         </button>
@@ -1944,14 +1916,11 @@ let state = { version: 0, positions: [], profile: null, legacy: null, settings: 
 let authMode = 'login';
 
 /* ---------------------------------------------------------------- tema */
-try { const t = localStorage.getItem('tema'); if (t) document.documentElement.setAttribute('data-theme', t); } catch(e){}
-$('themeBtn').onclick = () => {
-  let cur = document.documentElement.getAttribute('data-theme');
-  if (!cur) cur = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  const next = cur === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', next);
-  try { localStorage.setItem('tema', next); } catch(e){}
-};
+// Rendum é dark-native. Botão de alternar tema removido junto com o DOM;
+// este bloco agora é no-op pra evitar ReferenceError em qualquer theme antigo
+// no localStorage. (Mantém o site sempre em dark + lime.)
+try { localStorage.removeItem('tema'); } catch(e){}
+try { document.documentElement.removeAttribute('data-theme'); } catch(e){}
 
 /* ---------------------------------------------------------------- login */
 $('toggleBtn').onclick = () => {
