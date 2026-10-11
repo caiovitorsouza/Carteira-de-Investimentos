@@ -1,0 +1,57 @@
+# Configuração do Cloudflare Worker — Carteira de Investimentos.
+#
+# Como funciona:
+#   - main: entry point do worker (fetch + scheduled)
+#   - [assets]: serve os arquivos de public/ estaticamente, grátis.
+#     As rotas que começam com /api/* vão pro worker; o resto (/, /index.html,
+#     api.js, images etc.) é servido como asset.
+#   - [triggers.crons]: cron triggers em UTC. BRT = UTC-3.
+#   - Secrets (DATABASE_URL, BRAPI_TOKEN, RESEND_API_KEY) são configurados
+#     via `wrangler secret put <NOME>` ou pela UI do Cloudflare.
+#
+# Deploy local pra testar:
+#   wrangler dev
+# Deploy pra produção:
+#   wrangler deploy
+
+name = "carteira-de-investimentos"
+main = "worker/index.js"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Serve public/ como static assets. Qualquer rota que NÃO começa com /api/*
+# e NÃO existe como arquivo cai no not_found_handling — como é SPA, servimos
+# o index.html pra deixar o front lidar com rotas client-side.
+[assets]
+directory = "./public"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+# Nota: quando `run_worker_first` é omitido, o Workers serve o asset
+# primeiro se existir; se não existir, cai no worker (que trata /api/*)
+# e o worker.notFound() serve index.html como SPA.
+
+# Observabilidade — logs no painel Cloudflare
+[observability]
+enabled = true
+
+# Vars não-secretas (os dados reais vão em `wrangler secret put ...`)
+[vars]
+ENVIRONMENT = "production"
+PUBLIC_ORIGIN = "https://carteira-de-investimentos.pages.dev"
+BRAPI_BASE_URL = "https://brapi.dev"
+BRAPI_PLAN = "free"
+STALE_SECONDS = "120"
+SESSION_TTL_DAYS = "30"
+COOKIE_SECURE = "true"
+EMAIL_ENABLED = "false"
+EMAIL_FROM = "Carteira <onboarding@resend.dev>"
+
+# Cron Triggers. Cada entrada vira um evento scheduled no fetch handler.
+# Horários em UTC (BRT = UTC-3).
+[triggers]
+crons = [
+  "*/5 13-21 * * 1-5",   # Cotações: a cada 5min, 10h-18h BRT, dias úteis
+  "0 12 * * 1-5",        # Taxas BCB: 9h BRT dias úteis
+  "0 22 * * 0",          # E-mail semanal: domingo 19h BRT
+  "0 12 1,2,3 * *",      # E-mail mensal: dias 1-3 do mês 9h BRT (filtro de fim-de-semana no handler)
+]
