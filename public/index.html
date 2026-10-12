@@ -107,7 +107,9 @@
    BASE
    ========================================================================= */
 *{box-sizing:border-box}
-html{font-size:16px; overflow-x: hidden; overflow-x: clip;}
+html{font-size:16px; overflow-x: hidden; overflow-x: clip; background:var(--bg);
+  /* sem o efeito elástico que deixava a página passar do fim e mostrar só o fundo */
+  overscroll-behavior-y:none;}
 body{
   margin:0;
   background:var(--bg);
@@ -119,6 +121,7 @@ body{
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeLegibility;
   overflow-x: hidden; overflow-x: clip; /* clip não cria contêiner de rolagem (preserva o sticky da lateral) */
+  overscroll-behavior-y:none;
   background-image:none;
   background-attachment:fixed;
 }
