@@ -8,6 +8,7 @@
   },
   "scripts": {
     "check": "node scripts/check-project.mjs",
+    "test:unit": "node tests/unit/run-all.mjs",
     "test:e2e": "node tests/e2e/run-all.mjs",
     "auto:simulate": "node scripts/auto-simulate.mjs once",
     "auto:start": "node scripts/auto-simulate.mjs watch",
@@ -26,6 +27,7 @@
     "postgres": "^3.4.5"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.9",
     "playwright": "1.64.0",
     "wrangler": "^3.100.0"
   }

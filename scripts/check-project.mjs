@@ -22,8 +22,9 @@ function files(dir) {
 for (const dir of ['worker', 'scripts', 'tests', 'public']) {
   for (const file of files(dir)) run(['--check', file]);
 }
+run(['tests/unit/run-all.mjs']);
 run(['tests/e2e/run-all.mjs']);
 // Build only; no deployment, login, migrations or production requests.
 run(['node_modules/wrangler/bin/wrangler.js', 'deploy', '--dry-run',
   '--outdir', '.rendum-auto/build']);
-console.log('Verificações concluídas: sintaxe, e2e fictício e build sem publicação.');
+console.log('Verificações concluídas: sintaxe, testes unitários/API, e2e fictício e build sem publicação.');

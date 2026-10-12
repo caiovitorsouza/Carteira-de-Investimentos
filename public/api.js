@@ -38,6 +38,19 @@ export const api = {
   refresh:       () => api._req('POST', '/api/portfolio/refresh'),
   snapshot:      (total) => api._req('POST', '/api/portfolio/snapshot', { total }),
 
+  // --- proventos recebidos, metas, reserva e premissas (persistidos no servidor) ---
+  getFinance:       () => api._req('GET', '/api/finance'),
+  createReceipt:    (r) => api._req('POST', '/api/finance/receipts', r),
+  updateReceipt:    (id, r) => api._req('PUT', '/api/finance/receipts/' + encodeURIComponent(id), r),
+  deleteReceipt:    (id) => api._req('DELETE', '/api/finance/receipts/' + encodeURIComponent(id)),
+  createGoal:       (g) => api._req('POST', '/api/finance/goals', g),
+  updateGoal:       (id, g) => api._req('PUT', '/api/finance/goals/' + encodeURIComponent(id), g),
+  deleteGoal:       (id) => api._req('DELETE', '/api/finance/goals/' + encodeURIComponent(id)),
+  saveReserve:      (r) => api._req('PUT', '/api/finance/reserve', r),
+  deleteReserve:    () => api._req('DELETE', '/api/finance/reserve'),
+  saveSimulator:    (key, data) => api._req('PUT', '/api/finance/simulators/' + encodeURIComponent(key), data),
+  deleteSimulator:  (key) => api._req('DELETE', '/api/finance/simulators/' + encodeURIComponent(key)),
+
   // --- conta ---
   getEmailPrefs: () => api._req('GET', '/api/user/email-prefs'),
   saveEmailPrefs: (prefs) => api._req('PUT', '/api/user/email-prefs', prefs),

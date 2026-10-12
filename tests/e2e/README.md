@@ -10,7 +10,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-Cada arquivo começa com a carteira semeada (`/__ctl?seed=1`) num servidor novo.
+Defina `RENDUM_SHOTS=<pasta>` para o t11 salvar capturas de tela. Cada arquivo começa com a carteira semeada (`/__ctl?seed=1`) num servidor novo.
 
 O executor `run-all.mjs` funciona também no Windows, inclusive em caminhos com
 espaços e acentos. Interrompe no primeiro arquivo que falhar, detecta linhas
@@ -29,3 +29,6 @@ removidas do ambiente dos testes. O executor Bash continua disponível.
 | t7 | **colagem real** com Ctrl+V pela área de transferência do navegador ("100", "R$ 250", "1.234,56") em resgate e aporte, com o valor enviado ao servidor |
 | t8 | **navegação**: lateral fixa na altura da janela (desktop, iPad horizontal, mudança de altura), rolagem própria só quando necessário, abas sem números, foco e endereços, "Adicionar ativo" só em Visão geral e Minha carteira |
 | t9 | **fim da rolagem**: sem efeito elástico e sem espaço vazio além do último conteúdo, em desktop, iPad e celular |
+| t10 | **proventos recebidos, metas e reserva**: registro/edição/exclusão com confirmação, envio duplicado bloqueado, falha preservando o formulário e reenvio sem duplicar, totais por mês/ano e filtros, estimado x recebido, ocultar valores, falha ao carregar |
+| t11 | **simuladores editáveis** (independência com inflação, entradas inválidas, inalcançável, salvar/recarregar, Bazin com origem dos dados), ocultar valores, temas claro/escuro em 390 e 1440 px, movimento reduzido |
+| t12 | **regressão de foco**: o foco inicial do painel não rouba um campo já escolhido (valor, observação, data) e o temporizador é cancelado ao fechar; a máscara de moeda não desfaz a seleção do usuário (digitar sobre o valor selecionado o substitui) |

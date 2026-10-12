@@ -3,7 +3,7 @@
 import http from 'node:http'; import fs from 'node:fs'; import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 const ROOT=fileURLToPath(new URL('../../public/', import.meta.url));
-const flags={ failLoad:false, failSave:false, failRefresh:false, delay:0, logged:false };
+const flags={ failLoad:false, failSave:false, failRefresh:false, delay:0, logged:false, failFinLoad:false, failFinWrite:false, finDelay:0 };
 let version=1, saves=0;
 const today=new Date(); const y=today.getFullYear(), m=String(today.getMonth()+1).padStart(2,'0');
 const nm=today.getMonth()+2>12?`${y+1}-01`:`${y}-${String(today.getMonth()+2).padStart(2,'0')}`;
@@ -19,12 +19,15 @@ const SEED_DATA=[
 ];
 let positions=SEED();
 let empty=false;
+// dados financeiros fictícios (proventos recebidos, metas, reserva, premissas): um único usuário de teste
+let fin={receipts:[],goals:[],reserve:null,simulators:{}}; const finLog=[]; // finLog = cada escrita recebida
+const byId=(a,id)=>a.findIndex(x=>x.id===id);
 const puts=[]; // corpo de cada PUT recebido
 const send=(res,code,obj)=>{res.writeHead(code,{'content-type':'application/json'});res.end(JSON.stringify(obj));};
 const body=(req)=>new Promise(r=>{let d='';req.on('data',c=>d+=c);req.on('end',()=>{try{r(JSON.parse(d||'{}'))}catch{r({})}})});
 http.createServer(async(req,res)=>{
   const u=new URL(req.url,'http://x'); const p=u.pathname;
-  if(p==='/__ctl'){ for(const [k,v] of u.searchParams){ if(k==='empty') empty=v==='1'; else if(k==='reset'){version=1;saves=0;} else if(k==='seed'){positions=SEED();version=1;saves=0;puts.length=0;Object.assign(flags,{failLoad:false,failSave:false,failRefresh:false,delay:0});} else if(k==='only'){positions=SEED().filter(p=>p.id===v);version=1;saves=0;puts.length=0;} else flags[k]= v==='1'?true:v==='0'?false:Number(v);} return send(res,200,{flags,saves,version,empty,positions:positions.length,puts:u.searchParams.has('puts')?puts:puts.length,data:u.searchParams.has('data')?positions:undefined}); }
+  if(p==='/__ctl'){ for(const [k,v] of u.searchParams){ if(k==='empty') empty=v==='1'; else if(k==='reset'){version=1;saves=0;} else if(k==='seed'){positions=SEED();version=1;saves=0;puts.length=0;fin={receipts:[],goals:[],reserve:null,simulators:{}};finLog.length=0;Object.assign(flags,{failLoad:false,failSave:false,failRefresh:false,delay:0,failFinLoad:false,failFinWrite:false,finDelay:0});} else if(k==='only'){positions=SEED().filter(p=>p.id===v);version=1;saves=0;puts.length=0;} else flags[k]= v==='1'?true:v==='0'?false:Number(v);} return send(res,200,{flags,saves,version,empty,positions:positions.length,puts:u.searchParams.has('puts')?puts:puts.length,data:u.searchParams.has('data')?positions:undefined,fin:u.searchParams.has('fin')?fin:undefined,finLog:u.searchParams.has('fin')?finLog:finLog.length}); }
   if(p.startsWith('/api/')){
     if(flags.delay) await new Promise(r=>setTimeout(r,flags.delay));
     if(p==='/api/auth/me') return flags.logged?send(res,200,{user:{email:'t@t.com'}}):send(res,401,{error:'nao_autenticado'});
@@ -39,6 +42,30 @@ http.createServer(async(req,res)=>{
     if(p==='/api/portfolio'&&req.method==='PUT'){ const b=await body(req); puts.push({at:Date.now(),version:b.version,fail:flags.failSave,positions:b.positions}); if(flags.failSave) return send(res,500,{error:'x'}); if(b.version!==version) return send(res,409,{error:'conflito'}); version++; saves++; if(!empty) positions=b.positions; return send(res,200,{version}); }
     if(p==='/api/portfolio/refresh'){ if(flags.failRefresh) return send(res,502,{error:'x'}); return send(res,200,{tickers:6,ok:5,failed:1}); }
     if(p==='/api/portfolio/snapshot') return send(res,200,{});
+    if(p.startsWith('/api/finance')){
+      if(flags.finDelay) await new Promise(r=>setTimeout(r,flags.finDelay));
+      const m=req.method, parts=p.split('/').filter(Boolean); // api finance <rec> <id>
+      if(m==='GET'&&parts.length===2){ if(flags.failFinLoad) return send(res,500,{error:'x'}); return send(res,200,fin); }
+      const b=(m==='POST'||m==='PUT')?await body(req):{};
+      finLog.push({m,p,at:Date.now(),fail:flags.failFinWrite,body:b});
+      if(flags.failFinWrite) return send(res,500,{error:'x'});
+      const kind=parts[2], id=parts[3];
+      if(kind==='receipts'||kind==='goals'){
+        const list=kind==='receipts'?fin.receipts:fin.goals, key=kind==='receipts'?'receipt':'goal';
+        if(m==='POST'){ const i=byId(list,b.id); const row={...b}; if(i>=0) return send(res,200,{[key]:list[i],created:false}); list.unshift(row); return send(res,201,{[key]:row,created:true}); }
+        if(m==='PUT'){ const i=byId(list,id); if(i<0) return send(res,404,{error:'nao_encontrado'}); list[i]={...b,id}; return send(res,200,{[key]:list[i]}); }
+        if(m==='DELETE'){ const i=byId(list,id); if(i<0) return send(res,404,{error:'nao_encontrado'}); list.splice(i,1); return send(res,200,{ok:true}); }
+      }
+      if(kind==='reserve'){
+        if(m==='PUT'){ fin.reserve={monthlyExpenseCents:b.monthlyExpenseCents,months:b.months,linkedPositionIds:b.linkedPositionIds||[]}; return send(res,200,{reserve:fin.reserve}); }
+        if(m==='DELETE'){ if(!fin.reserve) return send(res,404,{error:'nao_encontrado'}); fin.reserve=null; return send(res,200,{ok:true}); }
+      }
+      if(kind==='simulators'){
+        if(m==='PUT'){ fin.simulators[id]=b; return send(res,200,{key:id,data:b}); }
+        if(m==='DELETE'){ delete fin.simulators[id]; return send(res,200,{ok:true}); }
+      }
+      return send(res,404,{error:'nf'});
+    }
     return send(res,404,{error:'nf'});
   }
   let f=path.join(ROOT,p==='/'?'index.html':p); if(!fs.existsSync(f)) f=path.join(ROOT,'index.html');

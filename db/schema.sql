@@ -157,3 +157,63 @@ CREATE TABLE IF NOT EXISTS email_log (
   error     text
 );
 CREATE INDEX IF NOT EXISTS email_log_user_idx ON email_log(user_id, kind, sent_at);
+
+
+-- >>> FINANCE (proventos recebidos, metas, reserva, premissas) --------------
+-- Aditivo e idempotente: não altera nem remove nada de positions/user_documents,
+-- então carteiras existentes seguem intactas. Dinheiro em CENTAVOS inteiros (bigint),
+-- datas de calendário em DATE (sem fuso). Tudo isolado por user_id, com
+-- ON DELETE CASCADE. Sem chave estrangeira para positions: o salvamento da carteira
+-- recria as linhas de positions, e esses registros devem sobreviver a isso.
+
+-- Recebimentos INFORMADOS pelo usuário (não confirmados por corretora e sem ligação
+-- com caixa, posição ou patrimônio). `asset` é o texto do ativo no momento do registro.
+CREATE TABLE IF NOT EXISTS dividend_receipts (
+  id            uuid PRIMARY KEY,                    -- gerado no cliente (idempotência)
+  user_id       uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  asset         text NOT NULL CHECK (char_length(asset) BETWEEN 1 AND 40),
+  received_on   date NOT NULL,
+  amount_cents  bigint NOT NULL CHECK (amount_cents > 0 AND amount_cents <= 10000000000000),
+  note          text CHECK (note IS NULL OR char_length(note) <= 200),
+  created_at    timestamptz NOT NULL DEFAULT now(),
+  updated_at    timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS dividend_receipts_user_date_idx ON dividend_receipts(user_id, received_on DESC);
+
+CREATE TABLE IF NOT EXISTS financial_goals (
+  id            uuid PRIMARY KEY,
+  user_id       uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  kind          text NOT NULL CHECK (kind IN ('patrimonio','renda_mensal')),
+  name          text NOT NULL CHECK (char_length(name) BETWEEN 1 AND 60),
+  target_cents  bigint NOT NULL CHECK (target_cents > 0 AND target_cents <= 10000000000000),
+  deadline      date,
+  created_at    timestamptz NOT NULL DEFAULT now(),
+  updated_at    timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS financial_goals_user_idx ON financial_goals(user_id, created_at);
+
+-- Uma reserva por usuário. `linked_position_ids` guarda ids de posições escolhidas pelo
+-- usuário (nada é vinculado automaticamente).
+CREATE TABLE IF NOT EXISTS emergency_reserve (
+  user_id               uuid PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  monthly_expense_cents bigint NOT NULL CHECK (monthly_expense_cents > 0 AND monthly_expense_cents <= 10000000000000),
+  months                integer NOT NULL CHECK (months BETWEEN 1 AND 60),
+  linked_position_ids   jsonb NOT NULL DEFAULT '[]'::jsonb,
+  updated_at            timestamptz NOT NULL DEFAULT now()
+);
+
+-- Premissas editáveis dos simuladores (um documento por usuário e simulador).
+CREATE TABLE IF NOT EXISTS user_simulators (
+  user_id     uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  key         text NOT NULL CHECK (key IN ('independence','bazin')),
+  data        jsonb NOT NULL,
+  updated_at  timestamptz NOT NULL DEFAULT now(),
+  PRIMARY KEY (user_id, key)
+);
+-- RLS ligado e sem políticas, como nas demais tabelas do projeto: a API pública do Supabase
+-- (chaves anon/authenticated) não enxerga nada; o Worker usa o papel postgres, que ignora RLS.
+ALTER TABLE dividend_receipts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE financial_goals   ENABLE ROW LEVEL SECURITY;
+ALTER TABLE emergency_reserve ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_simulators   ENABLE ROW LEVEL SECURITY;
+-- <<< FINANCE

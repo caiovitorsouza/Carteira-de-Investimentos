@@ -2052,7 +2052,7 @@ td.gain{color:var(--gain);} td.loss{color:var(--loss);} td.muted{color:var(--mut
   .side-brand{display:flex; align-items:baseline; gap:12px;}
   .wordmark{padding:0; font-size:28px;}
   .workspace{display:none;}
-  .mainnav{grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px;}
+  .mainnav{grid-template-columns:repeat(5,minmax(0,1fr)); gap:4px;}
   .navitem{justify-content:center; text-align:center; padding:10px 4px; font-size:var(--text-xs); min-height:44px; line-height:1.3;}
   .navitem[aria-current="page"]::before{left:12px; right:12px; top:auto; bottom:2px; width:auto; height:2px;}
   .summary{grid-template-columns:1.2fr 1fr .5fr; gap:24px;}
@@ -2080,7 +2080,7 @@ td.gain{color:var(--gain);} td.loss{color:var(--loss);} td.muted{color:var(--mut
   .compactsummary{gap:20px;}
 }
 @media (max-width:480px){
-  .mainnav{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .mainnav{grid-template-columns:repeat(3,minmax(0,1fr));}
   .navitem{font-size:var(--text-sm);}
   .summary{grid-template-columns:1fr;}
   .stat-income{display:grid; grid-template-columns:1fr auto; gap:2px 12px; align-items:baseline;}
@@ -2092,6 +2092,89 @@ td.gain{color:var(--gain);} td.loss{color:var(--loss);} td.muted{color:var(--mut
   .bazin-form{flex-wrap:wrap;} .bazin-form .btn{flex:1 1 100%;}
   .filterbar{grid-template-columns:1fr;}
   .undated-list li{grid-template-columns:1fr auto;} .undated-list .src{grid-column:1/-1; grid-row:2;}
+}
+/* ---------- Proventos recebidos, metas, reserva e premissas ---------- */
+.seg{display:inline-flex; border:1px solid var(--line-strong); border-radius:var(--radius); overflow:hidden; background:var(--surface); margin:0 0 22px;}
+.seg button{min-height:44px; padding:0 18px; background:transparent; color:var(--ink); border:0; font:var(--weight-medium) var(--text-md)/1.2 var(--font-ui);}
+.seg button + button{border-left:1px solid var(--line-strong);}
+.seg button:hover{background:var(--hover);}
+.seg button[aria-pressed="true"]{background:var(--accent); color:var(--accent-ink);}
+.seg button:focus-visible{outline-offset:-3px;}
+.badge{display:inline-block; font-size:var(--text-tiny); line-height:1.2; padding:3px 7px; border-radius:3px; letter-spacing:.2px; white-space:nowrap; vertical-align:middle;}
+.badge-user{background:var(--surface-2); color:var(--ink); border:1px solid var(--line-strong);}
+.badge-est{background:transparent; color:var(--muted); border:1px dashed var(--line-strong);}
+.fin-banner{font-size:var(--text-sm); background:var(--surface-2); color:var(--ink-2); padding:11px 14px; border-radius:4px; margin:0 0 20px; line-height:1.5;}
+.fin-alert{border:1px solid var(--warn-line); background:var(--warn-soft); color:var(--warn-ink); border-radius:var(--radius); padding:14px 16px; margin:0 0 20px; font-size:var(--text-sm); display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;}
+.fin-alert[hidden]{display:none;}
+.fin-filters{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:0 0 6px;}
+.fin-empty{border:1px dashed var(--line-strong); border-radius:var(--radius); padding:24px; background:var(--surface); color:var(--ink-2); font-size:var(--text-md); line-height:1.55;}
+.fin-empty h3{font:var(--weight-medium) var(--text-lg)/1.25 var(--font-display); margin:0 0 8px; color:var(--ink);}
+.fin-empty p{margin:0 0 14px; max-width:60ch;}
+.fin-block{margin:0 0 40px;}
+.rec-bars{display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:6px; align-items:end; height:132px; margin:6px 0 4px; padding-top:8px; border-bottom:1px solid var(--line-strong);}
+.rec-bar{display:flex; flex-direction:column; justify-content:flex-end; height:100%;}
+.rec-bar span{display:block; background:var(--accent); border-radius:2px 2px 0 0; min-height:0;}
+.rec-bar.zero span{height:2px !important; background:var(--line-strong);}
+.rec-bar-names{display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:6px; font-size:var(--text-tiny); color:var(--muted); text-align:center; margin:0 0 18px;}
+.rec-masked{border:1px dashed var(--line-strong); border-radius:var(--radius); padding:18px; text-align:center; color:var(--muted); font-size:var(--text-sm); margin:6px 0 18px;}
+.rec-month{margin:22px 0 0;}
+.rec-month h3{display:flex; justify-content:space-between; gap:12px; align-items:baseline; font:var(--weight-medium) var(--text-lg)/1.2 var(--font-display); margin:0 0 4px; padding-bottom:8px; border-bottom:1px solid var(--line-strong);}
+.rec-row{display:flex; align-items:center; gap:13px; width:100%; min-height:56px; padding:10px 0; border:0; border-bottom:1px solid var(--line); background:none; color:var(--ink); text-align:left; font:inherit; cursor:pointer;}
+.rec-row:hover{background:var(--hover);}
+.rec-row .rd{min-width:44px; color:var(--accent); font-size:var(--text-md); font-weight:var(--weight-medium);}
+.rec-row .rm{flex:1; min-width:0;}
+.rec-row .rm b{font-weight:var(--weight-medium);}
+.rec-row .rn{display:block; font-size:var(--text-xs); color:var(--muted); overflow-wrap:anywhere;}
+.rec-row .rv{white-space:nowrap; font-weight:var(--weight-medium);}
+.rec-years{display:flex; flex-wrap:wrap; gap:8px; margin:0 0 6px; padding:0; list-style:none;}
+.rec-years button{min-height:44px; padding:6px 12px; border:1px solid var(--line-strong); background:var(--surface); color:var(--ink); border-radius:var(--radius); font:inherit; font-size:var(--text-sm);}
+.rec-years button[aria-pressed="true"]{border-color:var(--accent); background:var(--surface-2); font-weight:var(--weight-medium);}
+.goal-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr)); gap:18px;}
+.goal-card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); min-width:0; display:flex; flex-direction:column; gap:12px;}
+.goal-card h3{font:var(--weight-medium) var(--text-lg)/1.25 var(--font-display); margin:0; overflow-wrap:anywhere;}
+.goal-card .kindtag{font-size:var(--text-xs); color:var(--muted);}
+.goal-facts{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin:0;}
+.goal-facts div{min-width:0;} .goal-facts dt{font-size:var(--text-tiny); color:var(--muted);} .goal-facts dd{margin:2px 0 0; font-weight:var(--weight-medium); font-size:var(--text-md); overflow-wrap:anywhere;}
+.progress{height:10px; background:var(--surface-2); border:1px solid var(--line); border-radius:6px; overflow:hidden;}
+.progress > span{display:block; height:100%; background:var(--accent); transition:width .3s;}
+.progress.masked{background:repeating-linear-gradient(45deg,var(--surface-2),var(--surface-2) 6px,var(--line) 6px,var(--line) 12px);}
+.progress-label{display:flex; justify-content:space-between; gap:10px; font-size:var(--text-xs); color:var(--muted);}
+.goal-card .basis{font-size:var(--text-xs); color:var(--muted); margin:0; line-height:1.5;}
+.goal-card .goal-actions{margin-top:auto; display:flex; gap:10px;}
+.reserve-form{display:grid; grid-template-columns:1fr 1fr; gap:14px 16px; margin:0 0 16px; max-width:640px;}
+.reserve-form .full{grid-column:1/-1;}
+.res-links{border:1px solid var(--line); border-radius:var(--radius); padding:6px 14px 10px; margin:0; background:var(--surface); grid-column:1/-1;}
+.res-links legend{font-size:var(--text-sm); font-weight:var(--weight-medium); padding:0 6px;}
+.res-links label{display:flex; gap:12px; align-items:flex-start; padding:11px 0; border-bottom:1px solid var(--line); min-height:44px; cursor:pointer;}
+.res-links label:last-child{border-bottom:0;}
+.res-links input[type=checkbox]{width:22px; height:22px; margin-top:1px; flex:none; accent-color:var(--accent);}
+.res-links .rl-main{flex:1; min-width:0; font-size:var(--text-md);}
+.res-links .rl-hint{display:block; font-size:var(--text-xs); color:var(--muted); margin-top:2px; line-height:1.45;}
+.res-links .rl-val{white-space:nowrap; font-weight:var(--weight-medium);}
+.fin-actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:14px 0 0;}
+.fin-status{font-size:var(--text-sm); color:var(--ink-2); margin:10px 0 0; min-height:1.3em;}
+.fin-status.err{color:var(--loss); margin:10px 0 0;}
+.btn-danger{background:var(--loss); color:var(--surface);}
+.btn-danger:hover:not(:disabled){background:var(--loss); filter:brightness(.92);}
+.fin-confirm{border:1px solid var(--loss); background:var(--loss-soft); border-radius:var(--radius); padding:14px 16px; margin:16px 0 0; font-size:var(--text-sm); color:var(--ink);}
+.fin-confirm p{margin:0 0 12px;}
+.fin-form-err{color:var(--loss); font-size:var(--text-sm); margin:12px 0 0; min-height:1.2em;}
+.sim-fields{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:0 0 14px;}
+.sim-fields label{display:grid; gap:7px; font-size:var(--text-sm); font-weight:var(--weight-medium); color:var(--ink); align-content:start;}
+.sim-fields label small{font-weight:var(--weight-normal); color:var(--muted); font-size:var(--text-xs); line-height:1.4;}
+.sim-fields input{min-height:44px; font-size:var(--text-input); font-weight:var(--weight-normal);}
+.origin{display:inline-block; font-size:var(--text-tiny); padding:2px 6px; border-radius:3px; border:1px solid var(--line-strong); color:var(--ink-2); background:var(--surface-2); margin-left:6px; font-weight:var(--weight-normal);}
+.origin.ilus{border-style:dashed; color:var(--warn-ink); background:var(--warn-soft); border-color:var(--warn-line);}
+.sim-pair{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:12px 0 0;}
+.sim-pair div{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px;}
+.sim-pair dt{font-size:var(--text-tiny); color:var(--muted);} .sim-pair dd{margin:2px 0 0; font-weight:var(--weight-medium);}
+.sim-warn{font-size:var(--text-sm); color:var(--warn-ink); background:var(--warn-soft); border:1px solid var(--warn-line); border-radius:4px; padding:10px 12px; margin:0;}
+@media (max-width:640px){
+  .reserve-form, .sim-fields, .fin-filters{grid-template-columns:1fr;}
+  .goal-facts{grid-template-columns:1fr 1fr;}
+  .sim-pair{grid-template-columns:1fr;}
+  .seg{display:flex; width:100%;} .seg button{flex:1 1 0; padding:0 8px;}
+  .rec-bars, .rec-bar-names{gap:3px;}
 }
 @media (prefers-reduced-motion: reduce){
   *, *::before, *::after{transition:none !important; animation:none !important;}
@@ -2175,6 +2258,7 @@ td.gain{color:var(--gain);} td.loss{color:var(--loss);} td.muted{color:var(--mut
         <a class="navitem" href="#visao-geral" data-page="overview" aria-current="page">Visão geral</a>
         <a class="navitem" href="#carteira" data-page="holdings">Minha carteira</a>
         <a class="navitem" href="#proventos" data-page="income">Proventos</a>
+        <a class="navitem" href="#metas" data-page="goals">Metas</a>
         <a class="navitem" href="#simuladores" data-page="simulators">Simuladores</a>
       </nav>
     </aside>
@@ -2284,6 +2368,11 @@ td.gain{color:var(--gain);} td.loss{color:var(--loss);} td.muted{color:var(--mut
 
         <!-- ===================== PROVENTOS ===================== -->
         <section class="page" id="pg-income" data-panel="income" hidden aria-labelledby="pageTitle">
+          <div class="seg" role="group" aria-label="Tipo de provento">
+            <button type="button" id="incTabEst" aria-pressed="true">Estimados</button>
+            <button type="button" id="incTabRec" aria-pressed="false">Recebidos</button>
+          </div>
+          <div id="incEst">
           <div class="sectionhead">
             <h2 id="monthTitle">—</h2>
             <div class="monthtools">
@@ -2301,6 +2390,45 @@ td.gain{color:var(--gain);} td.loss{color:var(--loss);} td.muted{color:var(--mut
           <div class="calendar-list" id="calendarList"></div>
           <div id="undatedBox"></div>
           <p class="note" id="incomeNote"></p>
+          </div>
+
+          <!-- Recebidos: registros manuais, informados pelo usuário -->
+          <div id="incRec" hidden>
+            <p class="fin-banner" id="recBanner">Registros <b>informados por você</b>. O Rendum não confirma pagamentos com corretora, não converte estimativas em recebimentos e não altera caixa, posição nem patrimônio ao registrar.</p>
+            <div class="fin-alert" id="recLoadErr" role="alert" hidden>
+              <span>Não foi possível carregar seus recebimentos.</span>
+              <button type="button" class="btn btn-sm" id="recRetry">Tentar de novo</button>
+            </div>
+            <div class="sectionhead">
+              <h2 id="recTitle">Recebimentos informados por você</h2>
+              <button type="button" class="primary" id="recAddBtn">+ Registrar recebimento</button>
+            </div>
+            <div id="recFilters" class="fin-filters" hidden>
+              <div class="formrow"><label for="recYear">Ano</label><select id="recYear"></select></div>
+              <div class="formrow"><label for="recAsset">Ativo</label><select id="recAsset"></select></div>
+            </div>
+            <div id="recBody" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <!-- ===================== METAS ===================== -->
+        <section class="page" id="pg-goals" data-panel="goals" hidden aria-labelledby="pageTitle">
+          <p class="fin-banner">Metas e reserva usam o que você cadastrou no Rendum. Os valores são referências para acompanhar seu objetivo, não recomendações de investimento.</p>
+          <div class="fin-alert" id="goalsLoadErr" role="alert" hidden>
+            <span>Não foi possível carregar suas metas e a reserva.</span>
+            <button type="button" class="btn btn-sm" id="goalsRetry">Tentar de novo</button>
+          </div>
+          <section class="fin-block" aria-labelledby="hGoals">
+            <div class="sectionhead">
+              <h2 id="hGoals">Metas financeiras</h2>
+              <button type="button" class="primary" id="goalAddBtn">+ Nova meta</button>
+            </div>
+            <div id="goalList" aria-live="polite"></div>
+          </section>
+          <section class="fin-block" aria-labelledby="hReserve">
+            <div class="sectionhead"><h2 id="hReserve">Reserva de emergência</h2></div>
+            <div id="reserveBox"></div>
+          </section>
         </section>
 
         <!-- ===================== SIMULADORES ===================== -->
@@ -2331,6 +2459,11 @@ td.gain{color:var(--gain);} td.loss{color:var(--loss);} td.muted{color:var(--mut
 
 <script type="module">
 import { api } from './api.js';
+import {
+  parseMoneyToCents, formatCentsInput, parsePercentToBp, formatBpInput, parseCalendarDate, formatDateBR,
+  monthsBetween, pad2, summarizeReceipts, goalProgress, linearMonthlyNeed, reserveProgress,
+  simulateIndependence, INDEPENDENCE_DEFAULTS, calcBazin,
+} from './finance-calc.js';
 
 // =========================================================================
 // DADOS DE REFERÊNCIA (pesquisados em outubro/2026)
@@ -2640,8 +2773,13 @@ function aplicarMascaraMoeda(inp){
     if (colar(txt)){ e.preventDefault(); inp.dispatchEvent(new Event('input', { bubbles:true })); }
   });
   inp.addEventListener('focus', () => {
-    // posiciona cursor no final (sempre edita o último dígito)
-    setTimeout(() => inp.setSelectionRange(inp.value.length, inp.value.length), 0);
+    // posiciona cursor no final (sempre edita o último dígito) — mas respeita uma seleção já feita
+    // pelo usuário (Tab/Ctrl+A selecionam tudo): digitar sobre ela deve substituir o valor.
+    setTimeout(() => {
+      if (document.activeElement !== inp) return;
+      if (inp.selectionStart !== inp.selectionEnd) return;
+      inp.setSelectionRange(inp.value.length, inp.value.length);
+    }, 0);
   });
   // seedcentavos a partir de valor pré-existente (vindo como "10,00" ou similar)
   if (inp.value) {
@@ -2842,6 +2980,7 @@ async function enterApp(){
   $('loadError').hidden = true;
   applyValuesVisibility();
   render();
+  loadFinance();            // recebimentos, metas, reserva e premissas (não bloqueia o painel)
   setupScrollReveal();
   // Carrega taxas depois (não bloqueia render inicial). Re-renderiza só se
   // as taxas mudarem valor em relação ao fallback — evita flicker desnecessário.
@@ -2913,9 +3052,22 @@ const PAGES = {
   overview:   { hash:'#visao-geral', title:'Visão geral',        sub:'Patrimônio, posições e renda estimada.' },
   holdings:   { hash:'#carteira',    title:'Minha carteira',     sub:'Confira suas posições por ativo.' },
   income:     { hash:'#proventos',   title:'Proventos estimados', sub:'Datas registradas e estimativas, organizadas por mês.' },
+  goals:      { hash:'#metas',       title:'Metas',              sub:'Metas de patrimônio e renda, e sua reserva de emergência.' },
   simulators: { hash:'#simuladores', title:'Simuladores',        sub:'Explore cenários com premissas explícitas.' },
 };
 let _page = 'overview';
+let _incView = 'est';       // Proventos: 'est' (estimados) ou 'rec' (recebidos, informados pelo usuário)
+function pageMeta(page){
+  if (page === 'income' && _incView === 'rec') return { title: 'Proventos recebidos', sub: 'Recebimentos que você registrou, separados das estimativas.' };
+  return PAGES[page];
+}
+function applyPageMeta(page){
+  const m = pageMeta(page);
+  $('pageTitle').textContent = m.title;
+  $('pageSubtitle').textContent = m.sub;
+  $('crumb').textContent = m.title;
+  document.title = m.title + ' · Rendum';
+}
 function pageFromHash(){
   const h = location.hash;
   return Object.keys(PAGES).find(k => PAGES[k].hash === h) || 'overview';
@@ -2929,10 +3081,7 @@ function showPage(page, { focus = false } = {}){
   });
   // "Adicionar ativo" só onde faz sentido; hidden remove do layout (sem espaço vazio)
   $('addBtn').hidden = !(page === 'overview' || page === 'holdings');
-  $('pageTitle').textContent = PAGES[page].title;
-  $('pageSubtitle').textContent = PAGES[page].sub;
-  $('crumb').textContent = PAGES[page].title;
-  document.title = PAGES[page].title + ' · Rendum';
+  applyPageMeta(page);
   if (focus){ $('pageTitle').focus({ preventScroll: true }); window.scrollTo({ top: 0 }); }
 }
 document.addEventListener('click', (e) => {
@@ -3205,6 +3354,7 @@ function render(){
   renderIndependence(t);
   renderBazin();
   if (typeof _renderBazinResult === 'function' && $('bazinOut')) _renderBazinResult();
+  renderFinance();
 
   renderQuoteStatus();
 }
@@ -3638,87 +3788,859 @@ $('prevMonth').onclick = () => { _incomeMonth = new Date(_incomeMonth.getFullYea
 $('nextMonth').onclick = () => { _incomeMonth = new Date(_incomeMonth.getFullYear(), _incomeMonth.getMonth()+1, 1); renderIncomePage(); };
 $('thisMonth').onclick = () => { const h = new Date(); _incomeMonth = new Date(h.getFullYear(), h.getMonth(), 1); renderIncomePage(); $('monthTitle').focus?.(); };
 
-// ---------- 4) Independence Goal ----------
-const _INDEP_STATE = { custoMensal: 3500, aporteMensal: 500 };
+/* =========================================================================
+   PROVENTOS RECEBIDOS · METAS · RESERVA · PREMISSAS DOS SIMULADORES
+   Tudo é persistido no servidor (por usuário). Dinheiro em centavos inteiros;
+   datas de calendário como "AAAA-MM-DD", sem Date/fuso. Os valores exibidos passam
+   por brl.format, então "Ocultar valores" cobre texto, rótulos acessíveis, avisos e gráficos.
+   ========================================================================= */
+const MESES_PT = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+const centsBrl = (c) => brl.format(c / 100);
+const cap1 = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+// "hoje" no calendário local, como texto (sem conversão de fuso)
+function localToday(){ const d = new Date(); return { y: d.getFullYear(), m: d.getMonth() + 1, d: d.getDate() }; }
+function localTodayStr(){ const t = localToday(); return `${t.y}-${pad2(t.m)}-${pad2(t.d)}`; }
 
-function calcularIndependencia({ patrimonioAtual, aporteMensal, rentabilidadeAnual, yieldAnualPassivo, custoMensal }){
-  const i = rentabilidadeAnual / 12;
-  const yMensal = yieldAnualPassivo / 12;
-  let patr = patrimonioAtual;
-  const MAX = 600;
-  for (let n = 1; n <= MAX; n++){
-    patr = patr * (1 + i) + aporteMensal;
-    const renda = patr * yMensal;
-    if (renda >= custoMensal){
-      return { meses: n, anos: Math.round(n/12*10)/10, patr, renda, possivel: true };
-    }
-  }
-  return { meses: MAX, anos: 50, patr, renda: patr*yMensal, possivel: false };
+let fin = { receipts: [], goals: [], reserve: null, simulators: {}, status: 'idle' };   // idle|loading|ready|error
+
+// Campos de dinheiro viram "senha" (pontinhos) com os valores ocultos: o número digitado ou
+// carregado não aparece na tela nem em capturas.
+function syncMoneyFields(root = document){
+  root.querySelectorAll('input.moneyfield').forEach(i => {
+    const t = valuesHidden ? 'password' : 'text';
+    if (i.type !== t) i.type = t;
+    i.setAttribute('autocomplete', 'off');
+  });
 }
 
+function finErrorMessage(err){
+  const code = err && err.data && err.data.error;
+  if (err && err.status === 401) return 'Sua sessão expirou. Entre de novo; o que você digitou continua na tela.';
+  if (!err || err.status == null) return 'Não foi possível conectar ao servidor. Verifique sua internet e tente de novo. Seus dados continuam no formulário.';
+  if (err.status === 422 && code === 'limite_atingido') return 'Você atingiu o limite de registros desta lista.';
+  if (err.status === 400) return 'Confira os campos e tente de novo.';
+  if (err.status >= 500) return 'O servidor não conseguiu concluir agora. Seus dados continuam no formulário; tente de novo em instantes.';
+  return 'Não foi possível concluir. Seus dados continuam no formulário.';
+}
+
+let _finLoading = null;
+function loadFinance(){
+  if (_finLoading) return _finLoading;
+  fin.status = 'loading'; renderFinance();
+  _finLoading = api.getFinance()
+    .then(d => {
+      fin.receipts = Array.isArray(d.receipts) ? d.receipts : [];
+      fin.goals = Array.isArray(d.goals) ? d.goals : [];
+      fin.reserve = d.reserve || null;
+      fin.simulators = d.simulators || {};
+      fin.status = 'ready';
+    })
+    .catch(() => { fin.status = 'error'; })
+    .finally(() => { _finLoading = null; applySavedSimulators(); applyReserveFromState(true); renderFinance(); });
+  return _finLoading;
+}
+function renderFinance(){
+  renderReceipts(); renderGoals(); renderReserve(); updateSimButtons();
+  syncMoneyFields();
+}
+
+/* -------------------------------------------------- formulário em painel (genérico) */
+let _finFieldSeq = 0;
+// Foco inicial do painel: só se o painel ainda estiver aberto e o usuário (ou o teste) ainda
+// não tiver escolhido outro campo. O temporizador é cancelado quando o painel fecha.
+function focusInitially(sheet, target, delay = 60){
+  const t = setTimeout(() => {
+    if (!sheet.isConnected || sheet.inert || !target.isConnected) return;
+    const a = document.activeElement;
+    if (a && a !== sheet && a !== document.body && sheet.contains(a)) return;   // foco já escolhido
+    target.focus();
+  }, delay);
+  (sheet._cleanups = sheet._cleanups || []).push(() => clearTimeout(t));
+}
+// cfg: { title, sub, fields:[{key,label,kind,value,hint,options,maxlength,max,list,listOptions,placeholder,parse}],
+//        submitLabel, onSubmit(values) → Promise<mensagem>, del:{ question, confirmLabel, run() → Promise<mensagem> } }
+function openFinSheet(cfg){
+  openSheet((body, close) => {
+    buildAddHead(body, close, cfg.title, cfg.sub);
+    const form = el('form'); form.noValidate = true; form.style.marginTop = '16px';
+    const refs = {};
+    let busy = false, closed = false;
+    cfg.fields.forEach((f) => {
+      const id = 'ff' + (++_finFieldSeq);
+      const wrap = el('div', 'field');
+      const lab = el('label', null, f.label); lab.htmlFor = id;
+      wrap.appendChild(lab);
+      let inp;
+      if (f.kind === 'select'){
+        inp = document.createElement('select');
+        for (const [v, t] of f.options){ const o = document.createElement('option'); o.value = v; o.textContent = t; inp.appendChild(o); }
+        inp.value = f.value;
+      } else {
+        inp = document.createElement('input');
+        inp.type = f.kind === 'date' ? 'date' : 'text';
+        if (f.kind === 'money'){
+          inp.className = 'moneyfield';
+          inp.setAttribute('inputmode', 'numeric');
+          inp.placeholder = 'R$ 0,00';
+          if (Number.isInteger(f.value) && f.value > 0) inp.value = 'R$ ' + formatCentsInput(f.value);
+          aplicarMascaraMoeda(inp);
+        } else {
+          inp.value = f.value || '';
+        }
+        if (f.maxlength) inp.maxLength = f.maxlength;
+        if (f.max) inp.max = f.max;
+        if (f.placeholder) inp.placeholder = f.placeholder;
+        if (f.list){
+          const dl = document.createElement('datalist'); dl.id = id + '-dl';
+          for (const o of f.listOptions || []){ const op = document.createElement('option'); op.value = o; dl.appendChild(op); }
+          wrap.appendChild(dl); inp.setAttribute('list', dl.id);
+        }
+        inp.autocomplete = 'off';
+      }
+      inp.id = id;
+      wrap.appendChild(inp);
+      const ids = [];
+      if (f.hint){ const h = el('p', 'field-hint', f.hint); h.id = id + '-h'; wrap.appendChild(h); ids.push(h.id); }
+      const er = el('p', 'field-err'); er.id = id + '-e'; er.hidden = true; wrap.appendChild(er);
+      refs[f.key] = { f, inp, er, hintId: ids[0] || null };
+      form.appendChild(wrap);
+    });
+    const formErr = el('p', 'fin-form-err'); formErr.setAttribute('role', 'alert');
+    form.appendChild(formErr);
+    const actions = el('div', 'fin-actions');
+    const submit = el('button', 'btn', cfg.submitLabel || 'Salvar'); submit.type = 'submit';
+    actions.appendChild(submit);
+    const cancel = el('button', 'btn btn-ghost', 'Cancelar'); cancel.type = 'button'; cancel.onclick = () => { if (!busy) close(); };
+    actions.appendChild(cancel);
+    let delBtn = null, confirmBox = null;
+    if (cfg.del){
+      delBtn = el('button', 'btn btn-ghost', 'Excluir'); delBtn.type = 'button'; actions.appendChild(delBtn);
+      confirmBox = el('div', 'fin-confirm'); confirmBox.hidden = true; confirmBox.setAttribute('role', 'alertdialog');
+      const q = el('p', null, cfg.del.question); q.id = 'fc' + (++_finFieldSeq); confirmBox.setAttribute('aria-labelledby', q.id);
+      const yes = el('button', 'btn btn-danger btn-sm', cfg.del.confirmLabel || 'Confirmar exclusão'); yes.type = 'button';
+      const no = el('button', 'btn btn-ghost btn-sm', 'Voltar'); no.type = 'button';
+      const row = el('div', 'fin-actions'); row.style.margin = '0'; row.append(yes, no);
+      confirmBox.append(q, row);
+      delBtn.onclick = () => { if (busy) return; confirmBox.hidden = false; delBtn.hidden = true; no.focus(); };
+      no.onclick = () => { if (busy) return; confirmBox.hidden = true; delBtn.hidden = false; delBtn.focus(); };
+      yes.onclick = async () => {
+        if (busy) return;
+        busy = true; yes.disabled = true; no.disabled = true; yes.setAttribute('aria-busy', 'true'); yes.textContent = 'Excluindo…'; formErr.textContent = '';
+        try { const msg = await cfg.del.run(); closed = true; close(); toast(msg); }
+        catch (err){ formErr.textContent = finErrorMessage(err).replace('Seus dados continuam no formulário.', 'O registro não foi excluído.'); }
+        finally { if (!closed){ busy = false; yes.disabled = false; no.disabled = false; yes.removeAttribute('aria-busy'); yes.textContent = cfg.del.confirmLabel || 'Confirmar exclusão'; } }
+      };
+    }
+    form.appendChild(actions);
+    if (confirmBox) form.appendChild(confirmBox);
+
+    const setErr = (r, msg) => {
+      r.er.textContent = msg || ''; r.er.hidden = !msg;
+      if (msg) r.inp.setAttribute('aria-invalid', 'true'); else r.inp.removeAttribute('aria-invalid');
+      const ids = [r.hintId, msg ? r.er.id : null].filter(Boolean);
+      if (ids.length) r.inp.setAttribute('aria-describedby', ids.join(' ')); else r.inp.removeAttribute('aria-describedby');
+    };
+    for (const r of Object.values(refs)){
+      if (r.hintId) r.inp.setAttribute('aria-describedby', r.hintId);
+      r.inp.addEventListener('input', () => { if (!r.er.hidden) setErr(r, ''); });
+    }
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      if (busy) return;                                   // bloqueia envio duplicado (clique, Enter)
+      formErr.textContent = '';
+      const vals = {}; let firstBad = null;
+      for (const [key, r] of Object.entries(refs)){
+        const out = r.f.parse ? r.f.parse(r.inp.value) : { value: r.inp.value };
+        if (out.error){ setErr(r, out.error); firstBad = firstBad || r.inp; }
+        else { setErr(r, ''); vals[key] = out.value; }
+      }
+      if (firstBad){ firstBad.focus(); return; }
+      busy = true; submit.disabled = true; submit.setAttribute('aria-busy', 'true'); submit.textContent = 'Salvando…';
+      try {
+        const msg = await cfg.onSubmit(vals);             // só chega aqui depois da confirmação do servidor
+        closed = true; close(); toast(msg);
+      } catch (err){
+        formErr.textContent = finErrorMessage(err);       // o formulário continua preenchido
+      } finally {
+        if (!closed){ busy = false; submit.disabled = false; submit.removeAttribute('aria-busy'); submit.textContent = cfg.submitLabel || 'Salvar'; }
+      }
+    };
+    body.appendChild(form);
+    syncMoneyFields(form);
+    const firstInp = Object.values(refs)[0];
+    if (firstInp) focusInitially(body, firstInp.inp);
+  });
+}
+
+function openConfirmSheet({ title, question, confirmLabel, run }){
+  openSheet((body, close) => {
+    buildAddHead(body, close, title);
+    body.appendChild(el('p', 'note', question));
+    const err = el('p', 'fin-form-err'); err.setAttribute('role', 'alert'); body.appendChild(err);
+    const actions = el('div', 'fin-actions');
+    const yes = el('button', 'btn btn-danger', confirmLabel); yes.type = 'button';
+    const no = el('button', 'btn btn-ghost', 'Cancelar'); no.type = 'button';
+    let busy = false, closed = false;
+    no.onclick = () => { if (!busy) close(); };
+    yes.onclick = async () => {
+      if (busy) return;
+      busy = true; yes.disabled = true; yes.setAttribute('aria-busy', 'true'); yes.textContent = 'Removendo…'; err.textContent = '';
+      try { const msg = await run(); closed = true; close(); toast(msg); }
+      catch (e){ err.textContent = finErrorMessage(e); }
+      finally { if (!closed){ busy = false; yes.disabled = false; yes.removeAttribute('aria-busy'); yes.textContent = confirmLabel; } }
+    };
+    actions.append(yes, no); body.appendChild(actions);
+    focusInitially(body, no);
+  });
+}
+
+/* ------------------------------------------------------- proventos recebidos */
+
+const _rec = { year: null, asset: '' };
+
+function setIncomeView(view){
+  _incView = view;
+  $('incEst').hidden = view !== 'est';
+  $('incRec').hidden = view !== 'rec';
+  $('incTabEst').setAttribute('aria-pressed', view === 'est' ? 'true' : 'false');
+  $('incTabRec').setAttribute('aria-pressed', view === 'rec' ? 'true' : 'false');
+  if (_page === 'income') applyPageMeta('income');
+  if (view === 'rec'){ renderReceipts(); if (fin.status === 'idle' || fin.status === 'error') loadFinance(); }
+}
+$('incTabEst').onclick = () => setIncomeView('est');
+$('incTabRec').onclick = () => setIncomeView('rec');
+$('recRetry').onclick = () => loadFinance();
+$('goalsRetry').onclick = () => loadFinance();
+
+function setOptions(sel, opts, value){
+  const sig = JSON.stringify(opts);
+  if (sel.dataset.sig !== sig){
+    sel.dataset.sig = sig; sel.replaceChildren();
+    for (const [v, t] of opts){ const o = document.createElement('option'); o.value = v; o.textContent = t; sel.appendChild(o); }
+  }
+  sel.value = value;
+}
+
+function assetChoices(){
+  const set = new Set();
+  for (const p of state.positions){ const n = p.ticker || p.nome; if (n) set.add(n); }
+  return [...set].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+}
+
+function renderReceipts(){
+  const body = $('recBody'); if (!body) return;
+  $('recLoadErr').hidden = fin.status !== 'error';
+  $('recAddBtn').disabled = fin.status !== 'ready';
+  const filters = $('recFilters');
+  if (fin.status !== 'ready'){
+    filters.hidden = true;
+    body.replaceChildren(fin.status === 'error' ? document.createComment('erro') : el('p', 'empty-line', 'Carregando seus recebimentos…'));
+    return;
+  }
+  if (!fin.receipts.length){
+    filters.hidden = true;
+    const box = el('div', 'fin-empty');
+    box.append(el('h3', null, 'Nenhum recebimento registrado'),
+      el('p', null, 'Registre aqui, manualmente, os proventos que você de fato recebeu: ativo, data e valor total. O Rendum não consulta corretoras e as estimativas do calendário nunca viram recebimentos sozinhas.'));
+    const b = el('button', 'primary', 'Registrar o primeiro recebimento'); b.type = 'button'; b.onclick = () => openReceiptSheet();
+    box.appendChild(b);
+    body.replaceChildren(box);
+    return;
+  }
+  filters.hidden = false;
+  const curYear = localToday().y;
+  const years = [...new Set([curYear, ...fin.receipts.map(r => Number(r.receivedOn.slice(0, 4)))])].sort((a, b) => b - a);
+  if (_rec.year == null || !years.includes(_rec.year)) _rec.year = curYear;
+  const assets = [...new Set(fin.receipts.map(r => r.asset))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+  if (_rec.asset && !assets.includes(_rec.asset)) _rec.asset = '';
+  setOptions($('recYear'), years.map(y => [String(y), String(y)]), String(_rec.year));
+  setOptions($('recAsset'), [['', 'Todos os ativos'], ...assets.map(a => [a, a])], _rec.asset);
+
+  const sum = summarizeReceipts(fin.receipts, { asset: _rec.asset, year: _rec.year });
+  const frag = document.createDocumentFragment();
+
+  const cs = el('div', 'compactsummary');
+  const stat = (k, v, cls) => { const d = el('div'); d.append(el('small', null, k), el('strong', cls || null, v)); return d; };
+  cs.append(
+    stat(`Total recebido em ${_rec.year}${_rec.asset ? ' · ' + _rec.asset : ''}`, centsBrl(sum.totalAno), 'num'),
+    stat('Registros no ano', String(sum.contagemAno), 'num'),
+    stat('Origem dos valores', 'Informados por você'));
+  frag.appendChild(cs);
+
+  // totais por ano (respeitando o filtro de ativo)
+  if (sum.anos.length){
+    frag.appendChild(el('h3', 'quiet', 'Totais por ano'));
+    const ul = el('ul', 'rec-years');
+    for (const a of sum.anos){
+      const li = el('li'); const b = el('button', null, `${a.year}: ${centsBrl(a.cents)}`); b.type = 'button';
+      b.setAttribute('aria-pressed', a.year === _rec.year ? 'true' : 'false');
+      b.onclick = () => { _rec.year = a.year; renderReceipts(); const nb = $('recBody').querySelector('.rec-years button[aria-pressed="true"]'); if (nb) nb.focus(); };
+      li.appendChild(b); ul.appendChild(li);
+    }
+    frag.appendChild(ul);
+  }
+
+  // gráfico mensal: com valores ocultos não há barras (a altura revelaria os valores)
+  frag.appendChild(el('h3', 'quiet', `Total por mês em ${_rec.year}`));
+  if (valuesHidden){
+    frag.appendChild(el('p', 'rec-masked', 'Gráfico oculto enquanto os valores estão ocultos.'));
+  } else {
+    const max = Math.max(...sum.porMes, 1);
+    const bars = el('div', 'rec-bars'); bars.setAttribute('aria-hidden', 'true');
+    const names = el('div', 'rec-bar-names'); names.setAttribute('aria-hidden', 'true');
+    sum.porMes.forEach((v, i) => {
+      const b = el('div', 'rec-bar' + (v ? '' : ' zero')); const s = el('span'); s.style.height = Math.max(2, Math.round(v / max * 100)) + '%';
+      b.appendChild(s); bars.appendChild(b);
+      names.appendChild(el('span', null, cap1(MESES_PT[i].slice(0, 3))));
+    });
+    frag.append(bars, names);
+  }
+
+  // lista por mês (equivalente textual do gráfico)
+  if (!sum.contagemAno){
+    frag.appendChild(el('p', 'empty-line', `Nenhum recebimento registrado em ${_rec.year}${_rec.asset ? ' para ' + _rec.asset : ''}.`));
+  } else {
+    for (let m = 12; m >= 1; m--){
+      const lst = fin.receipts.filter(r => {
+        const p = parseCalendarDate(r.receivedOn);
+        return p && p.y === _rec.year && p.m === m && (!_rec.asset || r.asset === _rec.asset);
+      }).sort((a, b) => (a.receivedOn < b.receivedOn ? 1 : a.receivedOn > b.receivedOn ? -1 : 0));
+      if (!lst.length) continue;
+      const sec = el('section', 'rec-month');
+      const h = el('h3'); h.append(el('span', null, `${cap1(MESES_PT[m - 1])} de ${_rec.year}`), el('span', 'num', centsBrl(sum.porMes[m - 1])));
+      sec.appendChild(h);
+      for (const r of lst){
+        const row = el('button', 'rec-row'); row.type = 'button';
+        row.setAttribute('aria-label', `Editar recebimento de ${r.asset} em ${formatDateBR(r.receivedOn)}, ${centsBrl(r.amountCents)}`);
+        const p = parseCalendarDate(r.receivedOn);
+        const rd = el('span', 'rd', `${pad2(p.d)}/${pad2(p.m)}`);
+        const rm = el('span', 'rm'); const line = el('span'); line.append(el('b', null, r.asset), ' ', el('span', 'badge badge-user', 'Informado por você'));
+        rm.appendChild(line);
+        if (r.note) rm.appendChild(el('span', 'rn', r.note));
+        row.append(rd, rm, el('span', 'rv num', centsBrl(r.amountCents)));
+        row.onclick = () => openReceiptSheet({ rec: r });
+        sec.appendChild(row);
+      }
+      frag.appendChild(sec);
+    }
+  }
+  frag.appendChild(el('p', 'note', 'Cada valor é o total que você informou ter recebido naquela data. O Rendum não calcula o provento pela quantidade de cotas e não confirma o pagamento com corretora.'));
+  body.replaceChildren(frag);
+}
+$('recYear').onchange = (e) => { _rec.year = Number(e.target.value); renderReceipts(); };
+$('recAsset').onchange = (e) => { _rec.asset = e.target.value; renderReceipts(); };
+$('recAddBtn').onclick = () => openReceiptSheet();
+
+function openReceiptSheet({ rec = null, asset = '' } = {}){
+  const id = rec ? rec.id : crypto.randomUUID();       // o mesmo id vale para todas as tentativas: reenviar não duplica
+  const today = localTodayStr();
+  openFinSheet({
+    title: rec ? 'Editar recebimento' : 'Registrar recebimento',
+    sub: 'Registro informado por você. Não altera caixa, posição nem patrimônio e não é confirmação de corretora.',
+    submitLabel: 'Salvar recebimento',
+    fields: [
+      { key: 'asset', label: 'Ativo', kind: 'text', value: rec ? rec.asset : asset, maxlength: 40, list: true, listOptions: assetChoices(),
+        hint: 'Escolha um ativo da carteira ou digite outro (por exemplo, um que você já vendeu).',
+        parse: (v) => { const t = v.trim().replace(/\s+/g, ' '); return t ? { value: /^[A-Za-z]{4}\d{1,2}$/.test(t) ? t.toUpperCase() : t } : { error: 'Informe o ativo.' }; } },
+      { key: 'receivedOn', label: 'Data do recebimento', kind: 'date', value: rec ? rec.receivedOn : today, max: today,
+        parse: (v) => {
+          if (!parseCalendarDate(v)) return { error: 'Informe uma data válida.' };
+          if (v > today) return { error: 'A data não pode ser futura. Registre só o que já recebeu.' };
+          return { value: v };
+        } },
+      { key: 'amountCents', label: 'Valor total recebido (R$)', kind: 'money', value: rec ? rec.amountCents : null,
+        hint: 'O total que você recebeu nessa data, como no seu extrato. Não é calculado pela quantidade de cotas.',
+        parse: (v) => { const c = parseMoneyToCents(v); return c && c > 0 ? { value: c } : { error: 'Informe um valor maior que zero.' }; } },
+      { key: 'note', label: 'Observação (opcional)', kind: 'text', value: rec ? (rec.note || '') : '', maxlength: 200,
+        parse: (v) => ({ value: v.trim() }) },
+    ],
+    onSubmit: async (v) => {
+      const payload = { asset: v.asset, receivedOn: v.receivedOn, amountCents: v.amountCents, note: v.note || null };
+      if (rec){
+        const r = await api.updateReceipt(id, payload);
+        fin.receipts = fin.receipts.map(x => x.id === id ? r.receipt : x);
+      } else {
+        const r = await api.createReceipt({ id, ...payload });
+        fin.receipts = [r.receipt, ...fin.receipts.filter(x => x.id !== id)];
+      }
+      renderFinance();
+      return rec ? 'Recebimento atualizado' : 'Recebimento registrado';
+    },
+    del: rec ? {
+      question: `Excluir o recebimento de ${rec.asset} em ${formatDateBR(rec.receivedOn)}? Só este registro será removido; sua carteira não muda.`,
+      run: async () => {
+        try { await api.deleteReceipt(id); }
+        catch (err){ if (!(err && err.status === 404)) throw err; }       // já removido: o resultado é o mesmo
+        fin.receipts = fin.receipts.filter(x => x.id !== id);
+        renderFinance();
+        return 'Recebimento excluído';
+      },
+    } : null,
+  });
+}
+
+/* --------------------------------------------------------------------- metas */
+const GOAL_KIND = {
+  patrimonio:   { nome: 'Meta de patrimônio',     base: 'Medida pelo patrimônio atual das posições cadastradas.' },
+  renda_mensal: { nome: 'Meta de renda mensal',   base: 'Medida pela renda mensal estimada da carteira — uma estimativa, não valor recebido.' },
+};
+
+function renderGoals(){
+  const box = $('goalList'); if (!box) return;
+  $('goalsLoadErr').hidden = fin.status !== 'error';
+  $('goalAddBtn').disabled = fin.status !== 'ready';
+  if (fin.status !== 'ready'){
+    box.replaceChildren(fin.status === 'error' ? document.createComment('erro') : el('p', 'empty-line', 'Carregando suas metas…'));
+    return;
+  }
+  if (!fin.goals.length){
+    const e = el('div', 'fin-empty');
+    e.append(el('h3', null, 'Você ainda não definiu metas'),
+      el('p', null, 'Crie uma meta de patrimônio (comparada ao patrimônio atual das suas posições) ou de renda mensal (comparada à renda mensal estimada da carteira). O prazo é opcional.'));
+    if (!state.positions.length) e.appendChild(el('p', null, 'Sua carteira ainda não tem posições, então o progresso começa em zero. Cadastre seus ativos em Minha carteira.'));
+    const b = el('button', 'primary', 'Criar a primeira meta'); b.type = 'button'; b.onclick = () => openGoalSheet();
+    e.appendChild(b);
+    box.replaceChildren(e);
+    return;
+  }
+  const t = totals();
+  const atual = { patrimonio: Math.round(t.atual * 100), renda_mensal: Math.round(t.renda * 100) };
+  const hoje = localTodayStr();
+  const grid = el('div', 'goal-grid');
+  for (const g of fin.goals){
+    const info = GOAL_KIND[g.kind] || GOAL_KIND.patrimonio;
+    const pr = goalProgress({ targetCents: g.targetCents, currentCents: atual[g.kind] });
+    const card = el('article', 'goal-card');
+    const hid = 'goal-' + g.id;
+    const h = el('h3', null, g.name); h.id = hid; card.setAttribute('aria-labelledby', hid);
+    card.append(h, el('span', 'kindtag', info.nome));
+    const dl = el('dl', 'goal-facts');
+    const fact = (k, v) => { const d = el('div'); d.append(el('dt', null, k), el('dd', 'num', v)); dl.appendChild(d); };
+    fact('Objetivo', centsBrl(g.targetCents));
+    fact(g.kind === 'renda_mensal' ? 'Renda estimada' : 'Patrimônio atual', centsBrl(pr.atualCents));
+    fact('Falta', pr.atingida ? 'Meta atingida' : centsBrl(pr.restanteCents));
+    card.appendChild(dl);
+    card.appendChild(progressEl(pr.pct, `Progresso da meta ${g.name}`));
+    card.appendChild(el('p', 'basis', info.base));
+    if (g.deadline){
+      const m = monthsBetween(hoje, g.deadline);
+      let txt;
+      if (g.deadline < hoje) txt = `Prazo vencido em ${formatDateBR(g.deadline)}.`;
+      else if (m === 0) txt = `Prazo: ${formatDateBR(g.deadline)} (termina neste mês).`;
+      else txt = `Prazo: ${formatDateBR(g.deadline)} · faltam ${m} ${m === 1 ? 'mês' : 'meses'}.`;
+      card.appendChild(el('p', 'basis', txt));
+      if (g.kind === 'patrimonio' && !pr.atingida && g.deadline >= hoje){
+        const need = linearMonthlyNeed({ restanteCents: pr.restanteCents, monthsLeft: Math.max(1, m) });
+        if (need) card.appendChild(el('p', 'basis', `Conta simples, sem rentabilidade: cerca de ${centsBrl(need)} por mês até o prazo.`));
+      }
+    } else {
+      card.appendChild(el('p', 'basis', 'Sem prazo definido.'));
+    }
+    const act = el('div', 'goal-actions');
+    const ed = el('button', 'btn btn-ghost btn-sm', 'Editar'); ed.type = 'button'; ed.setAttribute('aria-label', `Editar meta ${g.name}`);
+    ed.onclick = () => openGoalSheet(g);
+    act.appendChild(ed); card.appendChild(act);
+    grid.appendChild(card);
+  }
+  box.replaceChildren(grid);
+}
+
+// Barra de progresso. Com valores ocultos, nem a barra nem a porcentagem aparecem:
+// a razão atual/objetivo permitiria deduzir os valores.
+function progressEl(pct, label){
+  const wrap = el('div');
+  const bar = el('div', 'progress' + (valuesHidden ? ' masked' : ''));
+  if (valuesHidden){
+    bar.setAttribute('role', 'img'); bar.setAttribute('aria-label', `${label}: oculto com os valores`);
+    wrap.append(bar, el('div', 'progress-label', 'Progresso oculto'));
+  } else {
+    bar.setAttribute('role', 'progressbar'); bar.setAttribute('aria-label', label);
+    bar.setAttribute('aria-valuemin', '0'); bar.setAttribute('aria-valuemax', '100'); bar.setAttribute('aria-valuenow', String(pct));
+    bar.setAttribute('aria-valuetext', `${pct}% concluído`);
+    const s = el('span'); s.style.width = pct + '%'; bar.appendChild(s);
+    wrap.append(bar, el('div', 'progress-label', `${pct}% concluído`));
+  }
+  return wrap;
+}
+$('goalAddBtn').onclick = () => openGoalSheet();
+
+function openGoalSheet(goal = null){
+  const id = goal ? goal.id : crypto.randomUUID();
+  openFinSheet({
+    title: goal ? 'Editar meta' : 'Nova meta',
+    sub: 'Patrimônio: comparado ao patrimônio atual das suas posições. Renda mensal: comparada à renda mensal ESTIMADA da carteira, que não é valor recebido.',
+    submitLabel: 'Salvar meta',
+    fields: [
+      { key: 'kind', label: 'Tipo de meta', kind: 'select', value: goal ? goal.kind : 'patrimonio',
+        options: [['patrimonio', 'Patrimônio'], ['renda_mensal', 'Renda mensal']], parse: (v) => ({ value: v }) },
+      { key: 'name', label: 'Nome da meta', kind: 'text', value: goal ? goal.name : '', maxlength: 60,
+        parse: (v) => { const t = v.trim().replace(/\s+/g, ' '); return t ? { value: t } : { error: 'Dê um nome à meta.' }; } },
+      { key: 'targetCents', label: 'Valor-alvo (R$)', kind: 'money', value: goal ? goal.targetCents : null,
+        parse: (v) => { const c = parseMoneyToCents(v); return c && c > 0 ? { value: c } : { error: 'Informe um valor-alvo maior que zero.' }; } },
+      { key: 'deadline', label: 'Prazo (opcional)', kind: 'date', value: goal ? (goal.deadline || '') : '',
+        hint: 'Sem prazo, mostramos apenas o progresso.',
+        parse: (v) => { if (!v) return { value: null }; return parseCalendarDate(v) ? { value: v } : { error: 'Informe uma data válida ou deixe em branco.' }; } },
+    ],
+    onSubmit: async (v) => {
+      const payload = { kind: v.kind, name: v.name, targetCents: v.targetCents, deadline: v.deadline };
+      if (goal){
+        const r = await api.updateGoal(id, payload);
+        fin.goals = fin.goals.map(x => x.id === id ? r.goal : x);
+      } else {
+        const r = await api.createGoal({ id, ...payload });
+        fin.goals = [...fin.goals.filter(x => x.id !== id), r.goal];
+      }
+      renderFinance();
+      return goal ? 'Meta atualizada' : 'Meta criada';
+    },
+    del: goal ? {
+      question: `Excluir a meta “${goal.name}”? Isso remove só a meta; seus ativos não mudam.`,
+      run: async () => {
+        try { await api.deleteGoal(id); }
+        catch (err){ if (!(err && err.status === 404)) throw err; }
+        fin.goals = fin.goals.filter(x => x.id !== id);
+        renderFinance();
+        return 'Meta excluída';
+      },
+    } : null,
+  });
+}
+
+/* --------------------------------------------------------- reserva de emergência */
+const _res = { linked: new Set(), dirty: false, busy: false, built: false, sig: '' };
+const KIND_LABEL = { fii: 'Fundo imobiliário', acao: 'Ação', selic: 'Tesouro Selic', pre: 'Tesouro Prefixado', ipca: 'Tesouro IPCA+', cdb: 'CDB', lci: 'LCI', lca: 'LCA', fundo: 'Fundo de investimento' };
+const KIND_HINT = {
+  selic: 'Confira o prazo de resgate e se a marcação a mercado afeta o valor antes do vencimento.',
+  pre: 'Antes do vencimento o valor pode oscilar; confira a liquidez.',
+  ipca: 'Antes do vencimento o valor pode oscilar; confira a liquidez.',
+  cdb: 'Confira se há liquidez diária, carência e vencimento no contrato.',
+  lci: 'Confira carência e vencimento: costumam não ter liquidez imediata.',
+  lca: 'Confira carência e vencimento: costumam não ter liquidez imediata.',
+  fundo: 'Confira o prazo de cotização e resgate (D+ dias) e as taxas.',
+  fii: 'Renda variável: o preço oscila e pode estar baixo quando você precisar.',
+  acao: 'Renda variável: o preço oscila e pode estar baixo quando você precisar.',
+};
+
+function buildReserve(){
+  if (_res.built) return;
+  _res.built = true;
+  const box = $('reserveBox');
+  box.innerHTML = `
+    <p class="fin-banner">O Rendum <b>não classifica automaticamente</b> nenhum CDB, Tesouro ou fundo como reserva. Liquidez, vencimento, risco e adequação precisam ser conferidos por você; só entram aqui as posições que você marcar.</p>
+    <div class="reserve-form">
+      <div class="formrow"><label for="resExpense">Gastos mensais (R$)</label>
+        <input id="resExpense" class="moneyfield" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off" aria-describedby="resExpenseHint">
+        <small class="quiet" id="resExpenseHint">Quanto você precisa por mês para cobrir suas despesas essenciais.</small></div>
+      <div class="formrow"><label for="resMonths">Meses de cobertura</label>
+        <input id="resMonths" type="number" inputmode="numeric" min="1" max="60" step="1" value="6" aria-describedby="resMonthsHint">
+        <small class="quiet" id="resMonthsHint">Você escolhe: de 1 a 60 meses. O Rendum não indica um número ideal.</small></div>
+      <fieldset class="res-links" id="resLinks"><legend>Posições que você quer vincular à reserva</legend><div id="resLinkList"></div></fieldset>
+    </div>
+    <div id="resOut" role="status" aria-live="polite"></div>
+    <div class="fin-actions">
+      <button type="button" class="primary" id="resSave">Salvar reserva</button>
+      <button type="button" class="btn btn-ghost" id="resRemove" hidden>Remover reserva</button>
+    </div>
+    <p class="fin-status" id="resStatus" role="status"></p>`;
+  const touch = () => { _res.dirty = true; $('resStatus').textContent = 'Há alterações não salvas.'; $('resStatus').classList.remove('err'); renderReserveOut(); };
+  $('resExpense').addEventListener('input', touch);
+  $('resMonths').addEventListener('input', touch);
+  $('resLinkList').addEventListener('change', (e) => {
+    const cb = e.target.closest('input[type=checkbox][data-pid]'); if (!cb) return;
+    if (cb.checked) _res.linked.add(cb.dataset.pid); else _res.linked.delete(cb.dataset.pid);
+    touch();
+  });
+  $('resSave').onclick = saveReserveForm;
+  $('resRemove').onclick = () => openConfirmSheet({
+    title: 'Remover reserva de emergência',
+    question: 'Remover o objetivo e os vínculos da reserva? Suas posições não são alteradas.',
+    confirmLabel: 'Remover reserva',
+    run: async () => {
+      try { await api.deleteReserve(); } catch (err){ if (!(err && err.status === 404)) throw err; }
+      fin.reserve = null; _res.dirty = false; _res.linked = new Set();
+      $('resExpense').value = ''; $('resMonths').value = '6'; $('resStatus').textContent = '';
+      renderFinance();
+      return 'Reserva removida';
+    },
+  });
+}
+function applyReserveFromState(force){
+  buildReserve();
+  if (fin.status !== 'ready' || (_res.dirty && !force)) return;
+  const r = fin.reserve;
+  $('resExpense').value = r ? 'R$ ' + formatCentsInput(r.monthlyExpenseCents) : '';
+  $('resMonths').value = r ? String(r.months) : '6';
+  _res.linked = new Set(r ? r.linkedPositionIds : []);
+  _res.dirty = false; _res.sig = '';
+  aplicarMascaraMoeda($('resExpense'));
+}
+function readReserveForm(){
+  const expense = parseMoneyToCents($('resExpense').value);
+  const mRaw = $('resMonths').value.trim();
+  const months = /^\d+$/.test(mRaw) ? Number(mRaw) : null;
+  return { expense: expense && expense > 0 ? expense : null, months: months && months >= 1 && months <= 60 ? months : null };
+}
+function reserveLinkedCents(){
+  let total = 0, found = 0;
+  for (const p of state.positions){
+    if (_res.linked.has(p.id)){ total += Math.round(enrich(p).atual * 100); found++; }
+  }
+  return { total, found, missing: _res.linked.size - found };
+}
+function renderReserve(){
+  buildReserve();
+  const ready = fin.status === 'ready';
+  $('resSave').disabled = !ready || _res.busy;
+  $('resRemove').hidden = !(ready && fin.reserve);
+  // lista de posições: só reconstrói quando algo muda (preserva o foco nas caixas)
+  const sig = JSON.stringify(state.positions.map(p => [p.id, p.ticker || p.nome, Math.round(enrich(p).atual * 100)])) + '|' + valuesHidden + '|' + [..._res.linked].join(',');
+  if (sig !== _res.sig){
+    _res.sig = sig;
+    const list = $('resLinkList'); list.replaceChildren();
+    if (!state.positions.length){
+      list.appendChild(el('p', 'quiet', 'Você ainda não tem posições cadastradas. Cadastre seus ativos em Minha carteira para poder vinculá-los.'));
+    } else {
+      for (const p of state.positions){
+        const lab = el('label');
+        const cb = document.createElement('input'); cb.type = 'checkbox'; cb.dataset.pid = p.id; cb.checked = _res.linked.has(p.id);
+        const main = el('span', 'rl-main');
+        main.append(el('b', null, p.ticker || p.nome || KIND_LABEL[p.kind] || 'Ativo'), ' · ' + (KIND_LABEL[p.kind] || ''));
+        main.appendChild(el('span', 'rl-hint', KIND_HINT[p.kind] || 'Confira liquidez e adequação.'));
+        lab.append(cb, main, el('span', 'rl-val num', brl.format(enrich(p).atual)));
+        list.appendChild(lab);
+      }
+    }
+  }
+  if (!ready && fin.status === 'loading') $('resOut').replaceChildren(el('p', 'empty-line', 'Carregando sua reserva…'));
+  else if (!ready) $('resOut').replaceChildren();
+  else renderReserveOut();
+}
+function renderReserveOut(){
+  const out = $('resOut'); if (!out || fin.status !== 'ready') return;
+  const { expense, months } = readReserveForm();
+  if (!expense || !months){
+    const e = el('div', 'fin-empty');
+    e.append(el('h3', null, 'Defina o objetivo da sua reserva'),
+      el('p', null, 'Informe seus gastos mensais e por quantos meses a reserva deve cobri-los (de 1 a 60). Depois marque as posições que você considera adequadas para vincular.'));
+    out.replaceChildren(e); return;
+  }
+  const link = reserveLinkedCents();
+  const rp = reserveProgress({ monthlyExpenseCents: expense, months, linkedCents: link.total });
+  if (!rp){ out.replaceChildren(el('p', 'fin-status err', 'Não foi possível calcular com esses valores. Confira os campos.')); return; }
+  const frag = document.createDocumentFragment();
+  const dl = el('dl', 'goal-facts');
+  const fact = (k, v) => { const d = el('div'); d.append(el('dt', null, k), el('dd', 'num', v)); dl.appendChild(d); };
+  fact('Objetivo', centsBrl(rp.objetivoCents));
+  fact('Valor vinculado', centsBrl(rp.vinculadoCents));
+  fact('Falta', rp.atingida ? 'Objetivo atingido' : centsBrl(rp.restanteCents));
+  frag.append(dl, progressEl(rp.pct, 'Progresso da reserva de emergência'));
+  const notes = [];
+  notes.push(`Objetivo = ${months} ${months === 1 ? 'mês' : 'meses'} × gastos mensais informados.`);
+  if (!link.found) notes.push('Nenhuma posição vinculada ainda: o valor vinculado é zero.');
+  else if (!valuesHidden) notes.push(`O valor vinculado cobre cerca de ${String(rp.mesesCobertos).replace('.', ',')} ${rp.mesesCobertos === 1 ? 'mês' : 'meses'} dos gastos informados.`);
+  if (link.missing > 0) notes.push(`${link.missing} ${link.missing === 1 ? 'posição vinculada não existe mais' : 'posições vinculadas não existem mais'} na carteira e ${link.missing === 1 ? 'foi ignorada' : 'foram ignoradas'}.`);
+  notes.push('O valor das posições é o estimado pelo Rendum e pode diferir do que você resgataria.');
+  for (const n of notes) frag.appendChild(el('p', 'note', n));
+  out.replaceChildren(frag);
+}
+async function saveReserveForm(){
+  if (_res.busy || fin.status !== 'ready') return;
+  const st = $('resStatus');
+  const { expense, months } = readReserveForm();
+  if (!expense){ st.textContent = 'Informe seus gastos mensais (maior que zero).'; st.classList.add('err'); $('resExpense').setAttribute('aria-invalid', 'true'); $('resExpense').focus(); return; }
+  $('resExpense').removeAttribute('aria-invalid');
+  if (!months){ st.textContent = 'Informe os meses de cobertura (de 1 a 60).'; st.classList.add('err'); $('resMonths').setAttribute('aria-invalid', 'true'); $('resMonths').focus(); return; }
+  $('resMonths').removeAttribute('aria-invalid');
+  const existing = new Set(state.positions.map(p => p.id));
+  const ids = [..._res.linked].filter(i => existing.has(i));
+  _res.busy = true; const btn = $('resSave'); btn.disabled = true; btn.setAttribute('aria-busy', 'true'); btn.textContent = 'Salvando…';
+  st.classList.remove('err'); st.textContent = 'Salvando…';
+  try {
+    const r = await api.saveReserve({ monthlyExpenseCents: expense, months, linkedPositionIds: ids });
+    fin.reserve = r.reserve; _res.linked = new Set(r.reserve.linkedPositionIds); _res.dirty = false; _res.sig = '';
+    st.textContent = 'Reserva salva.';
+    renderFinance(); toast('Reserva de emergência salva');
+  } catch (err){
+    st.textContent = finErrorMessage(err).replace('no formulário', 'na tela'); st.classList.add('err');
+  } finally {
+    _res.busy = false; btn.disabled = fin.status !== 'ready'; btn.removeAttribute('aria-busy'); btn.textContent = 'Salvar reserva';
+  }
+}
+
+/* ===================== SIMULADORES (premissas editáveis, salvas no servidor) ===================== */
+const _SIM = { indepDirty: false, indepBusy: false, bazinDirty: false, bazinBusy: false };
+function setStatusLine(id, msg, isErr){ const n = $(id); if (!n) return; n.textContent = msg || ''; n.classList.toggle('err', !!isErr); }
+function updateSimButtons(){
+  const ready = fin.status === 'ready';
+  if ($('indepSave')) $('indepSave').disabled = !ready || _SIM.indepBusy;
+  if ($('bazinSave')) $('bazinSave').disabled = !ready || _SIM.bazinBusy;
+  if ($('indepLoadNote')) $('indepLoadNote').hidden = fin.status !== 'error';
+}
+
+// ---------- 4) Independência financeira ----------
 let _INDEP_PATR = 0;
 
+// Lê os campos. Vazio = valor omitido; texto inválido = erro apontado no campo.
+function readIndependence(){
+  const erros = {};
+  const money = (id, { emptyTo }) => {
+    const t = $(id).value.trim();
+    if (t === '') return emptyTo;
+    const c = parseMoneyToCents(t);
+    if (c == null){ erros[id] = 'Valor inválido.'; return undefined; }
+    return c;
+  };
+  const pctv = (id, { emptyTo }) => {
+    const t = $(id).value.trim();
+    if (t === '') return emptyTo;
+    const bp = parsePercentToBp(t);
+    if (bp == null){ erros[id] = 'Percentual inválido.'; return undefined; }
+    return bp;
+  };
+  const input = {
+    initialCents: money('indepInicial', { emptyTo: null }),
+    monthlyContributionCents: money('indepAporte', { emptyTo: 0 }),
+    desiredIncomeCents: money('indepCusto', { emptyTo: 0 }),
+    returnBp: pctv('indepRent', { emptyTo: NaN }),
+    incomeRateBp: pctv('indepTaxaRenda', { emptyTo: NaN }),
+    inflationBp: pctv('indepInflacao', { emptyTo: null }),
+  };
+  return { input, erros };
+}
+const _IND_LABELS = { indepInicial: 'capital inicial', indepAporte: 'aporte mensal', indepCusto: 'renda mensal desejada', indepRent: 'rentabilidade anual', indepTaxaRenda: 'taxa anual para estimar renda', indepInflacao: 'inflação anual' };
+const _IND_BY_KEY = { initialCents: 'indepInicial', monthlyContributionCents: 'indepAporte', desiredIncomeCents: 'indepCusto', returnBp: 'indepRent', incomeRateBp: 'indepTaxaRenda', inflationBp: 'indepInflacao' };
+
+function _indepTempo(r){
+  return r.months === 0 ? 'já atingido hoje'
+    : r.years < 1 ? `${r.months} ${r.months === 1 ? 'mês' : 'meses'}`
+    : r.years < 2 ? '1 ano'
+    : `${String(r.years).replace('.', ',')} anos`;
+}
 function _indepResultHtml(){
-  const r = calcularIndependencia({
-    patrimonioAtual: _INDEP_PATR,
-    aporteMensal: _INDEP_STATE.aporteMensal,
-    rentabilidadeAnual: 0.10,
-    yieldAnualPassivo: 0.07,
-    custoMensal: _INDEP_STATE.custoMensal,
-  });
-  const tempo = _INDEP_STATE.custoMensal <= 0 ? '—'
-    : !r.possivel ? 'mais de 50 anos'
-    : r.anos < 1 ? `${r.meses} ${r.meses === 1 ? 'mês' : 'meses'}`
-    : r.anos < 2 ? '1 ano'
-    : `${r.anos} anos`;
-  return `
-    <p class="lead">Prazo estimado neste cenário</p>
-    <p class="time">${tempo}</p>
-    <p class="explain">
-      ${_INDEP_STATE.custoMensal <= 0 ? 'Informe seus custos mensais pra calcular.'
-        : r.possivel
-        ? `Neste cenário, com <b>${brl.format(r.patr)}</b> acumulados, a renda passiva estimada seria de <span class="lime">${brl.format(r.renda)}</span>/mês, igual ou acima dos custos informados.`
-        : 'Neste cenário, o prazo passaria de 50 anos. Teste outros valores de aporte ou custo.'}
-    </p>`;
+  const { input, erros } = readIndependence();
+  for (const id of Object.keys(_IND_LABELS)) { const n = $(id); if (n) n.removeAttribute('aria-invalid'); }
+  const bad = new Set(Object.keys(erros));
+  let r = null;
+  if (!bad.size){
+    r = simulateIndependence(input, Math.round(_INDEP_PATR * 100));
+    if (r.status === 'invalid') for (const k of Object.keys(r.erros)) bad.add(_IND_BY_KEY[k]);
+  }
+  for (const id of bad) if ($(id)) $(id).setAttribute('aria-invalid', 'true');
+  if (bad.size){
+    return `<div class="bazin-erro" role="status">Confira estes campos: ${[...bad].map(id => _IND_LABELS[id]).join(', ')}. ${
+      r && r.erros ? Object.values(r.erros).join(' ') : 'Use números, por exemplo 3500 ou 10,5.'}</div>`;
+  }
+  const f = centsBrl;
+  let head, body;
+  if (!r.reachable){
+    head = `<p class="lead">Prazo estimado neste cenário</p><p class="time">mais de 50 anos</p>`;
+    body = `<p class="explain">Neste cenário, a renda mensal desejada não é atingida em 50 anos${r.nominal.capitalCents != null ? ` (o capital chegaria a ${f(r.nominal.capitalCents)} em valores nominais)` : ''}. Teste um aporte maior, outra renda desejada ou outras premissas.</p>`;
+  } else {
+    head = `<p class="lead">Prazo estimado neste cenário</p><p class="time">${_indepTempo(r)}</p>`;
+    body = r.months === 0
+      ? `<p class="explain">Com o capital inicial informado, a renda estimada de <span class="lime">${f(r.nominal.incomeCents)}</span>/mês já cobre a renda desejada neste cenário.</p>`
+      : `<p class="explain">Neste cenário, o capital acumulado seria de <b>${f(r.nominal.capitalCents)}</b> e a renda estimada de <span class="lime">${f(r.nominal.incomeCents)}</span>/mês${r.usaInflacao ? ' (valores nominais, do futuro)' : ''}, igual ou acima da renda desejada.</p>`;
+    if (r.usaInflacao){
+      body += `<dl class="sim-pair">
+        <div><dt>Valores nominais (no futuro)</dt><dd>Capital ${f(r.nominal.capitalCents)}<br>Renda ${f(r.nominal.incomeCents)}/mês</dd></div>
+        <div><dt>Poder de compra de hoje</dt><dd>Capital ${f(r.real.capitalCents)}<br>Renda ${f(r.real.incomeCents)}/mês</dd></div>
+      </dl>`;
+    }
+  }
+  const mensal = (bp) => pct.format((Math.pow(1 + bp / 10000, 1 / 12) - 1) * 100);
+  const fonteInicial = input.initialCents == null ? `o patrimônio atual da carteira (${f(Math.round(_INDEP_PATR * 100))})` : `o valor informado por você (${f(input.initialCents)})`;
+  const premissas = [
+    `Capital inicial: ${fonteInicial}.`,
+    `Rentabilidade de ${pct.format(input.returnBp / 100)}% ao ano, convertida para a taxa mensal equivalente de ${mensal(input.returnBp)}% (e não ${pct.format(input.returnBp / 1200)}%, que seria dividir por 12).`,
+    `Renda estimada = capital × taxa mensal equivalente a ${pct.format(input.incomeRateBp / 100)}% ao ano (${mensal(input.incomeRateBp)}% ao mês).`,
+    `Aporte de ${f(input.monthlyContributionCents)} por mês, constante em valor nominal (sem reajuste).`,
+    input.inflationBp != null && input.inflationBp > 0
+      ? `Inflação de ${pct.format(input.inflationBp / 100)}% ao ano: a renda desejada é informada em valores de hoje e a meta sobe com a inflação; mostramos valores nominais e em poder de compra de hoje.`
+      : 'Sem inflação informada: os valores são nominais e o cálculo não desconta a inflação.',
+    'As premissas podem não se confirmar; o resultado é uma estimativa, não uma garantia nem uma recomendação.',
+  ];
+  return `${head}${body}<ul class="indep-premissas">${premissas.map(p => `<li>${_escHtml(p)}</li>`).join('')}</ul>`;
+}
+function _refreshIndepHint(){
+  const h = $('indepInicialHint'); if (!h) return;
+  h.textContent = `Em branco, usa o patrimônio atual da carteira (${centsBrl(Math.round(_INDEP_PATR * 100))}).`;
+}
+function fillIndependence(src){
+  const d = { ...INDEPENDENCE_DEFAULTS, ...src };
+  $('indepInicial').value = d.initialCents == null ? '' : formatCentsInput(d.initialCents);
+  $('indepAporte').value = formatCentsInput(d.monthlyContributionCents);
+  $('indepCusto').value = formatCentsInput(d.desiredIncomeCents);
+  $('indepRent').value = formatBpInput(d.returnBp);
+  $('indepTaxaRenda').value = formatBpInput(d.incomeRateBp);
+  $('indepInflacao').value = d.inflationBp == null ? '' : formatBpInput(d.inflationBp);
 }
 
 function renderIndependence(totals){
   _INDEP_PATR = (totals && totals.atual) || 0;
   const box = $('indepBox');
-  // Inputs são criados UMA vez; depois só o resultado é atualizado (mantém foco).
+  // Campos são criados UMA vez; depois só o resultado muda (mantém foco e seleção).
   if (box.dataset.ready !== '1'){
     box.dataset.ready = '1';
+    const field = (id, label, hint, extra = '') =>
+      `<label class="indep-field" for="${id}"><span>${label}</span><input id="${id}" type="text" inputmode="decimal" autocomplete="off" ${extra} ${hint ? `aria-describedby="${id}Hint"` : ''}>${hint ? `<small class="quiet" id="${id}Hint">${hint}</small>` : ''}</label>`;
     box.innerHTML = `
       <div class="indep-card">
-        <p class="sim-desc">Projeta quando a renda passiva estimada da carteira cobriria seus custos mensais.</p>
-        <div class="indep-inputs">
-          <label class="indep-field">
-            <span>Seus custos mensais (R$)</span>
-            <div class="wrap"><input id="indepCusto" type="number" inputmode="decimal" min="0" step="100" value="${_INDEP_STATE.custoMensal}"></div>
-          </label>
-          <label class="indep-field">
-            <span>Aporte mensal (R$)</span>
-            <div class="wrap"><input id="indepAporte" type="number" inputmode="decimal" min="0" step="100" value="${_INDEP_STATE.aporteMensal}"></div>
-          </label>
+        <p class="sim-desc">Projeta quando a renda estimada do capital cobriria a renda mensal que você deseja. Todos os campos são premissas suas, editáveis.</p>
+        <div class="sim-fields">
+          ${field('indepInicial', 'Capital inicial (R$)', 'Em branco, usa o patrimônio atual da carteira.', 'class="moneyfield" placeholder="Patrimônio atual"')}
+          ${field('indepAporte', 'Aporte mensal (R$)', '', 'class="moneyfield"')}
+          ${field('indepCusto', 'Renda mensal desejada (R$, em valores de hoje)', '', 'class="moneyfield"')}
+          ${field('indepRent', 'Rentabilidade anual esperada (%)', 'Taxa nominal ao ano.')}
+          ${field('indepTaxaRenda', 'Taxa anual usada para estimar a renda (%)', 'Quanto o capital renderia por ano como renda.')}
+          ${field('indepInflacao', 'Inflação anual (%, opcional)', 'Em branco: valores nominais, sem inflação.')}
         </div>
-        <div class="indep-result" id="indepResult"></div>
-        <ul class="indep-premissas">
-          <li>Premissas fixas: rentabilidade de 10% ao ano sobre o patrimônio e yield (renda passiva) de 7% ao ano.</li>
-          <li>Valores nominais: o cálculo não desconta a inflação.</li>
-          <li>As premissas podem não se confirmar; o resultado é uma estimativa, não uma garantia.</li>
-        </ul>
-      </div>
-    `;
-    $('indepCusto').addEventListener('input', (e) => { _INDEP_STATE.custoMensal = Math.max(0, Number(e.target.value) || 0); $('indepResult').innerHTML = _indepResultHtml(); });
-    $('indepAporte').addEventListener('input', (e) => { _INDEP_STATE.aporteMensal = Math.max(0, Number(e.target.value) || 0); $('indepResult').innerHTML = _indepResultHtml(); });
+        <div class="fin-actions" style="margin:0 0 16px">
+          <button type="button" class="btn" id="indepSave">Salvar premissas</button>
+          <button type="button" class="btn btn-ghost" id="indepReset">Restaurar valores padrão</button>
+        </div>
+        <p class="fin-status" id="indepStatus" role="status"></p>
+        <p class="fin-status err" id="indepLoadNote" role="alert" hidden>Não foi possível carregar suas premissas salvas; os valores padrão estão na tela e você ainda pode simular. <button type="button" class="textlink" id="indepRetry">Tentar de novo</button></p>
+        <div class="indep-result" id="indepResult" role="status" aria-live="polite"></div>
+      </div>`;
+    fillIndependence(INDEPENDENCE_DEFAULTS);
+    $('indepInicial').value = '';
+    for (const id of Object.keys(_IND_LABELS)){
+      $(id).addEventListener('input', () => {
+        _SIM.indepDirty = true; setStatusLine('indepStatus', 'Há premissas não salvas.');
+        $('indepResult').innerHTML = _indepResultHtml();
+      });
+    }
+    $('indepReset').onclick = () => {
+      fillIndependence(INDEPENDENCE_DEFAULTS); $('indepInicial').value = '';
+      _SIM.indepDirty = true; setStatusLine('indepStatus', 'Valores padrão restaurados. Salve para mantê-los.');
+      $('indepResult').innerHTML = _indepResultHtml();
+    };
+    $('indepSave').onclick = saveIndependence;
+    $('indepRetry').onclick = () => loadFinance();
+    updateSimButtons();
   }
+  _refreshIndepHint();
   $('indepResult').innerHTML = _indepResultHtml();
 }
+async function saveIndependence(){
+  if (_SIM.indepBusy || fin.status !== 'ready') return;
+  const { input, erros } = readIndependence();
+  const v = Object.keys(erros).length ? { status: 'invalid' } : simulateIndependence(input, Math.round(_INDEP_PATR * 100));
+  if (v.status === 'invalid'){ setStatusLine('indepStatus', 'Corrija os campos destacados antes de salvar.', true); return; }
+  _SIM.indepBusy = true; const b = $('indepSave'); b.disabled = true; b.setAttribute('aria-busy', 'true'); b.textContent = 'Salvando…';
+  setStatusLine('indepStatus', 'Salvando…');
+  try {
+    const r = await api.saveSimulator('independence', input);
+    fin.simulators.independence = r.data; _SIM.indepDirty = false;
+    setStatusLine('indepStatus', 'Premissas salvas.'); toast('Premissas salvas');
+  } catch (err){
+    setStatusLine('indepStatus', finErrorMessage(err).replace('no formulário', 'na tela'), true);
+  } finally {
+    _SIM.indepBusy = false; b.removeAttribute('aria-busy'); b.textContent = 'Salvar premissas'; updateSimButtons();
+  }
+}
 
-// ---------- 5) Bazin Calculator ----------
-const BAZIN_YIELD = 0.06;
-// Mock interno com DADOS ILUSTRATIVOS (não são cotações atuais nem médias
-// verificadas): px = preço de referência, div = proventos anuais por ação/cota.
+// ---------- 5) Bazin ----------
 const BAZIN_MOCK = {
   BBAS3:  { nome:'Banco do Brasil',        tipo:'Ação', div: 4.80, px: 56.20 },
   ITSA4:  { nome:'Itaúsa',                 tipo:'Ação', div: 1.05, px: 10.80 },
@@ -3750,12 +4672,10 @@ const BAZIN_MOCK = {
   IRDM11: { nome:'Iridium Recebíveis',     tipo:'FII',  div: 9.10, px: 72.00 },
 };
 
-function calcularBazin(div){ return div > 0 ? div / BAZIN_YIELD : 0; }
-
 function _bazinSugestoes(q){
   q = (q || '').trim().toUpperCase();
   if (!q) return [];
-  const norm = (t) => t.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase();
+  const norm = (t) => t.normalize('NFD').replace(/[̀-ͯ]/g,'').toUpperCase();
   const qn = norm(q);
   return Object.entries(BAZIN_MOCK)
     .map(([tk, d]) => ({ tk, ...d, score: tk.startsWith(q) ? 0 : tk.includes(q) ? 1 : norm(d.nome).includes(qn) ? 2 : 9 }))
@@ -3764,67 +4684,104 @@ function _bazinSugestoes(q){
     .slice(0, 7);
 }
 
-// Lê número digitado em pt-BR ("1.234,56", "6,5", "56.2") → Number ou NaN
-function _numBR(v){
-  let t = String(v ?? '').trim().replace(/[R$\s%]/g, '');
-  if (!t) return NaN;
-  if (t.includes(',')) t = t.replace(/\./g, '').replace(',', '.');
-  return /^-?\d*\.?\d+$/.test(t) ? Number(t) : NaN;
+const _bz = { ticker: null, pxOrigin: 'manual', divOrigin: 'manual' };
+const _originTag = (o) => o === 'ilustrativo'
+  ? '<span class="origin ilus">dado ilustrativo, não é cotação</span>'
+  : '<span class="origin">informado por você</span>';
+function _readBazin(){
+  const t = (id) => $(id).value.trim();
+  return {
+    px: t('bazinPx') === '' ? null : parseMoneyToCents(t('bazinPx')),
+    div: t('bazinDiv') === '' ? null : parseMoneyToCents(t('bazinDiv')),
+    rate: t('bazinTaxa') === '' ? null : parsePercentToBp(t('bazinTaxa')),
+    empty: { px: t('bazinPx') === '', div: t('bazinDiv') === '', rate: t('bazinTaxa') === '' },
+  };
 }
-const _fmtCampo = (n) => Number(n).toFixed(2).replace('.', ',');
-
-let _bazinTicker = null;   // ativo escolhido no autocomplete (só rótulo)
 function _renderBazinResult(){
   const box = $('bazinOut'); if (!box) return;
-  const px = _numBR($('bazinPx').value);
-  const div = _numBR($('bazinDiv').value);
-  const taxa = _numBR($('bazinTaxa').value);
+  const { px, div, rate, empty } = _readBazin();
   const erros = [];
-  const okPos = (n) => Number.isFinite(n) && n > 0;
+  const okPos = (n) => Number.isInteger(n) && n > 0;
   const marca = (id, ok) => { const i = $(id); if (ok) i.removeAttribute('aria-invalid'); else i.setAttribute('aria-invalid', 'true'); };
-  const vazio = (id) => !String($(id).value).trim();
-  marca('bazinPx', vazio('bazinPx') || okPos(px));
-  marca('bazinDiv', vazio('bazinDiv') || okPos(div));
-  marca('bazinTaxa', vazio('bazinTaxa') || (okPos(taxa) && taxa <= 100));
-  if (vazio('bazinPx') && vazio('bazinDiv')){
-    box.innerHTML = '<p class="bazin-formula">Escolha um ativo na busca ou preencha os valores para calcular.</p>';
+  marca('bazinPx', empty.px || okPos(px));
+  marca('bazinDiv', empty.div || okPos(div));
+  marca('bazinTaxa', empty.rate || (okPos(rate) && rate <= 10000));
+  if (empty.px && empty.div){
+    box.innerHTML = '<p class="bazin-formula">Escolha um ativo na busca ou preencha os proventos anuais por ação/cota para calcular.</p>';
     return;
   }
-  if (!okPos(px)) erros.push('preço de referência');
+  if (!empty.px && !okPos(px)) erros.push('preço de referência');
   if (!okPos(div)) erros.push('proventos anuais');
-  if (!(okPos(taxa) && taxa <= 100)) erros.push('taxa de referência (entre 0 e 100%)');
+  if (!(okPos(rate) && rate <= 10000)) erros.push('taxa de referência (entre 0 e 100%)');
   if (erros.length){
     box.innerHTML = `<div class="bazin-erro" role="status">Informe um valor positivo para: ${erros.join(', ')}.</div>`;
     return;
   }
-  const teto = div / (taxa / 100);
-  const dif = ((px - teto) / teto) * 100;      // quanto o preço está acima/abaixo do teto
-  const dy = div / px * 100;
-  const fmt = (n) => brl.format(n);   // respeita "Ocultar valores"
+  const r = calcBazin({ priceCents: empty.px ? null : px, annualDividendCents: div, rateBp: rate });
+  const fmt = centsBrl;                                   // respeita "Ocultar valores"
   const pctTxt = (n) => pct.format(Math.abs(n));
   let frase;
-  if (Math.abs(dif) < 0.05) frase = `Com os valores informados, o preço de referência é praticamente igual ao preço-teto.`;
-  else if (dif < 0) frase = `Com os valores informados, o preço de referência está <b>${pctTxt(dif)}% abaixo</b> do preço-teto calculado (rendimento de ${pctTxt(dy)}% ao ano sobre esse preço).`;
-  else frase = `Com os valores informados, o preço de referência está <b>${pctTxt(dif)}% acima</b> do preço-teto calculado (rendimento de ${pctTxt(dy)}% ao ano sobre esse preço).`;
+  if (r.diffPct == null) frase = 'Com os valores informados, este é o preço-teto calculado a partir dos proventos e da taxa de referência.';
+  else if (Math.abs(r.diffPct) < 0.05) frase = 'Com os valores informados, o preço de referência é praticamente igual ao preço-teto.';
+  else if (r.diffPct < 0) frase = `Com os valores informados, o preço de referência está <b>${pctTxt(r.diffPct)}% abaixo</b> do preço-teto calculado (rendimento de ${pctTxt(r.yieldPct)}% ao ano sobre esse preço).`;
+  else frase = `Com os valores informados, o preço de referência está <b>${pctTxt(r.diffPct)}% acima</b> do preço-teto calculado (rendimento de ${pctTxt(r.yieldPct)}% ao ano sobre esse preço).`;
   box.innerHTML = `
     <div class="bazin-result">
       <div class="head">
-        <span class="tk">${_bazinTicker ? _bazinTicker : 'Valores informados'}</span>
-        <span class="px">Preço de referência: ${fmt(px)}</span>
+        <span class="tk">${_bz.ticker ? _escHtml(_bz.ticker) : 'Valores informados'}</span>
+        <span class="px">${empty.px ? 'Sem preço de referência' : 'Preço de referência: ' + fmt(px)}</span>
       </div>
       <div class="bazin-grid">
         <div class="bazin-cell">
-          <div class="k">Proventos anuais</div>
+          <div class="k">Proventos anuais ${_originTag(_bz.divOrigin)}</div>
           <div class="v">${fmt(div)}/ano</div>
         </div>
         <div class="bazin-cell">
-          <div class="k">Preço-teto (${pct.format(taxa)}%)</div>
-          <div class="v lime">${fmt(teto)}</div>
+          <div class="k">Preço-teto (${pct.format(rate / 100)}%)</div>
+          <div class="v lime">${fmt(r.ceilingCents)}</div>
         </div>
       </div>
+      ${empty.px ? '' : `<p class="bazin-formula">Preço de referência: ${_originTag(_bz.pxOrigin)}</p>`}
       <div class="bazin-margem neutro" role="status">${frase} Este cálculo é uma referência simplificada, não uma recomendação de compra ou venda.</div>
-    </div>
-  `;
+    </div>`;
+}
+function applySavedSimulators(){
+  const ind = fin.simulators && fin.simulators.independence;
+  if (ind && !_SIM.indepDirty && $('indepBox').dataset.ready === '1'){
+    fillIndependence(ind); setStatusLine('indepStatus', 'Premissas salvas carregadas.');
+    $('indepResult').innerHTML = _indepResultHtml();
+  }
+  const bz = fin.simulators && fin.simulators.bazin;
+  if (bz && !_SIM.bazinDirty && $('bazinBox').dataset.ready === '1'){
+    _bz.ticker = bz.ticker || null; _bz.pxOrigin = bz.priceOrigin || 'manual'; _bz.divOrigin = bz.dividendOrigin || 'manual';
+    $('bazinInput').value = bz.ticker || '';
+    $('bazinPx').value = bz.priceCents == null ? '' : formatCentsInput(bz.priceCents);
+    $('bazinDiv').value = formatCentsInput(bz.annualDividendCents);
+    $('bazinTaxa').value = formatBpInput(bz.rateBp);
+    setStatusLine('bazinStatus', 'Cenário salvo carregado.');
+    _renderBazinResult();
+  }
+  updateSimButtons();
+}
+async function saveBazin(){
+  if (_SIM.bazinBusy || fin.status !== 'ready') return;
+  const { px, div, rate, empty } = _readBazin();
+  const v = calcBazin({ priceCents: empty.px ? null : px, annualDividendCents: div, rateBp: rate });
+  if (v.status !== 'ok'){ setStatusLine('bazinStatus', 'Corrija os campos destacados antes de salvar.', true); return; }
+  _SIM.bazinBusy = true; const b = $('bazinSave'); b.disabled = true; b.setAttribute('aria-busy', 'true'); b.textContent = 'Salvando…';
+  setStatusLine('bazinStatus', 'Salvando…');
+  try {
+    const r = await api.saveSimulator('bazin', {
+      ticker: _bz.ticker, priceCents: empty.px ? null : px, annualDividendCents: div, rateBp: rate,
+      priceOrigin: _bz.pxOrigin, dividendOrigin: _bz.divOrigin,
+    });
+    fin.simulators.bazin = r.data; _SIM.bazinDirty = false;
+    setStatusLine('bazinStatus', 'Cenário salvo.'); toast('Cenário salvo');
+  } catch (err){
+    setStatusLine('bazinStatus', finErrorMessage(err).replace('no formulário', 'na tela'), true);
+  } finally {
+    _SIM.bazinBusy = false; b.removeAttribute('aria-busy'); b.textContent = 'Salvar cenário'; updateSimButtons();
+  }
 }
 
 function renderBazin(){
@@ -3834,7 +4791,7 @@ function renderBazin(){
   box.dataset.ready = '1';
   box.innerHTML = `
     <div class="hero-card">
-      <p class="bazin-warn"><b>Dados ilustrativos — não são cotações atuais.</b> Os valores da lista servem só de ponto de partida; confira e edite antes de usar.</p>
+      <p class="bazin-warn"><b>Dados ilustrativos — não são cotações atuais.</b> Os valores da lista servem só de ponto de partida; confira e edite antes de usar. O que você digitar passa a ser marcado como informado por você.</p>
       <form class="bazin-form" id="bazinForm" autocomplete="off" novalidate>
         <div class="bazin-ac">
           <label for="bazinInput" class="sr-only">Buscar ativo</label>
@@ -3845,12 +4802,16 @@ function renderBazin(){
         <button type="submit" class="btn">Usar</button>
       </form>
       <div class="bazin-fields">
-        <label>Preço de referência (R$)<input id="bazinPx" type="text" inputmode="decimal" placeholder="0,00"></label>
-        <label>Proventos anuais por ação/cota (R$)<input id="bazinDiv" type="text" inputmode="decimal" placeholder="0,00"></label>
-        <label>Taxa de referência (%)<input id="bazinTaxa" type="text" inputmode="decimal" value="6"></label>
+        <label>Preço de referência (R$, opcional)<input id="bazinPx" class="moneyfield" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off"></label>
+        <label>Proventos anuais por ação/cota (R$)<input id="bazinDiv" class="moneyfield" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off"></label>
+        <label>Taxa de referência (% ao ano)<input id="bazinTaxa" type="text" inputmode="decimal" value="6" autocomplete="off"></label>
       </div>
-      <p class="bazin-formula">Fórmula: <code>preço-teto = proventos anuais ÷ taxa de referência</code></p>
+      <p class="bazin-formula">Fórmula: <code>preço-teto = proventos anuais ÷ taxa de referência</code>. A taxa de 6% é só o valor inicial; ela é sua para editar.</p>
       <div id="bazinOut" aria-live="polite"></div>
+      <div class="fin-actions">
+        <button type="button" class="btn" id="bazinSave">Salvar cenário</button>
+      </div>
+      <p class="fin-status" id="bazinStatus" role="status"></p>
     </div>
   `;
   const input = $('bazinInput'), list = $('bazinList');
@@ -3867,9 +4828,10 @@ function renderBazin(){
   const escolher = (tk) => {
     const d = BAZIN_MOCK[tk]; if (!d) return;
     input.value = tk; fechar();
-    _bazinTicker = tk;
-    $('bazinPx').value = _fmtCampo(d.px);
-    $('bazinDiv').value = _fmtCampo(d.div);
+    _bz.ticker = tk; _bz.pxOrigin = 'ilustrativo'; _bz.divOrigin = 'ilustrativo'; _SIM.bazinDirty = true;
+    $('bazinPx').value = formatCentsInput(Math.round(d.px * 100));
+    $('bazinDiv').value = formatCentsInput(Math.round(d.div * 100));
+    setStatusLine('bazinStatus', 'Valores ilustrativos carregados. Confira antes de usar.');
     _renderBazinResult();
   };
   input.addEventListener('input', () => {
@@ -3897,14 +4859,13 @@ function renderBazin(){
     if (tk) escolher(tk);
     else $('bazinOut').innerHTML = '<div class="bazin-erro" role="status">Ativo fora da lista ilustrativa. Você pode preencher os valores manualmente abaixo.</div>';
   };
-  // Edição manual: recalcula só o resultado (campos nunca são recriados)
-  for (const id of ['bazinPx','bazinDiv','bazinTaxa']){
-    $(id).addEventListener('input', () => {
-      if (id !== 'bazinTaxa' && _bazinTicker){ _bazinTicker = _bazinTicker.endsWith(' (editado)') ? _bazinTicker : _bazinTicker + ' (editado)'; }
-      _renderBazinResult();
-    });
-  }
+  // Edição manual: recalcula só o resultado (campos nunca são recriados) e marca a origem manual
+  $('bazinPx').addEventListener('input', () => { _bz.pxOrigin = 'manual'; _SIM.bazinDirty = true; setStatusLine('bazinStatus', 'Há valores não salvos.'); _renderBazinResult(); });
+  $('bazinDiv').addEventListener('input', () => { _bz.divOrigin = 'manual'; _SIM.bazinDirty = true; setStatusLine('bazinStatus', 'Há valores não salvos.'); _renderBazinResult(); });
+  $('bazinTaxa').addEventListener('input', () => { _SIM.bazinDirty = true; setStatusLine('bazinStatus', 'Há valores não salvos.'); _renderBazinResult(); });
+  $('bazinSave').onclick = saveBazin;
   _renderBazinResult();
+  updateSimButtons();
 }
 
 // ---------- Glossário do investidor (estático, sem alertas) ----------
@@ -4496,6 +5457,7 @@ function openSheet(buildBody){
   const close = () => {
     if (closed) return;
     closed = true;
+    (sheet._cleanups || []).forEach(f => f());      // cancela temporizadores do painel (ex.: foco inicial)
     // Bloqueia novos cliques já durante a animação de saída (evita operação duplicada)
     bd.style.pointerEvents = 'none';
     // Desabilita os controles antes do inert: Enter/Espaço repetidos no botão

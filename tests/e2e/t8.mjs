@@ -44,7 +44,7 @@ for (const [nome,cfg] of cfgs){
 // 3) Sem numeração, rótulos alinhados, destaque e foco de teclado
 { const pg=await br.newPage({viewport:{width:1440,height:900}}); await pg.goto(B+'/#carteira'); await pg.waitForSelector('#app:not(.hide)'); await pg.waitForTimeout(200);
   const nav=await pg.evaluate(()=>[...document.querySelectorAll('.mainnav .navitem')].map(a=>({t:a.textContent.trim(), x:Math.round(a.firstChild.nodeType===3? (()=>{const r=document.createRange(); r.selectNodeContents(a); return r.getBoundingClientRect().left;})() : 0)})));
-  log(nav.every(n=>!/\d/.test(n.t)) && nav.map(n=>n.t).join('|')==='Visão geral|Minha carteira|Proventos|Simuladores','sem números: '+nav.map(n=>n.t).join(' | '));
+  log(nav.every(n=>!/\d/.test(n.t)) && nav.map(n=>n.t).join('|')==='Visão geral|Minha carteira|Proventos|Metas|Simuladores','sem números: '+nav.map(n=>n.t).join(' | '));
   log(new Set(nav.map(n=>n.x)).size===1, 'rótulos alinhados à mesma margem: x='+[...new Set(nav.map(n=>n.x))].join(','));
   log(await pg.evaluate(()=>document.querySelector('.mainnav [aria-current=page]').dataset.page)==='holdings' && await pg.evaluate(()=>location.hash)==='#carteira','destaque da aba ativa e endereço preservados');
   await pg.focus('.mainnav a[data-page=income]'); await pg.keyboard.press('Shift+Tab'); await pg.keyboard.press('Tab');

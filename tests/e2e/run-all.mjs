@@ -27,7 +27,7 @@ process.on('SIGTERM', () => { cleanup(); process.exit(143); });
 let failures = 0;
 try {
   await freePort();
-  for (let i = 1; i <= 9; i++) {
+  for (let i = 1; i <= 12; i++) {
     let server;
     if (i <= 5) {
       server = child('server.mjs');
