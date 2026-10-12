@@ -2782,6 +2782,27 @@ function aplicarMascaraMoeda(inp){
     inp.value = 'R$ ' + num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
   inp.addEventListener('input', () => format());
+  // Colar/arrastar: o texto vem como reais ("100" = R$ 100,00; "1.234,56"; "R$ 250").
+  // Só a digitação tecla a tecla preenche pelos centavos.
+  const colar = (txt) => {
+    let t = String(txt || '').replace(/R\$/gi, '').replace(/\s/g, '');
+    if (!t) return false;
+    if (/,\d{1,2}$/.test(t)) t = t.replace(/\./g, '').replace(',', '.');        // 1.234,56
+    else if (/\.\d{1,2}$/.test(t) && !/,/.test(t)) t = t.replace(/,/g, '');     // 1234.56
+    else t = t.replace(/[.,]/g, '');                                              // 1.234 / 100
+    const n = Number(t);
+    if (!Number.isFinite(n) || n < 0) return false;
+    format(Math.round(n * 100));
+    return true;
+  };
+  inp.addEventListener('paste', (e) => {
+    const txt = e.clipboardData && e.clipboardData.getData('text');
+    if (colar(txt)){ e.preventDefault(); inp.dispatchEvent(new Event('input', { bubbles:true })); }
+  });
+  inp.addEventListener('drop', (e) => {
+    const txt = e.dataTransfer && e.dataTransfer.getData('text');
+    if (colar(txt)){ e.preventDefault(); inp.dispatchEvent(new Event('input', { bubbles:true })); }
+  });
   inp.addEventListener('focus', () => {
     // posiciona cursor no final (sempre edita o último dígito)
     setTimeout(() => inp.setSelectionRange(inp.value.length, inp.value.length), 0);
@@ -4618,6 +4639,10 @@ function openSheet(buildBody){
     closed = true;
     // Bloqueia novos cliques já durante a animação de saída (evita operação duplicada)
     bd.style.pointerEvents = 'none';
+    // Desabilita os controles antes do inert: Enter/Espaço repetidos no botão
+    // focado não podem disparar a mesma operação de novo.
+    sheet.querySelectorAll('button, input, select, textarea').forEach(c => { c.disabled = true; });
+    if (sheet.contains(document.activeElement)) document.activeElement.blur();
     sheet.inert = true;
     bd.classList.remove('open');
     document.removeEventListener('keydown', key, true);
@@ -5155,30 +5180,31 @@ function openSellSheet(p){
     ok.onclick = async () => {
       if (isMarket){
         const Q = toNum(qtyI.value);
-        if (Q <= 0){ err.textContent = 'Informe as cotas vendidas.'; return; }
-        if (Q > p.q){ err.textContent = 'Você tem só ' + p.q + ' cotas.'; return; }
+        if (!(Q > 0)){ err.textContent = 'Informe as cotas vendidas.'; return; }
         const alvo = state.positions.find(x => x.id === p.id);
-        if (!alvo) return;
-        if (Q === p.q){
+        if (!alvo){ err.textContent = 'Esta posição não está mais na carteira. Feche e confira a lista.'; return; }
+        if (Q > alvo.q){ err.textContent = 'Você tem só ' + alvo.q + ' cotas.'; return; }
+        if (Q === alvo.q){
           state.positions = state.positions.filter(x => x.id !== p.id);
           close(); render(); await salvar('Posição zerada');
         } else {
-          alvo.q = p.q - Q;
+          alvo.q = alvo.q - Q;
           // preço médio pago NÃO muda com venda
           close(); render(); await salvar('Venda de ' + Q + ' cotas registrada');
         }
       } else {
         const V = toNum(valI.value);
-        if (V <= 0){ err.textContent = 'Informe o valor resgatado.'; return; }
-        if (V > r.atual + 0.01){ err.textContent = 'Valor maior do que o resgatável.'; return; }
+        if (!(V > 0)){ err.textContent = 'Informe o valor resgatado.'; return; }
         const alvo = state.positions.find(x => x.id === p.id);
-        if (!alvo) return;
-        if (V >= r.atual - 0.01){
+        if (!alvo){ err.textContent = 'Esta aplicação não está mais na carteira. Feche e confira a lista.'; return; }
+        const atualAgora = enrich(alvo).atual;     // valor atual da posição, não o do momento em que o painel abriu
+        if (V > atualAgora + 0.01){ err.textContent = 'Valor maior do que o resgatável (' + brl.format(atualAgora) + ').'; return; }
+        if (V >= atualAgora - 0.01){
           state.positions = state.positions.filter(x => x.id !== p.id);
           close(); render(); await salvar('Aplicação resgatada por inteiro');
         } else {
           // novo capital proporcional à parte não resgatada
-          alvo.ap = Number((p.ap * (1 - V / r.atual)).toFixed(2));
+          alvo.ap = Number((alvo.ap * (1 - V / atualAgora)).toFixed(2));
           close(); render(); await salvar('Resgate de ' + brl.format(V) + ' registrado');
         }
       }
