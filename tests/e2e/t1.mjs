@@ -4,17 +4,24 @@ const log=(ok,msg)=>console.log((ok?'PASS ':'FAIL ')+msg);
 const br=await chromium.launch(); const pg=await br.newPage({viewport:{width:1280,height:900}});
 const errs=[]; pg.on('pageerror',e=>errs.push(e.message)); pg.on('console',m=>{if(m.type()==='error'&&!/Failed to load resource|fonts/.test(m.text()))errs.push(m.text())});
 await ctl('seed=1&logged=0&failLoad=0&failSave=0&delay=0&empty=0&reset=1');
-await pg.goto(B); await pg.waitForSelector('#authForm');
-log(await pg.textContent('.auth-headline')==='Sua carteira clara. Seu próximo passo consciente.','headline');
+await pg.goto(B); await pg.waitForSelector('#authWelcome');
+log(await pg.textContent('#welcomeTitle')==='Vamos começar.' && await pg.isVisible('#startLogin') && !(await pg.isVisible('#authForm')),'entrada "Vamos começar" antes do formulário');
+log((await pg.$$('text=Explorar a carteira de exemplo')).length===0 && (await pg.$$('text=Esqueci minha senha')).length===0,'sem modo demonstração nem recuperação de senha');
+await pg.click('#startLogin');
+log(await pg.isVisible('#authForm') && await pg.evaluate(()=>document.activeElement.id)==='authTitle' && await pg.textContent('#authTitle')==='Bom ter você aqui.','abre o formulário e move o foco para o título');
+await pg.click('#authBack');
+log(await pg.isVisible('#authWelcome') && await pg.evaluate(()=>document.activeElement.id)==='startLogin','Voltar retorna à entrada e devolve o foco ao botão');
+await pg.keyboard.press('Enter');
+log(await pg.isVisible('#authForm'),'Entrar no Rendum funciona pelo teclado');
 log(await pg.getAttribute('#password','placeholder')==='Sua senha','placeholder login');
 log(await pg.getAttribute('#password','autocomplete')==='current-password','autocomplete login');
-log(await pg.textContent('#authSub')==='Entre para acompanhar sua carteira.','subtitulo login');
+log(await pg.textContent('#authSub')==='Entre para acompanhar seus investimentos.','subtítulo do login');
 // show password preserving caret
 await pg.fill('#password','abcdef'); await pg.focus('#password');
 await pg.evaluate(()=>document.getElementById('password').setSelectionRange(2,2));
 await pg.click('#passToggle'); await pg.waitForTimeout(60);
 const st=await pg.evaluate(()=>{const i=document.getElementById('password');return {t:i.type,v:i.value,s:i.selectionStart,f:document.activeElement===i,pr:document.getElementById('passToggle').getAttribute('aria-pressed'),lab:document.getElementById('passToggle').getAttribute('aria-label')}});
-log(st.t==='text'&&st.v==='abcdef'&&st.s===2&&st.f&&st.pr==='true'&&st.lab==='Ocultar senha','toggle mostra senha, preserva valor/cursor/foco '+JSON.stringify(st));
+log(st.t==='text'&&st.v==='abcdef'&&st.s===2&&st.f&&st.pr==='true'&&st.lab==='Ocultar senha'&&(await pg.textContent('#passToggle'))==='Ocultar','toggle mostra senha, preserva valor/cursor/foco '+JSON.stringify(st));
 log(!(await pg.evaluate(()=>!document.getElementById('auth').classList.contains('hide')&&false)), 'toggle não enviou form');
 // keyboard toggle
 await pg.focus('#passToggle'); await pg.keyboard.press('Enter');
@@ -58,5 +65,10 @@ await pg.waitForSelector('#app:not(.hide)'); await pg.waitForSelector('#rendaVal
 await ctl('delay=0');
 await pg.waitForTimeout(1500);
 log(await pg.textContent('#authBtn')==='Entrar','botão restaurado');
+// cadastro direto da entrada (nova página, sem sessão)
+{ await ctl('logged=0'); const p2=await br.newPage(); await p2.goto(B); await p2.waitForSelector('#authWelcome');
+  await p2.click('#startRegister');
+  log(await p2.textContent('#authTitle')==='Criar sua conta.' && await p2.getAttribute('#password','autocomplete')==='new-password' && await p2.isVisible('#passHint'),'Criar conta abre o formulário em modo cadastro');
+  await p2.close(); }
 log(errs.length===0,'sem erros JS '+JSON.stringify(errs));
 await br.close();

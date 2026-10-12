@@ -178,176 +178,6 @@ input:focus, textarea:focus, select:focus{outline:none; border-color:var(--accen
 .pill.gain{background:var(--gain-soft); color:var(--gain); border-color:transparent;}
 .pill.loss{background:var(--loss-soft); color:var(--loss); border-color:transparent;}
 
-/* =========================================================================
-   LOGIN
-   ========================================================================= */
-.auth{
-  min-height:100dvh;
-  display:grid;
-  grid-template-columns: 1fr;
-  padding:24px 16px;
-  position: relative;
-  overflow: hidden;
-  /* variação tonal estática e muito sutil (papel mineral) */
-  background: linear-gradient(145deg, var(--wash), transparent 55%) no-repeat, var(--bg);
-}
-.auth-side, .auth-card{ animation: authIn .35s ease-out both; }
-.auth-card{ animation-delay:.05s; }
-@keyframes authIn{ from{ opacity:0; transform: translateY(6px); } to{ opacity:1; transform:none; } }
-@media (min-width: 920px){
-  .auth{
-    grid-template-columns: 1.1fr 1fr;
-    gap: 40px;
-    padding: 48px;
-    align-items: center;
-    justify-items: center;
-  }
-}
-.auth-side{
-  display: none;
-  position: relative;
-  z-index: 1;
-  max-width: 480px;
-  padding: 0 24px;
-}
-@media (min-width: 920px){ .auth-side{ display: block; } }
-.auth-eyebrow{
-  display: inline-flex; align-items: center; gap: 8px;
-  font-size: 12.5px; font-weight: 600;
-  padding: 5px 12px; border-radius: 999px;
-  background: var(--accent-soft); color: var(--accent);
-  margin-bottom: 24px;
-}
-@keyframes pulse{
-  0%, 100%{ opacity: 1; transform: scale(1);}
-  50%{ opacity: .4; transform: scale(1.4);}
-}
-.auth-headline{
-  font-family: var(--f-serif);
-  font-weight: 600;
-  font-size: clamp(32px, 4.5vw, 48px);
-  line-height: 1.05;
-  letter-spacing: -0.025em;
-  margin: 0 0 20px;
-  color: var(--ink);
-}
-.auth-headline em{
-  font-style: italic;
-  color: var(--accent);
-  font-weight: 500;
-}
-.auth-tag{
-  color: var(--ink-2);
-  font-size: 16.5px;
-  line-height: 1.5;
-  margin: 0 0 32px;
-  max-width: 420px;
-}
-.auth-art{
-  margin-top: 28px;
-  max-width: 420px;
-}
-.auth-art svg{
-  width: 100%; height: auto;
-  display: block;
-}
-.auth-art .ln-stroke{
-  stroke: var(--accent);
-  stroke-width: 2.5;
-  fill: none;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  animation: draw 1.5s cubic-bezier(.4,.1,.2,1) .2s 1 forwards;
-}
-.auth-art .ln-area{
-  fill: color-mix(in srgb, var(--accent) 10%, transparent);
-  opacity: 0;
-  animation: fade .6s ease 1.2s 1 forwards;
-}
-.auth-art .ln-dot{
-  fill: var(--accent);
-  opacity: 0;
-  animation: fade .3s ease 1.6s 1 forwards;
-}
-.auth-art .ln-grid{
-  stroke: var(--line);
-  stroke-width: 1;
-  stroke-dasharray: 2 3;
-}
-.auth-art figcaption{
-  font-size: 12px; color: var(--muted); margin-top: 6px; text-align: right;
-}
-.auth-art{ margin: 28px 0 0; }
-@keyframes draw { to { stroke-dashoffset: 0; } }
-@keyframes fade { to { opacity: 1; } }
-@media (prefers-reduced-motion: reduce){
-  .auth-side, .auth-card{ animation: none !important; }
-  .auth-art .ln-stroke{ animation:none !important; stroke-dashoffset:0; }
-  .auth-art .ln-area, .auth-art .ln-dot{ animation:none !important; opacity:1; }
-}
-.auth-features{
-  display: grid; gap: 10px;
-  margin-top: 28px;
-}
-.auth-features li{
-  display: flex; align-items: start; gap: 10px;
-  color: var(--ink-2); font-size: 14.5px;
-  list-style: none;
-}
-.auth-features .check{
-  width: 20px; height: 20px; flex-shrink: 0;
-  border-radius: 50%; background: var(--accent-soft);
-  color: var(--accent);
-  display: grid; place-items: center;
-  margin-top: 1px;
-}
-.auth-features .check svg{ width: 11px; height: 11px; }
-
-.auth-form-wrap{
-  display: grid;
-  place-items: center;
-  position: relative;
-  z-index: 1;
-  width: 100%;
-}
-.auth-card{
-  width:100%;
-  max-width:420px;
-  background:var(--surface);
-  border:1px solid var(--line);
-  border-radius:20px;
-  padding:36px 32px;
-  box-shadow: 0 1px 2px rgba(20,40,30,.10), 0 20px 50px -30px rgba(20,40,30,.10);
-}
-.brand{
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  font-family:var(--f-serif);
-  font-weight:600;
-  font-size:20px;
-  line-height:1;
-  letter-spacing:-0.015em;
-}
-.brand-mark{
-  width:34px; height:34px;
-  border-radius:8px;
-  background:var(--accent);
-  color:var(--accent-ink);
-  display:grid; place-items:center;
-}
-.brand-mark svg{width:18px; height:18px;}
-.auth-title{
-  font-family:var(--f-serif);
-  font-weight:600;
-  font-size:28px;
-  letter-spacing:-0.02em;
-  margin:28px 0 6px;
-  line-height:1.1;
-}
-.auth-sub{color:var(--muted); font-size:15px; margin:0 0 28px;}
 .field{display:block; margin-bottom:16px;}
 .field > span, .field > label{display:block; font-size:13px; color:var(--ink-2); margin-bottom:6px; font-weight:500;}
 .pass-wrap{position:relative;}
@@ -363,9 +193,6 @@ input:focus, textarea:focus, select:focus{outline:none; border-color:var(--accen
 .field-err{font-size:12.5px; color:var(--loss); margin:6px 0 0;}
 input[aria-invalid="true"]{border-color:var(--loss);}
 #authBtn[aria-busy="true"]{opacity:.75; cursor:progress;}
-.auth-foot{text-align:center; margin-top:18px; font-size:14px; color:var(--muted);}
-.auth-foot button{color:var(--accent); font-weight:600;}
-.auth-foot button:hover{text-decoration:underline;}
 
 .err{color:var(--loss); font-size:13.5px; min-height:1.2em; margin:4px 0 10px;}
 
@@ -2151,19 +1978,43 @@ td.gain{color:var(--gain);} td.loss{color:var(--loss);} td.muted{color:var(--mut
 .pill{border-radius:4px;}
 .pill.gain{background:var(--gain-soft); color:var(--gain);} .pill.loss{background:var(--loss-soft); color:var(--loss);}
 
-/* ---------- Login (composição preservada, cores e fontes harmonizadas) ---------- */
-.auth-cardhead{display:flex; align-items:center; justify-content:space-between; gap:12px;}
-.auth-card{background:var(--surface); border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow);}
-.auth-headline{font:var(--weight-normal) clamp(36px,4.5vw,52px)/1.08 var(--font-display) !important; letter-spacing:var(--tracking-title);}
-.auth-headline em{font-style:normal; color:var(--accent); font-weight:var(--weight-normal);}
-.auth-title{font:var(--weight-normal) 32px/1.12 var(--font-display) !important; letter-spacing:var(--tracking-title);}
-.auth-eyebrow{background:none !important; color:var(--muted) !important; padding:0 !important; font-size:var(--text-xs) !important; letter-spacing:.1em; text-transform:uppercase; font-weight:var(--weight-medium) !important;}
-.auth-tag, .auth-features li{color:var(--ink-2) !important;}
-.auth-features .check{background:var(--surface-2) !important; color:var(--accent) !important;}
-.brand{font-family:var(--font-display); font-weight:var(--weight-medium);}
-.brand-mark{border-radius:6px;}
-.auth-art .ln-grid{stroke:var(--line) !important;}
-.pass-toggle{color:var(--muted);} .pass-toggle:hover{background:var(--surface-2); color:var(--ink);}
+/* ---------- Entrada (login/cadastro) — composição do protótipo ---------- */
+.auth{min-height:100dvh; display:flex; flex-direction:column; padding:28px clamp(20px,7vw,110px);
+  background:linear-gradient(145deg, var(--wash), transparent 55%) no-repeat, var(--bg); color:var(--ink);}
+.auth.hide{display:none;}
+.authhead{display:flex; align-items:center; justify-content:space-between; gap:16px;}
+.brand{display:inline-flex; align-items:center; gap:10px;}
+.brand .wordmark{padding:0; font:var(--weight-medium) var(--text-brand)/1.1 var(--font-display); letter-spacing:var(--tracking-title); color:var(--ink);}
+.brand-mark{width:30px; height:30px; border-radius:6px; background:var(--accent); color:var(--accent-ink); display:grid; place-items:center;}
+.brand-mark svg{width:16px; height:16px;}
+.authcontent{width:min(100%,440px); margin:auto; padding:70px 0;}
+.authcontent > div{animation:authIn .3s ease-out both;}
+@keyframes authIn{from{opacity:0; transform:translateY(4px)} to{opacity:1; transform:none}}
+.eyebrow{font-size:var(--text-xs); letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin:0; font-weight:var(--weight-medium);}
+.auth h1{font:var(--weight-normal) clamp(38px,5vw,56px)/var(--leading-title) var(--font-display); letter-spacing:var(--tracking-title); margin:20px 0; color:var(--ink);}
+.auth h1:focus{outline:none;}
+.auth .sub{font-size:var(--text-md); color:var(--muted); line-height:1.6; margin:0 0 28px; max-width:52ch;}
+.auth-cta{width:100%;}
+.auth-alt{margin:20px 0 0; font-size:var(--text-sm); color:var(--muted); display:flex; flex-wrap:wrap; gap:6px; align-items:center; min-height:44px;}
+.auth-alt .textlink{min-height:44px;}
+.auth-back{margin-top:4px; min-height:44px;}
+.authfoot{font-size:var(--text-xs); color:var(--muted); border-top:1px solid var(--line); padding-top:20px;}
+.auth .field{display:grid; gap:7px; margin-bottom:17px;}
+.auth .field > label{font-size:var(--text-md); color:var(--ink); font-weight:var(--weight-normal); margin:0;}
+.auth input{padding:11px 12px; min-height:44px; font-size:var(--text-input);}
+.passwordrow{display:flex; gap:8px;}
+.passwordrow input{flex:1; width:0; min-width:0;}
+.pass-toggle{position:static; transform:none; width:auto; height:auto; min-width:84px; min-height:44px; padding:8px 12px; font-size:var(--text-sm); color:var(--ink);}
+.pass-toggle:hover{background:var(--surface-2);}
+.auth .err{margin:4px 0 14px;}
+.auth .err:empty{display:none;}
+#authBtn{margin-top:4px;}
+@media (max-width:640px){
+  .auth{padding:22px 16px;}
+  .authcontent{padding:48px 0;}
+  .brand .wordmark{font-size:28px;}
+}
+@media (prefers-reduced-motion: reduce){ .authcontent > div{animation:none;} }
 
 /* Ajustes sobre estilos legados */
 .stat-label{text-transform:none !important; letter-spacing:0 !important; font-family:var(--font-ui) !important;}
@@ -2246,82 +2097,61 @@ td.gain{color:var(--gain);} td.loss{color:var(--loss);} td.muted{color:var(--mut
 <!-- =========================================================================
      LOGIN / CADASTRO
      ========================================================================= -->
-<section class="auth" id="auth">
-  <!-- Apresentação (desktop). No celular fica oculta para priorizar o formulário. -->
-  <aside class="auth-side">
-    <div class="auth-eyebrow">Rendum · Cotações atualizadas periodicamente</div>
-    <h2 class="auth-headline">Sua carteira clara. Seu próximo passo <em>consciente</em>.</h2>
-    <p class="auth-tag">Acompanhe seus investimentos, organize seus aportes e visualize sua evolução em um só lugar.</p>
-    <figure class="auth-art">
-      <svg viewBox="0 0 420 180" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
-        <line class="ln-grid" x1="30" y1="40"  x2="400" y2="40"/>
-        <line class="ln-grid" x1="30" y1="90"  x2="400" y2="90"/>
-        <line class="ln-grid" x1="30" y1="140" x2="400" y2="140"/>
-        <path class="ln-area" d="M30,140 L58,133 L82,137 L108,124 L132,128 L158,113 L182,117 L208,100 L232,105 L258,87 L282,92 L308,72 L332,77 L358,57 L382,61 L400,46 L400,160 L30,160 Z"/>
-        <path class="ln-stroke" pathLength="1" d="M30,140 L58,133 L82,137 L108,124 L132,128 L158,113 L182,117 L208,100 L232,105 L258,87 L282,92 L308,72 L332,77 L358,57 L382,61 L400,46"/>
-        <circle class="ln-dot" cx="400" cy="46" r="4.5"/>
-      </svg>
-      <figcaption>Simulação ilustrativa</figcaption>
-    </figure>
-    <ul class="auth-features">
-      <li>
-        <span class="check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5 11-11"/></svg></span>
-        <span>FIIs, ações, Tesouro Direto, CDB, LCI e LCA na mesma visão.</span>
-      </li>
-      <li>
-        <span class="check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5 11-11"/></svg></span>
-        <span>Em dias úteis, das 10h às 18h, o sistema tenta atualizar as cotações a cada 5 minutos. Se a fonte não responder, a última cotação disponível continua sendo exibida com a data dela.</span>
-      </li>
-      <li>
-        <span class="check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5 11-11"/></svg></span>
-        <span>Sua carteira fica armazenada na sua conta e só é acessada com seu login.</span>
-      </li>
-    </ul>
-  </aside>
+<section class="auth" id="auth" aria-label="Entrada do Rendum">
+  <header class="authhead">
+    <div class="brand">
+      <span class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 17 L10 11 L14 15 L20 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 7 L20 7 L20 12" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span class="wordmark">Rendum</span>
+    </div>
+    <button type="button" class="control" id="authThemeBtn" aria-pressed="false">Tema escuro</button>
+  </header>
 
-  <div class="auth-form-wrap">
-    <div class="auth-card">
-      <div class="auth-cardhead">
-        <div class="brand">
-          <span class="brand-mark">
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 17 L10 11 L14 15 L20 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 7 L20 7 L20 12" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </span>
-          <span>Rendum</span>
-        </div>
-        <button type="button" class="control" id="authThemeBtn" aria-pressed="false">Tema escuro</button>
-      </div>
+  <div class="authcontent">
+    <!-- Etapa 1: boas-vindas -->
+    <div id="authWelcome">
+      <p class="eyebrow">Sua carteira, com clareza</p>
+      <h1 id="welcomeTitle" tabindex="-1">Vamos começar.</h1>
+      <p class="sub">Acompanhe seus investimentos, organize os proventos e explore seus próximos passos.</p>
+      <button type="button" class="primary auth-cta" id="startLogin">Entrar no Rendum →</button>
+      <p class="auth-alt">Ainda não tem conta? <button type="button" class="textlink" id="startRegister">Criar conta</button></p>
+    </div>
 
-      <h1 class="auth-title" id="authTitle">Entrar</h1>
-      <p class="auth-sub" id="authSub">Entre para acompanhar sua carteira.</p>
+    <!-- Etapa 2: formulário (login ou cadastro) -->
+    <div id="authPanel" hidden>
+      <p class="eyebrow" id="authEyebrow">Acesso à carteira</p>
+      <h1 id="authTitle" tabindex="-1">Bom ter você aqui.</h1>
+      <p class="sub" id="authSub">Entre para acompanhar seus investimentos.</p>
 
       <form id="authForm" novalidate>
         <div class="field">
           <label for="email">E-mail</label>
-          <input id="email" name="email" type="email" required autocomplete="email" inputmode="email" placeholder="voce@email.com">
+          <input id="email" name="email" type="email" required autocomplete="email" inputmode="email" placeholder="voce@exemplo.com">
           <p class="field-err" id="emailErr" hidden></p>
         </div>
         <div class="field">
           <label for="password" id="passLabel">Senha</label>
-          <div class="pass-wrap">
+          <div class="passwordrow">
             <input id="password" name="password" type="password" required autocomplete="current-password" placeholder="Sua senha">
-            <button type="button" class="pass-toggle" id="passToggle" aria-controls="password" aria-pressed="false" aria-label="Mostrar senha" title="Mostrar senha">
-              <svg class="ic-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
-              <svg class="ic-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 3l18 18"/><path d="M10.6 5.1A10.8 10.8 0 0 1 12 5c6.4 0 10 7 10 7a17.6 17.6 0 0 1-3.2 4.1M6.6 6.6A17.4 17.4 0 0 0 2 12s3.6 7 10 7a10 10 0 0 0 5.4-1.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>
-            </button>
+            <button type="button" class="control control-line pass-toggle" id="passToggle" aria-controls="password" aria-pressed="false" aria-label="Mostrar senha">Mostrar</button>
           </div>
           <p class="field-hint" id="passHint" hidden>Use pelo menos 8 caracteres.</p>
           <p class="field-err" id="passErr" hidden></p>
         </div>
         <p class="err" id="authErr" role="alert" aria-live="assertive"></p>
-        <button class="btn btn-full" id="authBtn" type="submit">Entrar</button>
+        <button class="primary btn-full" id="authBtn" type="submit">Entrar</button>
       </form>
 
-      <p class="auth-foot">
+      <p class="auth-alt">
         <span id="toggleText">Ainda não tem conta?</span>
-        <button type="button" id="toggleBtn">Criar conta</button>
+        <button type="button" class="textlink" id="toggleBtn">Criar conta</button>
       </p>
+      <button type="button" class="textlink auth-back" id="authBack">← Voltar</button>
     </div>
   </div>
+
+  <footer class="authfoot">Sua carteira fica armazenada na sua conta. Cotações atualizadas periodicamente durante o pregão.</footer>
 </section>
 
 <!-- =========================================================================
@@ -2837,7 +2667,7 @@ function setPassVisible(visible){
   passToggle.setAttribute('aria-pressed', visible ? 'true' : 'false');
   const lbl = visible ? 'Ocultar senha' : 'Mostrar senha';
   passToggle.setAttribute('aria-label', lbl);
-  passToggle.title = lbl;
+  passToggle.textContent = visible ? 'Ocultar' : 'Mostrar';
   const restore = () => { if (ss != null){ try { passInp.setSelectionRange(ss, se); } catch(e){} } };
   restore();
   if (focused) passInp.focus();
@@ -2893,8 +2723,9 @@ for (const name of Object.keys(AUTH_FIELDS)){
 
 function applyAuthMode(){
   const reg = authMode === 'register';
-  $('authTitle').textContent = reg ? 'Criar conta' : 'Entrar';
-  $('authSub').textContent = reg ? 'Crie sua conta para começar a organizar sua carteira.' : 'Entre para acompanhar sua carteira.';
+  $('authEyebrow').textContent = reg ? 'Nova conta' : 'Acesso à carteira';
+  $('authTitle').textContent = reg ? 'Criar sua conta.' : 'Bom ter você aqui.';
+  $('authSub').textContent = reg ? 'Crie sua conta para começar a organizar sua carteira.' : 'Entre para acompanhar seus investimentos.';
   $('authBtn').textContent = reg ? 'Criar conta' : 'Entrar';
   $('toggleText').textContent = reg ? 'Já tem conta?' : 'Ainda não tem conta?';
   $('toggleBtn').textContent = reg ? 'Entrar' : 'Criar conta';
@@ -2904,10 +2735,30 @@ function applyAuthMode(){
   setPassVisible(false);   // sempre volta a ocultar ao trocar de modo
   clearAuthErrors();
 }
+// Etapas da entrada: "Vamos começar" → formulário. Foco vai para o título de cada etapa.
+let _authOpener = null;
+function showAuthStep(step, mode){
+  const form = step === 'form';
+  $('authWelcome').hidden = form;
+  $('authPanel').hidden = !form;
+  if (form){
+    if (mode && mode !== authMode){ authMode = mode; }
+    applyAuthMode();
+    $('authTitle').focus({ preventScroll: true });
+  } else {
+    setPassVisible(false);
+    clearAuthErrors();
+    (_authOpener && _authOpener.isConnected ? _authOpener : $('welcomeTitle')).focus({ preventScroll: true });
+  }
+}
+$('startLogin').onclick = () => { _authOpener = $('startLogin'); showAuthStep('form', 'login'); };
+$('startRegister').onclick = () => { _authOpener = $('startRegister'); showAuthStep('form', 'register'); };
+$('authBack').onclick = () => { if (!authBusy) showAuthStep('welcome'); };
 $('toggleBtn').onclick = () => {
   if (authBusy) return;
   authMode = authMode === 'login' ? 'register' : 'login';
   applyAuthMode();
+  $('authTitle').focus({ preventScroll: true });
 };
 
 let authBusy = false;
