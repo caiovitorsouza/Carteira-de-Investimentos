@@ -2,9 +2,11 @@
 // (caminho nativo do Chromium, sem ClipboardEvent sintético). Também confere digitação e o valor enviado.
 const { chromium } = await import(process.env.PW_MODULE || 'playwright');
 import { spawn } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 const PORT=8900+Math.floor(Math.random()*90), B='http://localhost:'+PORT;
-const srv=spawn('node',[new URL('./server.mjs', import.meta.url).pathname],{env:{...process.env,PORT:String(PORT)},stdio:'ignore'}); await new Promise(r=>setTimeout(r,800));
+const srv=spawn(process.execPath,[fileURLToPath(new URL('./server.mjs', import.meta.url))],{env:{...process.env,PORT:String(PORT)},stdio:'ignore'}); await new Promise(r=>setTimeout(r,800));
 const ctl=(q)=>fetch(B+'/__ctl?'+q).then(r=>r.json());
+process.on('exit',()=>srv.kill());
 let fails=0; const log=(ok,msg)=>{ if(!ok) fails++; console.log((ok?'PASS ':'FAIL ')+msg); };
 const br=await chromium.launch();
 const ctx=await br.newContext({viewport:{width:1280,height:900}, permissions:['clipboard-read','clipboard-write']});

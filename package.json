@@ -7,6 +7,14 @@
     "node": ">=20"
   },
   "scripts": {
+    "check": "node scripts/check-project.mjs",
+    "test:e2e": "node tests/e2e/run-all.mjs",
+    "auto:simulate": "node scripts/auto-simulate.mjs once",
+    "auto:start": "node scripts/auto-simulate.mjs watch",
+    "auto:stop": "node scripts/auto-simulate.mjs stop",
+    "auto:pause": "node scripts/auto-simulate.mjs pause",
+    "auto:resume": "node scripts/auto-simulate.mjs resume",
+    "auto:status": "node scripts/auto-simulate.mjs status",
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "tail": "wrangler tail",
@@ -18,6 +26,7 @@
     "postgres": "^3.4.5"
   },
   "devDependencies": {
+    "playwright": "1.64.0",
     "wrangler": "^3.100.0"
   }
 }

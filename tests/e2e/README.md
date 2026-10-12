@@ -5,11 +5,18 @@ um servidor de teste que simula a API com **dados fictícios** (não usa Supabas
 Cloudflare, carteira real nem envia e-mails).
 
 ```bash
-npm i -D playwright && npx playwright install chromium
-./tests/e2e/run-all.sh
+npm install
+npx playwright install chromium
+npm run test:e2e
 ```
 
 Cada arquivo começa com a carteira semeada (`/__ctl?seed=1`) num servidor novo.
+
+O executor `run-all.mjs` funciona também no Windows, inclusive em caminhos com
+espaços e acentos. Interrompe no primeiro arquivo que falhar, detecta linhas
+`FAIL` mesmo quando o teste retorna saída zero e recusa uma porta 8787 já ocupada.
+O servidor fictício só escuta em `127.0.0.1`; variáveis de credenciais são
+removidas do ambiente dos testes. O executor Bash continua disponível.
 
 | Arquivo | Cobre |
 |---|---|

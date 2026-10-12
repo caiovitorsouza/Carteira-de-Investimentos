@@ -1,7 +1,8 @@
 // Servidor de TESTE: serve public/ e simula a API com dados fictícios (nenhum dado real).
 // Controle via /__ctl?seed=1&failSave=1&delay=800 ... — ver README.
 import http from 'node:http'; import fs from 'node:fs'; import path from 'node:path';
-const ROOT=new URL('../../public/', import.meta.url).pathname;
+import { fileURLToPath } from 'node:url';
+const ROOT=fileURLToPath(new URL('../../public/', import.meta.url));
 const flags={ failLoad:false, failSave:false, failRefresh:false, delay:0, logged:false };
 let version=1, saves=0;
 const today=new Date(); const y=today.getFullYear(), m=String(today.getMonth()+1).padStart(2,'0');
@@ -42,4 +43,4 @@ http.createServer(async(req,res)=>{
   }
   let f=path.join(ROOT,p==='/'?'index.html':p); if(!fs.existsSync(f)) f=path.join(ROOT,'index.html');
   const ext=path.extname(f); res.writeHead(200,{'content-type':{'.html':'text/html','.js':'text/javascript','.svg':'image/svg+xml','.png':'image/png','.woff2':'font/woff2'}[ext]||'application/octet-stream'}); fs.createReadStream(f).pipe(res);
-}).listen(Number(process.env.PORT||8787),()=>console.log('up'));
+}).listen(Number(process.env.PORT||8787),'127.0.0.1',()=>console.log('up'));
