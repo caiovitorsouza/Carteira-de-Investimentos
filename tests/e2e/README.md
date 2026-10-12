@@ -21,3 +21,4 @@ Cada arquivo começa com a carteira semeada (`/__ctl?seed=1`) num servidor novo.
 | t6 | **regressão do resgate**: máscara (digitação e colagem), valor no formulário → envio → persistido → saldo, clique duplo e Enter repetido em resgate/venda/aporte, retry sem duplicar |
 | t7 | **colagem real** com Ctrl+V pela área de transferência do navegador ("100", "R$ 250", "1.234,56") em resgate e aporte, com o valor enviado ao servidor |
 | t8 | **navegação**: lateral fixa na altura da janela (desktop, iPad horizontal, mudança de altura), rolagem própria só quando necessário, abas sem números, foco e endereços, "Adicionar ativo" só em Visão geral e Minha carteira |
+| t9 | **fim da rolagem**: sem efeito elástico e sem espaço vazio além do último conteúdo, em desktop, iPad e celular |
