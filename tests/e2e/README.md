@@ -19,3 +19,4 @@ Cada arquivo começa com a carteira semeada (`/__ctl?seed=1`) num servidor novo.
 | t4 | adicionar ativo com falha/retry sem duplicar |
 | t5 | tema claro/escuro, navegação, calendário de proventos, filtros, concorrência na atualização |
 | t6 | **regressão do resgate**: máscara (digitação e colagem), valor no formulário → envio → persistido → saldo, clique duplo e Enter repetido em resgate/venda/aporte, retry sem duplicar |
+| t7 | **colagem real** com Ctrl+V pela área de transferência do navegador ("100", "R$ 250", "1.234,56") em resgate e aporte, com o valor enviado ao servidor |
