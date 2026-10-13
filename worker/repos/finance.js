@@ -13,6 +13,17 @@ const GOAL_COLS = (sql) => sql`
   id, kind, name, target_cents::float8 AS "targetCents",
   to_char(deadline, 'YYYY-MM-DD') AS deadline`;
 
+// Verificação do limite + inserção precisam ser atômicas POR USUÁRIO: sem isso, dois pedidos
+// simultâneos leem a mesma contagem e ambos inserem (o limite é ultrapassado). O bloqueio consultivo
+// de transação (pg_advisory_xact_lock) serializa só o mesmo usuário e a mesma lista; outros usuários
+// não esperam. Funciona com o pooler de transações do Supabase (o bloqueio some no COMMIT/ROLLBACK).
+function withUserLock(sql, kind, userId, fn) {
+  return sql.begin(async (tx) => {
+    await tx`SELECT pg_advisory_xact_lock(hashtextextended(${'finance:' + kind + ':' + userId}, 0))`;
+    return fn(tx);
+  });
+}
+
 export async function loadFinance(sql, userId) {
   const [receipts, goals, reserve, sims] = await Promise.all([
     sql`SELECT ${RECEIPT_COLS(sql)} FROM dividend_receipts
@@ -39,22 +50,21 @@ export async function loadFinance(sql, userId) {
 
 // Criação idempotente: repetir o mesmo id (reenvio após falha de rede) devolve o registro
 // já salvo sem duplicar. Um id que já pertence a OUTRO usuário retorna null (conflito).
-export async function createReceipt(sql, userId, id, v) {
-  const existing = await sql`
-    SELECT ${RECEIPT_COLS(sql)} FROM dividend_receipts WHERE id = ${id} AND user_id = ${userId}`;
-  if (existing.length) return { row: { ...existing[0] }, created: false };
-  const count = await sql`SELECT count(*)::int AS n FROM dividend_receipts WHERE user_id = ${userId}`;
-  if (count[0].n >= MAX_RECEIPTS) return { limit: true };
-  const created = await sql`
-    INSERT INTO dividend_receipts (id, user_id, asset, received_on, amount_cents, note)
-    VALUES (${id}, ${userId}, ${v.asset}, ${v.receivedOn}, ${v.amountCents}, ${v.note})
-    ON CONFLICT (id) DO NOTHING
-    RETURNING ${RECEIPT_COLS(sql)}`;
-  // sem retorno = o id pertence a outro usuário (ou corrida com reenvio idêntico)
-  if (created.length) return { row: { ...created[0] }, created: true };
-  const again = await sql`
-    SELECT ${RECEIPT_COLS(sql)} FROM dividend_receipts WHERE id = ${id} AND user_id = ${userId}`;
-  return again.length ? { row: { ...again[0] }, created: false } : null;
+export function createReceipt(sql, userId, id, v) {
+  return withUserLock(sql, 'receipts', userId, async (tx) => {
+    const existing = await tx`
+      SELECT ${RECEIPT_COLS(tx)} FROM dividend_receipts WHERE id = ${id} AND user_id = ${userId}`;
+    if (existing.length) return { row: { ...existing[0] }, created: false };
+    const count = await tx`SELECT count(*)::int AS n FROM dividend_receipts WHERE user_id = ${userId}`;
+    if (count[0].n >= MAX_RECEIPTS) return { limit: true };
+    const created = await tx`
+      INSERT INTO dividend_receipts (id, user_id, asset, received_on, amount_cents, note)
+      VALUES (${id}, ${userId}, ${v.asset}, ${v.receivedOn}, ${v.amountCents}, ${v.note})
+      ON CONFLICT (id) DO NOTHING
+      RETURNING ${RECEIPT_COLS(tx)}`;
+    // sem retorno = o id pertence a outro usuário
+    return created.length ? { row: { ...created[0] }, created: true } : null;
+  });
 }
 
 export async function updateReceipt(sql, userId, id, v) {
@@ -74,21 +84,20 @@ export async function deleteReceipt(sql, userId, id) {
 
 /* ----------------------------------------------------------------------- metas */
 
-export async function createGoal(sql, userId, id, v) {
-  const existing = await sql`
-    SELECT ${GOAL_COLS(sql)} FROM financial_goals WHERE id = ${id} AND user_id = ${userId}`;
-  if (existing.length) return { row: { ...existing[0] }, created: false };
-  const count = await sql`SELECT count(*)::int AS n FROM financial_goals WHERE user_id = ${userId}`;
-  if (count[0].n >= MAX_GOALS) return { limit: true };
-  const created = await sql`
-    INSERT INTO financial_goals (id, user_id, kind, name, target_cents, deadline)
-    VALUES (${id}, ${userId}, ${v.kind}, ${v.name}, ${v.targetCents}, ${v.deadline})
-    ON CONFLICT (id) DO NOTHING
-    RETURNING ${GOAL_COLS(sql)}`;
-  if (created.length) return { row: { ...created[0] }, created: true };
-  const again = await sql`
-    SELECT ${GOAL_COLS(sql)} FROM financial_goals WHERE id = ${id} AND user_id = ${userId}`;
-  return again.length ? { row: { ...again[0] }, created: false } : null;
+export function createGoal(sql, userId, id, v) {
+  return withUserLock(sql, 'goals', userId, async (tx) => {
+    const existing = await tx`
+      SELECT ${GOAL_COLS(tx)} FROM financial_goals WHERE id = ${id} AND user_id = ${userId}`;
+    if (existing.length) return { row: { ...existing[0] }, created: false };
+    const count = await tx`SELECT count(*)::int AS n FROM financial_goals WHERE user_id = ${userId}`;
+    if (count[0].n >= MAX_GOALS) return { limit: true };
+    const created = await tx`
+      INSERT INTO financial_goals (id, user_id, kind, name, target_cents, deadline)
+      VALUES (${id}, ${userId}, ${v.kind}, ${v.name}, ${v.targetCents}, ${v.deadline})
+      ON CONFLICT (id) DO NOTHING
+      RETURNING ${GOAL_COLS(tx)}`;
+    return created.length ? { row: { ...created[0] }, created: true } : null;
+  });
 }
 
 export async function updateGoal(sql, userId, id, v) {

@@ -208,7 +208,7 @@ export function simulateIndependence(input, patrimonioAtualCents = 0) {
         realReturnBp: usaInflacao ? Math.round(((1 + p.returnBp / 10000) / (1 + p.inflationBp / 10000) - 1) * 10000) : null,
       };
     }
-    if (!Number.isFinite(capital)) break;
+    if (n === MAX_SIM_MONTHS || !Number.isFinite(capital)) break;   // o mês 600 é o último: sem aporte extra
     capital = capital * (1 + mr) + p.monthlyContributionCents;
     if (capital < 0) capital = 0;
   }

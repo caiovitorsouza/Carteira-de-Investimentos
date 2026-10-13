@@ -1832,7 +1832,7 @@ td.gain{color:var(--gain);} td.loss{color:var(--loss);} td.muted{color:var(--mut
 .sleep-body .tag{display:inline-block; font-size:var(--text-xs); font-weight:var(--weight-medium); padding:3px 8px; border-radius:4px; background:var(--surface-2); color:var(--ink);}
 .sleep-body p{font-size:var(--text-sm); color:var(--muted); margin:8px 0 0;}
 .sleep-how{margin-top:8px; font-size:var(--text-sm); color:var(--muted);}
-.sleep-how summary{cursor:pointer; color:var(--accent); font-weight:var(--weight-medium); min-height:32px; display:inline-flex; align-items:center;}
+.sleep-how summary{cursor:pointer; color:var(--accent); font-weight:var(--weight-medium); min-height:44px; display:inline-flex; align-items:center;}
 .sleep-how p{margin:6px 0 0; line-height:1.5;}
 .attention{border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
 .attention[hidden]{display:none;}
@@ -2080,7 +2080,6 @@ td.gain{color:var(--gain);} td.loss{color:var(--loss);} td.muted{color:var(--mut
   .compactsummary{gap:20px;}
 }
 @media (max-width:480px){
-  .mainnav{grid-template-columns:repeat(3,minmax(0,1fr));}
   .navitem{font-size:var(--text-sm);}
   .summary{grid-template-columns:1fr;}
   .stat-income{display:grid; grid-template-columns:1fr auto; gap:2px 12px; align-items:baseline;}
@@ -2100,10 +2099,6 @@ td.gain{color:var(--gain);} td.loss{color:var(--loss);} td.muted{color:var(--mut
 .seg button:hover{background:var(--hover);}
 .seg button[aria-pressed="true"]{background:var(--accent); color:var(--accent-ink);}
 .seg button:focus-visible{outline-offset:-3px;}
-.badge{display:inline-block; font-size:var(--text-tiny); line-height:1.2; padding:3px 7px; border-radius:3px; letter-spacing:.2px; white-space:nowrap; vertical-align:middle;}
-.badge-user{background:var(--surface-2); color:var(--ink); border:1px solid var(--line-strong);}
-.badge-est{background:transparent; color:var(--muted); border:1px dashed var(--line-strong);}
-.fin-banner{font-size:var(--text-sm); background:var(--surface-2); color:var(--ink-2); padding:11px 14px; border-radius:4px; margin:0 0 20px; line-height:1.5;}
 .fin-alert{border:1px solid var(--warn-line); background:var(--warn-soft); color:var(--warn-ink); border-radius:var(--radius); padding:14px 16px; margin:0 0 20px; font-size:var(--text-sm); display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;}
 .fin-alert[hidden]{display:none;}
 .fin-filters{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:0 0 6px;}
@@ -2175,6 +2170,43 @@ td.gain{color:var(--gain);} td.loss{color:var(--loss);} td.muted{color:var(--mut
   .sim-pair{grid-template-columns:1fr;}
   .seg{display:flex; width:100%;} .seg button{flex:1 1 0; padding:0 8px;}
   .rec-bars, .rec-bar-names{gap:3px;}
+}
+
+/* ---------- Explicação curta + detalhes expansíveis ---------- */
+.fin-lead{font-size:var(--text-md); color:var(--ink-2); margin:0 0 6px; line-height:1.5; max-width:70ch;}
+.fin-more{margin:0 0 20px; border-bottom:1px solid var(--line);}
+.fin-more > summary{min-height:44px; display:flex; align-items:center; gap:9px; cursor:pointer; font-size:var(--text-sm); color:var(--accent); font-weight:var(--weight-medium); list-style:none;}
+.fin-more > summary::-webkit-details-marker{display:none;}
+.fin-more > summary::before{content:''; flex:none; width:7px; height:7px; border-right:2px solid currentColor; border-bottom:2px solid currentColor; transform:rotate(-45deg); transition:transform .15s;}
+.fin-more[open] > summary::before{transform:rotate(45deg);}
+.fin-more > :not(summary){font-size:var(--text-sm); color:var(--ink-2); line-height:1.55; max-width:70ch;}
+.fin-more ul{margin:0 0 12px; padding-left:18px;}
+.fin-more li{margin:0 0 6px;}
+.fin-more p{margin:0 0 8px;}
+.lead-actions[hidden]{display:none;}
+.explain-note{margin-top:10px; font-size:var(--text-xs); color:var(--muted);}
+.indep-premissas{margin:0 0 12px;}
+@media (min-width:641px){ .sim .fin-more{margin-top:14px;} }
+
+/* ---------- Celular: menos espaço para navegação e cabeçalho ---------- */
+@media (max-width:640px){
+  .sidebar{padding:12px 16px 6px; gap:8px;}
+  .wordmark{font-size:24px;}
+  .mainnav{grid-template-columns:repeat(5,minmax(0,1fr)); gap:2px;}
+  .navitem{padding:6px 2px; font-size:11.5px; min-height:44px; line-height:1.2;}
+  .crumb{display:none;}
+  .topbar{padding-bottom:10px; justify-content:flex-end;}
+  .tools{width:100%; flex-wrap:nowrap; justify-content:space-between; gap:4px;}
+  .tools .control{flex:1 1 0; min-width:0; padding:8px 4px; font-size:var(--text-xs); white-space:nowrap;}
+  .lead{margin:14px 0 12px; gap:10px;}
+  .lead h1{margin:0; font-size:28px;}
+  .lead .sub{display:none;}
+  .fin-lead{font-size:var(--text-sm);}
+  .info-banner{margin-bottom:14px;}
+  .fin-more{margin-bottom:14px;}
+}
+@media (max-width:360px){
+  .mainnav{grid-template-columns:repeat(3,minmax(0,1fr));}
 }
 @media (prefers-reduced-motion: reduce){
   *, *::before, *::after{transition:none !important; animation:none !important;}
@@ -2394,14 +2426,23 @@ td.gain{color:var(--gain);} td.loss{color:var(--loss);} td.muted{color:var(--mut
 
           <!-- Recebidos: registros manuais, informados pelo usuário -->
           <div id="incRec" hidden>
-            <p class="fin-banner" id="recBanner">Registros <b>informados por você</b>. O Rendum não confirma pagamentos com corretora, não converte estimativas em recebimentos e não altera caixa, posição nem patrimônio ao registrar.</p>
+            <p class="fin-lead" id="recBanner">Registros <b>informados por você</b>: não são confirmados por corretora e não alteram sua carteira.</p>
+            <details class="fin-more" id="recMore">
+              <summary>Como funcionam os recebimentos</summary>
+              <ul>
+                <li>Estimado é a previsão do calendário; recebido é só o que você registra aqui. Uma estimativa nunca vira recebimento sozinha.</li>
+                <li>Você informa o valor total recebido na data, como no extrato. O Rendum não o calcula pela quantidade de cotas.</li>
+                <li>Registrar não muda caixa, posições nem patrimônio, e não depende de cotações.</li>
+                <li>O Rendum não consulta corretoras: nada aqui é confirmação de pagamento.</li>
+              </ul>
+            </details>
             <div class="fin-alert" id="recLoadErr" role="alert" hidden>
               <span>Não foi possível carregar seus recebimentos.</span>
               <button type="button" class="btn btn-sm" id="recRetry">Tentar de novo</button>
             </div>
             <div class="sectionhead">
-              <h2 id="recTitle">Recebimentos informados por você</h2>
-              <button type="button" class="primary" id="recAddBtn">+ Registrar recebimento</button>
+              <h2 id="recTitle">Seus recebimentos</h2>
+              <button type="button" class="primary" id="recAddBtn" hidden>+ Registrar recebimento</button>
             </div>
             <div id="recFilters" class="fin-filters" hidden>
               <div class="formrow"><label for="recYear">Ano</label><select id="recYear"></select></div>
@@ -2413,7 +2454,15 @@ td.gain{color:var(--gain);} td.loss{color:var(--loss);} td.muted{color:var(--mut
 
         <!-- ===================== METAS ===================== -->
         <section class="page" id="pg-goals" data-panel="goals" hidden aria-labelledby="pageTitle">
-          <p class="fin-banner">Metas e reserva usam o que você cadastrou no Rendum. Os valores são referências para acompanhar seu objetivo, não recomendações de investimento.</p>
+          <p class="fin-lead">Compara suas metas e sua reserva com a carteira atual. São referências para acompanhar objetivos, não recomendações.</p>
+          <details class="fin-more" id="goalsMore">
+            <summary>Como o progresso é calculado</summary>
+            <ul>
+              <li>Meta de patrimônio: comparada ao patrimônio atual das posições cadastradas.</li>
+              <li>Meta de renda mensal: comparada à renda mensal <b>estimada</b> da carteira, que não é valor recebido.</li>
+              <li>Com prazo, mostramos o aporte mensal de uma conta simples, sem rentabilidade.</li>
+            </ul>
+          </details>
           <div class="fin-alert" id="goalsLoadErr" role="alert" hidden>
             <span>Não foi possível carregar suas metas e a reserva.</span>
             <button type="button" class="btn btn-sm" id="goalsRetry">Tentar de novo</button>
@@ -2421,7 +2470,7 @@ td.gain{color:var(--gain);} td.loss{color:var(--loss);} td.muted{color:var(--mut
           <section class="fin-block" aria-labelledby="hGoals">
             <div class="sectionhead">
               <h2 id="hGoals">Metas financeiras</h2>
-              <button type="button" class="primary" id="goalAddBtn">+ Nova meta</button>
+              <button type="button" class="primary" id="goalAddBtn" hidden>+ Nova meta</button>
             </div>
             <div id="goalList" aria-live="polite"></div>
           </section>
@@ -2433,7 +2482,7 @@ td.gain{color:var(--gain);} td.loss{color:var(--loss);} td.muted{color:var(--mut
 
         <!-- ===================== SIMULADORES ===================== -->
         <section class="page" id="pg-simulators" data-panel="simulators" hidden aria-labelledby="pageTitle">
-          <p class="info-banner">Simulações com premissas explícitas e campos editáveis. Os resultados são estimativas e não constituem recomendação.</p>
+          <p class="info-banner">Estimativas com as premissas que você define, usando sua carteira atual. Não são garantia nem recomendação.</p>
           <div class="simgrid">
             <section class="sim" aria-labelledby="hIndep"><h2 id="hIndep">Independência financeira</h2><div id="indepBox"></div></section>
             <section class="sim" aria-labelledby="hBazin"><h2 id="hBazin">Preço-teto · Bazin</h2><div id="bazinBox"></div></section>
@@ -3057,6 +3106,18 @@ const PAGES = {
 };
 let _page = 'overview';
 let _incView = 'est';       // Proventos: 'est' (estimados) ou 'rec' (recebidos, informados pelo usuário)
+// Ações do cabeçalho só onde são úteis: "Adicionar ativo" na carteira (e, sem ativos, a ação fica
+// no próprio estado vazio); "Atualizar cotações" onde há preços (carteira e proventos estimados),
+// nunca em Recebidos, Metas e Simuladores.
+function updateLeadActions(){
+  const onPortfolio = _page === 'overview' || _page === 'holdings';
+  const hasPositions = state.positions.length > 0;
+  const hasMarket = state.positions.some(p => p.ticker);
+  $('addBtn').hidden = !(onPortfolio && hasPositions);
+  $('refreshBtn').hidden = !(hasMarket && (onPortfolio || (_page === 'income' && _incView === 'est')));
+  const box = document.querySelector('.lead-actions');
+  if (box) box.hidden = $('addBtn').hidden && $('refreshBtn').hidden;
+}
 function pageMeta(page){
   if (page === 'income' && _incView === 'rec') return { title: 'Proventos recebidos', sub: 'Recebimentos que você registrou, separados das estimativas.' };
   return PAGES[page];
@@ -3080,7 +3141,7 @@ function showPage(page, { focus = false } = {}){
     if (a.dataset.page === page) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
   });
   // "Adicionar ativo" só onde faz sentido; hidden remove do layout (sem espaço vazio)
-  $('addBtn').hidden = !(page === 'overview' || page === 'holdings');
+  updateLeadActions();
   applyPageMeta(page);
   if (focus){ $('pageTitle').focus({ preventScroll: true }); window.scrollTo({ top: 0 }); }
 }
@@ -3299,6 +3360,7 @@ function totals(){
 
 /* ---------------------------------------------------------------- render hero */
 function render(){
+  updateLeadActions();
   const t = totals();
   const ganho = t.atual - t.inv;
   const pctg = t.inv > 0 ? ganho/t.inv*100 : 0;
@@ -3341,6 +3403,7 @@ function render(){
   if (n === 0){ renderEmptyState(); empty.style.display = ''; }
   else { empty.style.display = 'none'; }
   $('allocationBox').hidden = n === 0;
+  const posSec = $('overviewPositions').closest('section'); if (posSec) posSec.hidden = n === 0;
   renderAllocation(t);
   renderAssets();
 
@@ -3406,13 +3469,13 @@ function renderEmptyState(){
       <div class="icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6M12 22v-6M4.93 4.93l4.24 4.24M14.83 14.83l4.24 4.24M2 12h6M22 12h-6M4.93 19.07l4.24-4.24M14.83 9.17l4.24-4.24"/></svg>
       </div>
-      <h2>Adicionar o primeiro ativo para destravar as projeções</h2>
-      <p>Com um ativo já dá pra ver sua independência financeira, o calendário de dividendos e o seu Sleep Score.</p>
-      <button class="btn-emerald" id="emptyAddBtn">+ Adicionar meu primeiro ativo</button>
-      <p class="hint">Em dúvida sobre os tipos de ativo? O glossário no fim da página explica cada um.</p>
+      <h2>Cadastre seu primeiro investimento</h2>
+      <p>Informe o ativo, a quantidade e o preço pago. O patrimônio, a renda estimada e o calendário de proventos passam a refletir o que você cadastrar.</p>
+      <button class="btn-emerald" id="emptyAddBtn">Adicionar primeiro ativo</button>
+      <p class="hint">Dúvida sobre os tipos de ativo? Veja o <a class="textlink" href="#simuladores" data-page="simulators">glossário, no fim da página Simuladores</a>.</p>
     </div>
   `;
-  $('emptyAddBtn').onclick = () => $('addBtn').click();
+  $('emptyAddBtn').onclick = () => openAdd();
 }
 
 /* =========================================================================
@@ -4004,7 +4067,7 @@ function setIncomeView(view){
   $('incRec').hidden = view !== 'rec';
   $('incTabEst').setAttribute('aria-pressed', view === 'est' ? 'true' : 'false');
   $('incTabRec').setAttribute('aria-pressed', view === 'rec' ? 'true' : 'false');
-  if (_page === 'income') applyPageMeta('income');
+  if (_page === 'income'){ applyPageMeta('income'); updateLeadActions(); }
   if (view === 'rec'){ renderReceipts(); if (fin.status === 'idle' || fin.status === 'error') loadFinance(); }
 }
 $('incTabEst').onclick = () => setIncomeView('est');
@@ -4030,7 +4093,9 @@ function assetChoices(){
 function renderReceipts(){
   const body = $('recBody'); if (!body) return;
   $('recLoadErr').hidden = fin.status !== 'error';
+  // uma única ação principal: no estado vazio ela fica no próprio estado vazio, não no cabeçalho
   $('recAddBtn').disabled = fin.status !== 'ready';
+  $('recAddBtn').hidden = !(fin.status === 'ready' && fin.receipts.length > 0);
   const filters = $('recFilters');
   if (fin.status !== 'ready'){
     filters.hidden = true;
@@ -4041,7 +4106,7 @@ function renderReceipts(){
     filters.hidden = true;
     const box = el('div', 'fin-empty');
     box.append(el('h3', null, 'Nenhum recebimento registrado'),
-      el('p', null, 'Registre aqui, manualmente, os proventos que você de fato recebeu: ativo, data e valor total. O Rendum não consulta corretoras e as estimativas do calendário nunca viram recebimentos sozinhas.'));
+      el('p', null, 'Registre os proventos que você de fato recebeu: ativo, data e valor total.'));
     const b = el('button', 'primary', 'Registrar o primeiro recebimento'); b.type = 'button'; b.onclick = () => openReceiptSheet();
     box.appendChild(b);
     body.replaceChildren(box);
@@ -4063,8 +4128,7 @@ function renderReceipts(){
   const stat = (k, v, cls) => { const d = el('div'); d.append(el('small', null, k), el('strong', cls || null, v)); return d; };
   cs.append(
     stat(`Total recebido em ${_rec.year}${_rec.asset ? ' · ' + _rec.asset : ''}`, centsBrl(sum.totalAno), 'num'),
-    stat('Registros no ano', String(sum.contagemAno), 'num'),
-    stat('Origem dos valores', 'Informados por você'));
+    stat('Registros no ano', String(sum.contagemAno), 'num'));
   frag.appendChild(cs);
 
   // totais por ano (respeitando o filtro de ativo)
@@ -4114,7 +4178,7 @@ function renderReceipts(){
         row.setAttribute('aria-label', `Editar recebimento de ${r.asset} em ${formatDateBR(r.receivedOn)}, ${centsBrl(r.amountCents)}`);
         const p = parseCalendarDate(r.receivedOn);
         const rd = el('span', 'rd', `${pad2(p.d)}/${pad2(p.m)}`);
-        const rm = el('span', 'rm'); const line = el('span'); line.append(el('b', null, r.asset), ' ', el('span', 'badge badge-user', 'Informado por você'));
+        const rm = el('span', 'rm'); const line = el('span'); line.append(el('b', null, r.asset));
         rm.appendChild(line);
         if (r.note) rm.appendChild(el('span', 'rn', r.note));
         row.append(rd, rm, el('span', 'rv num', centsBrl(r.amountCents)));
@@ -4124,7 +4188,6 @@ function renderReceipts(){
       frag.appendChild(sec);
     }
   }
-  frag.appendChild(el('p', 'note', 'Cada valor é o total que você informou ter recebido naquela data. O Rendum não calcula o provento pela quantidade de cotas e não confirma o pagamento com corretora.'));
   body.replaceChildren(frag);
 }
 $('recYear').onchange = (e) => { _rec.year = Number(e.target.value); renderReceipts(); };
@@ -4189,6 +4252,7 @@ function renderGoals(){
   const box = $('goalList'); if (!box) return;
   $('goalsLoadErr').hidden = fin.status !== 'error';
   $('goalAddBtn').disabled = fin.status !== 'ready';
+  $('goalAddBtn').hidden = !(fin.status === 'ready' && fin.goals.length > 0);
   if (fin.status !== 'ready'){
     box.replaceChildren(fin.status === 'error' ? document.createComment('erro') : el('p', 'empty-line', 'Carregando suas metas…'));
     return;
@@ -4196,8 +4260,7 @@ function renderGoals(){
   if (!fin.goals.length){
     const e = el('div', 'fin-empty');
     e.append(el('h3', null, 'Você ainda não definiu metas'),
-      el('p', null, 'Crie uma meta de patrimônio (comparada ao patrimônio atual das suas posições) ou de renda mensal (comparada à renda mensal estimada da carteira). O prazo é opcional.'));
-    if (!state.positions.length) e.appendChild(el('p', null, 'Sua carteira ainda não tem posições, então o progresso começa em zero. Cadastre seus ativos em Minha carteira.'));
+      el('p', null, 'Defina um valor-alvo de patrimônio ou de renda mensal. O prazo é opcional.'));
     const b = el('button', 'primary', 'Criar a primeira meta'); b.type = 'button'; b.onclick = () => openGoalSheet();
     e.appendChild(b);
     box.replaceChildren(e);
@@ -4221,7 +4284,6 @@ function renderGoals(){
     fact('Falta', pr.atingida ? 'Meta atingida' : centsBrl(pr.restanteCents));
     card.appendChild(dl);
     card.appendChild(progressEl(pr.pct, `Progresso da meta ${g.name}`));
-    card.appendChild(el('p', 'basis', info.base));
     if (g.deadline){
       const m = monthsBetween(hoje, g.deadline);
       let txt;
@@ -4233,8 +4295,6 @@ function renderGoals(){
         const need = linearMonthlyNeed({ restanteCents: pr.restanteCents, monthsLeft: Math.max(1, m) });
         if (need) card.appendChild(el('p', 'basis', `Conta simples, sem rentabilidade: cerca de ${centsBrl(need)} por mês até o prazo.`));
       }
-    } else {
-      card.appendChild(el('p', 'basis', 'Sem prazo definido.'));
     }
     const act = el('div', 'goal-actions');
     const ed = el('button', 'btn btn-ghost btn-sm', 'Editar'); ed.type = 'button'; ed.setAttribute('aria-label', `Editar meta ${g.name}`);
@@ -4309,31 +4369,30 @@ function openGoalSheet(goal = null){
 /* --------------------------------------------------------- reserva de emergência */
 const _res = { linked: new Set(), dirty: false, busy: false, built: false, sig: '' };
 const KIND_LABEL = { fii: 'Fundo imobiliário', acao: 'Ação', selic: 'Tesouro Selic', pre: 'Tesouro Prefixado', ipca: 'Tesouro IPCA+', cdb: 'CDB', lci: 'LCI', lca: 'LCA', fundo: 'Fundo de investimento' };
-const KIND_HINT = {
-  selic: 'Confira o prazo de resgate e se a marcação a mercado afeta o valor antes do vencimento.',
-  pre: 'Antes do vencimento o valor pode oscilar; confira a liquidez.',
-  ipca: 'Antes do vencimento o valor pode oscilar; confira a liquidez.',
-  cdb: 'Confira se há liquidez diária, carência e vencimento no contrato.',
-  lci: 'Confira carência e vencimento: costumam não ter liquidez imediata.',
-  lca: 'Confira carência e vencimento: costumam não ter liquidez imediata.',
-  fundo: 'Confira o prazo de cotização e resgate (D+ dias) e as taxas.',
-  fii: 'Renda variável: o preço oscila e pode estar baixo quando você precisar.',
-  acao: 'Renda variável: o preço oscila e pode estar baixo quando você precisar.',
-};
 
 function buildReserve(){
   if (_res.built) return;
   _res.built = true;
   const box = $('reserveBox');
   box.innerHTML = `
-    <p class="fin-banner">O Rendum <b>não classifica automaticamente</b> nenhum CDB, Tesouro ou fundo como reserva. Liquidez, vencimento, risco e adequação precisam ser conferidos por você; só entram aqui as posições que você marcar.</p>
+    <p class="fin-lead" id="resLead">Você escolhe quais posições entram na reserva; o Rendum não classifica nada como reserva sozinho.</p>
+    <details class="fin-more" id="resMore">
+      <summary>O que conferir antes de vincular uma posição</summary>
+      <p>Liquidez, vencimento, risco e adequação precisam ser conferidos por você. Um CDB ou título público, por exemplo, pode ter carência, vencimento distante ou oscilar se resgatado antes do prazo.</p>
+      <ul>
+        <li>Renda fixa e Tesouro: confira liquidez, carência, vencimento e marcação a mercado.</li>
+        <li>Fundos: confira o prazo de cotização e resgate (D+ dias) e as taxas.</li>
+        <li>FIIs e ações: o preço oscila e pode estar baixo quando você precisar.</li>
+        <li>O valor de cada posição é o estimado pelo Rendum e pode diferir do que você resgataria.</li>
+      </ul>
+    </details>
     <div class="reserve-form">
       <div class="formrow"><label for="resExpense">Gastos mensais (R$)</label>
         <input id="resExpense" class="moneyfield" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off" aria-describedby="resExpenseHint">
-        <small class="quiet" id="resExpenseHint">Quanto você precisa por mês para cobrir suas despesas essenciais.</small></div>
+        <small class="quiet" id="resExpenseHint">Suas despesas essenciais por mês.</small></div>
       <div class="formrow"><label for="resMonths">Meses de cobertura</label>
         <input id="resMonths" type="number" inputmode="numeric" min="1" max="60" step="1" value="6" aria-describedby="resMonthsHint">
-        <small class="quiet" id="resMonthsHint">Você escolhe: de 1 a 60 meses. O Rendum não indica um número ideal.</small></div>
+        <small class="quiet" id="resMonthsHint">Você escolhe, de 1 a 60 meses.</small></div>
       <fieldset class="res-links" id="resLinks"><legend>Posições que você quer vincular à reserva</legend><div id="resLinkList"></div></fieldset>
     </div>
     <div id="resOut" role="status" aria-live="polite"></div>
@@ -4404,8 +4463,8 @@ function renderReserve(){
         const lab = el('label');
         const cb = document.createElement('input'); cb.type = 'checkbox'; cb.dataset.pid = p.id; cb.checked = _res.linked.has(p.id);
         const main = el('span', 'rl-main');
-        main.append(el('b', null, p.ticker || p.nome || KIND_LABEL[p.kind] || 'Ativo'), ' · ' + (KIND_LABEL[p.kind] || ''));
-        main.appendChild(el('span', 'rl-hint', KIND_HINT[p.kind] || 'Confira liquidez e adequação.'));
+        const nomeAtivo = p.ticker || p.nome || KIND_LABEL[p.kind] || 'Ativo';
+        main.append(el('b', null, nomeAtivo)); if (KIND_LABEL[p.kind] && KIND_LABEL[p.kind] !== nomeAtivo) main.append(' · ' + KIND_LABEL[p.kind]);
         lab.append(cb, main, el('span', 'rl-val num', brl.format(enrich(p).atual)));
         list.appendChild(lab);
       }
@@ -4439,7 +4498,6 @@ function renderReserveOut(){
   if (!link.found) notes.push('Nenhuma posição vinculada ainda: o valor vinculado é zero.');
   else if (!valuesHidden) notes.push(`O valor vinculado cobre cerca de ${String(rp.mesesCobertos).replace('.', ',')} ${rp.mesesCobertos === 1 ? 'mês' : 'meses'} dos gastos informados.`);
   if (link.missing > 0) notes.push(`${link.missing} ${link.missing === 1 ? 'posição vinculada não existe mais' : 'posições vinculadas não existem mais'} na carteira e ${link.missing === 1 ? 'foi ignorada' : 'foram ignoradas'}.`);
-  notes.push('O valor das posições é o estimado pelo Rendum e pode diferir do que você resgataria.');
   for (const n of notes) frag.appendChild(el('p', 'note', n));
   out.replaceChildren(frag);
 }
@@ -4527,6 +4585,7 @@ function _indepResultHtml(){
   }
   for (const id of bad) if ($(id)) $(id).setAttribute('aria-invalid', 'true');
   if (bad.size){
+    const lista0 = $('indepPremissas'); if (lista0) lista0.innerHTML = '';
     return `<div class="bazin-erro" role="status">Confira estes campos: ${[...bad].map(id => _IND_LABELS[id]).join(', ')}. ${
       r && r.erros ? Object.values(r.erros).join(' ') : 'Use números, por exemplo 3500 ou 10,5.'}</div>`;
   }
@@ -4559,7 +4618,9 @@ function _indepResultHtml(){
       : 'Sem inflação informada: os valores são nominais e o cálculo não desconta a inflação.',
     'As premissas podem não se confirmar; o resultado é uma estimativa, não uma garantia nem uma recomendação.',
   ];
-  return `${head}${body}<ul class="indep-premissas">${premissas.map(p => `<li>${_escHtml(p)}</li>`).join('')}</ul>`;
+  const lista = $('indepPremissas'); if (lista) lista.innerHTML = premissas.map(p => `<li>${_escHtml(p)}</li>`).join('');
+  const curta = `<p class="explain explain-note">Estimativa com as suas premissas, não uma garantia.${r.usaInflacao ? '' : ' Valores nominais, sem inflação.'}</p>`;
+  return `${head}${body}${curta}`;
 }
 function _refreshIndepHint(){
   const h = $('indepInicialHint'); if (!h) return;
@@ -4585,7 +4646,7 @@ function renderIndependence(totals){
       `<label class="indep-field" for="${id}"><span>${label}</span><input id="${id}" type="text" inputmode="decimal" autocomplete="off" ${extra} ${hint ? `aria-describedby="${id}Hint"` : ''}>${hint ? `<small class="quiet" id="${id}Hint">${hint}</small>` : ''}</label>`;
     box.innerHTML = `
       <div class="indep-card">
-        <p class="sim-desc">Projeta quando a renda estimada do capital cobriria a renda mensal que você deseja. Todos os campos são premissas suas, editáveis.</p>
+        <p class="sim-desc">Quando a renda estimada do capital cobriria a renda mensal que você deseja. Todos os campos são editáveis.</p>
         <div class="sim-fields">
           ${field('indepInicial', 'Capital inicial (R$)', 'Em branco, usa o patrimônio atual da carteira.', 'class="moneyfield" placeholder="Patrimônio atual"')}
           ${field('indepAporte', 'Aporte mensal (R$)', '', 'class="moneyfield"')}
@@ -4601,6 +4662,10 @@ function renderIndependence(totals){
         <p class="fin-status" id="indepStatus" role="status"></p>
         <p class="fin-status err" id="indepLoadNote" role="alert" hidden>Não foi possível carregar suas premissas salvas; os valores padrão estão na tela e você ainda pode simular. <button type="button" class="textlink" id="indepRetry">Tentar de novo</button></p>
         <div class="indep-result" id="indepResult" role="status" aria-live="polite"></div>
+        <details class="fin-more" id="indepMore">
+          <summary>Premissas e metodologia</summary>
+          <ul class="indep-premissas" id="indepPremissas"></ul>
+        </details>
       </div>`;
     fillIndependence(INDEPENDENCE_DEFAULTS);
     $('indepInicial').value = '';
@@ -4791,7 +4856,7 @@ function renderBazin(){
   box.dataset.ready = '1';
   box.innerHTML = `
     <div class="hero-card">
-      <p class="bazin-warn"><b>Dados ilustrativos — não são cotações atuais.</b> Os valores da lista servem só de ponto de partida; confira e edite antes de usar. O que você digitar passa a ser marcado como informado por você.</p>
+      <p class="bazin-warn"><b>Dados ilustrativos, não são cotações.</b> Os valores da lista são só um ponto de partida: confira e edite. O que você digitar fica marcado como informado por você.</p>
       <form class="bazin-form" id="bazinForm" autocomplete="off" novalidate>
         <div class="bazin-ac">
           <label for="bazinInput" class="sr-only">Buscar ativo</label>
@@ -5304,7 +5369,7 @@ function renderAssets(){
   // Visão geral: até 6 maiores posições
   const ov = $('overviewPositions'); ov.replaceChildren();
   if (!state.positions.length){
-    ov.appendChild(el('p', 'empty-line', 'Nenhuma posição cadastrada ainda.'));
+    // sem posições, a ação principal fica no estado vazio acima; esta seção some
   } else {
     const top = [...state.positions].sort((a,b) => (enrich(b).atual||0) - (enrich(a).atual||0)).slice(0, 6);
     ov.appendChild(_posTable(top, false, total, 'Maiores posições da carteira'));
@@ -5318,7 +5383,7 @@ function renderAssets(){
   if (!state.positions.length){
     const e = el('div', 'empty-block');
     e.appendChild(el('p', null, 'Sua carteira ainda não tem posições.'));
-    const b = el('button', 'primary', '+ Adicionar ativo'); b.type = 'button'; b.onclick = () => $('addBtn').click();
+    const b = el('button', 'primary', 'Adicionar primeiro ativo'); b.type = 'button'; b.onclick = () => openAdd();
     e.appendChild(b);
     list.appendChild(e);
     $('searchStatus').textContent = '';

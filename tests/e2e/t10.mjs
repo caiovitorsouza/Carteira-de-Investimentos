@@ -27,11 +27,17 @@ log(await txt('#pageTitle')==='Proventos estimados' && await pg.getAttribute('#i
 log(await pg.isVisible('#calendar') && /Estimado/.test(await txt('#pg-income')) && !await pg.isVisible('#incRec'),'calendário e estimativas visíveis, recebidos oculto');
 await pg.click('#incTabRec'); await pg.waitForTimeout(150);
 log(await txt('#pageTitle')==='Proventos recebidos' && await pg.getAttribute('#incTabRec','aria-pressed')==='true','aba Recebidos muda o título');
-log(/Nenhum recebimento registrado/.test(await txt('#recBody')) && /informados por você/.test(await txt('#recBanner')) && /não confirma pagamentos com corretora/.test(await txt('#recBanner')),'estado vazio útil e aviso de origem');
+log(/Nenhum recebimento registrado/.test(await txt('#recBody')) && /informados por você/.test(await txt('#recBanner')) && /não são confirmados por corretora/.test(await txt('#recBanner')),'estado vazio útil e aviso curto de origem');
+log(!await pg.isVisible('#recAddBtn') && await pg.locator('#recBody .fin-empty button').count()===1,'estado vazio: uma única ação principal (sem botão duplicado no cabeçalho)');
+log(!await pg.evaluate(()=>document.getElementById('recMore').open) && /nunca vira recebimento sozinha/.test(await txt('#recMore')) && /não consulta corretoras/.test(await txt('#recMore')) && /não muda caixa, posições nem patrimônio/.test(await txt('#recMore')),'metodologia em seção recolhida, com o conteúdo essencial');
+await pg.focus('#recMore summary'); await pg.keyboard.press('Enter');
+log(await pg.evaluate(()=>document.getElementById('recMore').open) && await pg.evaluate(()=>document.activeElement.tagName)==='SUMMARY','seção expansível abre pelo teclado e mantém o foco');
+await pg.keyboard.press('Space'); log(!await pg.evaluate(()=>document.getElementById('recMore').open),'e fecha pelo teclado');
+log(!await pg.isVisible('#refreshBtn') && !await pg.evaluate(()=>!!document.querySelector('.lead-actions') && getComputedStyle(document.querySelector('.lead-actions')).display!=='none'),'Recebidos não oferece "Atualizar cotações" (registros manuais não dependem de preços)');
 log((await ctl('fin=1')).fin.receipts.length===0,'estimativas não criam recebimentos');
 
 // registrar (envio duplicado bloqueado)
-await pg.click('#recAddBtn'); await sheet();
+await pg.click('#recBody .fin-empty button'); await sheet();
 log(await pg.evaluate(()=>document.querySelector('.sheet').getAttribute('aria-modal'))==='true' && /Registro informado por você/.test(await txt('.sheet')) && /Não altera caixa, posição nem patrimônio/.test(await txt('.sheet')),'painel explica origem e que não altera a carteira');
 await S('Ativo').fill('test11');
 await S('Data do recebimento').fill(`${Y}-01-31`);
@@ -48,7 +54,7 @@ log(Number.isInteger(sent.amountCents)&&sent.amountCents===12345 && sent.receive
 log(await pg.locator('.sheet').count()===0 && /Recebimento registrado/.test(await txt('#toast')) && !/123/.test(await txt('#toast')),'sucesso anunciado só depois da confirmação, sem valor no aviso');
 await ctl('finDelay=0');
 const row=pg.locator('.rec-row').first();
-log(/TEST11/.test(await row.textContent()) && /Informado por você/.test(await row.textContent()) && /R\$\s?123,45/.test(await row.textContent()) && /31\/01/.test(await row.textContent()),'registro aparece como informado pelo usuário: '+await row.textContent());
+log(/TEST11/.test(await row.textContent()) && /R\$\s?123,45/.test(await row.textContent()) && /31\/01/.test(await row.textContent()),'registro listado sob "informados por você": '+await row.textContent());
 log((await ctl('')).saves===saves0 && await txt('#heroValue')===hero0,'não altera carteira nem patrimônio');
 
 // falha preserva formulário e reenvio não duplica
@@ -124,21 +130,22 @@ log((await pg.$$('.rec-bar')).length===12,'mostrar valores volta o gráfico');
 /* ================= METAS ================= */
 await pg.click('.mainnav a[data-page=goals]'); await pg.waitForTimeout(150);
 log(await txt('#pageTitle')==='Metas' && /Você ainda não definiu metas/.test(await txt('#goalList')) && /Defina o objetivo da sua reserva/.test(await txt('#resOut')),'estados vazios úteis (metas e reserva)');
-await pg.click('#goalAddBtn'); await sheet();
+log(!await pg.isVisible('#goalAddBtn') && await pg.locator('#goalList .fin-empty button').count()===1 && !await pg.isVisible('#refreshBtn') && !await pg.isVisible('.lead-actions'),'Metas vazia: ação única no estado vazio; sem "Atualizar cotações" nem barra de ações vazia');
+await pg.click('#goalList .fin-empty button'); await sheet();
 log(/ESTIMADA da carteira, que não é valor recebido/.test(await txt('.sheet')),'painel explica patrimônio x renda estimada');
 await S('Nome da meta').fill('Meta teste'); await S('Valor-alvo (R$)').fill('5000000');
 await pg.click('.sheet button[type=submit]'); await pg.waitForTimeout(400);
 let g=(await ctl('fin=1')).fin.goals;
 log(g.length===1 && g[0].targetCents===5000000 && g[0].kind==='patrimonio' && g[0].deadline===null && Number.isInteger(g[0].targetCents),'meta de patrimônio em centavos: '+JSON.stringify(g[0]));
 const card=pg.locator('.goal-card').first();
-log(/Objetivo\s*R\$\s?50\.000,00/.test(await card.textContent()) && /patrimônio atual das posições cadastradas/.test(await card.textContent()) && /Sem prazo definido/.test(await card.textContent()) && await card.locator('[role=progressbar]').count()===1,'cartão: objetivo, base e progresso');
+log(/Objetivo\s*R\$\s?50\.000,00/.test(await card.textContent()) && /Patrimônio atual/.test(await card.textContent()) && /Meta de patrimônio/.test(await card.textContent()) && !/Prazo/.test(await card.textContent()) && /patrimônio atual das posições cadastradas/.test(await txt('#goalsMore')) && await card.locator('[role=progressbar]').count()===1,'cartão: objetivo, base e progresso');
 await pg.click('#goalAddBtn'); await sheet();
 await S('Tipo de meta').selectOption('renda_mensal'); await S('Nome da meta').fill('Renda 5 mil'); await S('Valor-alvo (R$)').fill('500000');
 await S('Prazo (opcional)').fill('2099-12-31');
 await pg.click('.sheet button[type=submit]'); await pg.waitForTimeout(400);
 g=(await ctl('fin=1')).fin.goals;
 const c2=pg.locator('.goal-card',{hasText:'Renda 5 mil'});
-log(g.length===2 && g[0].deadline==='2099-12-31' && /renda mensal estimada da carteira — uma estimativa, não valor recebido/.test(await c2.textContent()) && /Prazo: 31\/12\/2099/.test(await c2.textContent()),'meta de renda: prazo sem fuso e base explícita');
+log(g.length===2 && g[0].deadline==='2099-12-31' && /Renda estimada/.test(await c2.textContent()) && /renda mensal <?b?>?estimada/.test(await pg.innerHTML('#goalsMore')) && /não é valor recebido/.test(await txt('#goalsMore')) && /Prazo: 31\/12\/2099/.test(await c2.textContent()),'meta de renda: prazo sem fuso e base explícita');
 await c2.getByRole('button',{name:/Editar meta/}).click(); await sheet();
 await money('Valor-alvo (R$)','600000'); await pg.click('.sheet button[type=submit]'); await pg.waitForTimeout(400);
 const metaEd=(await ctl('fin=1')).fin.goals.find(x=>x.name==='Renda 5 mil');
@@ -148,8 +155,8 @@ await pg.getByRole('button',{name:'Excluir'}).click(); await pg.getByRole('butto
 log((await ctl('fin=1')).fin.goals.length===1 && await pg.locator('.goal-card').count()===1,'excluir meta com confirmação');
 
 /* ================= RESERVA ================= */
-log(await pg.locator('#resLinkList input:checked').count()===0 && /não classifica automaticamente/.test(await txt('#reserveBox')) && /liquidez/i.test(await txt('#reserveBox')),'nada vinculado automaticamente; aviso de liquidez/adequação');
-log(/Confira se há liquidez diária/.test(await txt('#resLinkList')) || /Confira o prazo/.test(await txt('#resLinkList')),'dica por tipo de ativo (renda fixa)');
+log(await pg.locator('#resLinkList input:checked').count()===0 && /não classifica nada como reserva sozinho/.test(await txt('#resLead')) && /liquidez/i.test(await txt('#resMore')) && !await pg.evaluate(()=>document.getElementById('resMore').open),'nada vinculado automaticamente; aviso de liquidez/adequação');
+log(/liquidez, carência, vencimento e marcação a mercado/.test(await txt('#resMore')) && /pode estar baixo quando você precisar/.test(await txt('#resMore')) && !/pode estar baixo/.test(await txt('#resLinkList')),'orientações por tipo de ativo ficam numa seção só, sem repetir em cada posição');
 await pg.fill('#resExpense','300000'); await pg.fill('#resMonths','6'); await pg.waitForTimeout(100);
 log(/Objetivo\s*R\$\s?18\.000,00/.test(await txt('#resOut')) && /Valor vinculado\s*R\$\s?0,00/.test(await txt('#resOut')) && /Falta\s*R\$\s?18\.000,00/.test(await txt('#resOut')) && /Nenhuma posição vinculada/.test(await txt('#resOut')),'objetivo = 3.000 × 6 = 18.000, vinculado 0, falta 18.000');
 await pg.locator('#resLinkList label',{hasText:'Tesouro Selic'}).locator('input').check(); await pg.waitForTimeout(100);

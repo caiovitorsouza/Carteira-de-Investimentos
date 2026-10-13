@@ -194,3 +194,25 @@ test('Bazin: teto = proventos anuais ÷ taxa; entradas inválidas não quebram',
     assert.equal(calcBazin(bad).status, 'invalid', JSON.stringify(bad));
   }
 });
+
+test('independência: no limite de 600 meses há exatamente 600 aportes (sem aporte extra)', () => {
+  // capital 0, R$ 500/mês, rentabilidade 0%: após 600 meses são 600 × 500 = R$ 300.000,00
+  const r = simulateIndependence({ initialCents: 0, monthlyContributionCents: 50000, returnBp: 0, desiredIncomeCents: 100_000_000, incomeRateBp: 700, inflationBp: null });
+  assert.equal(r.reachable, false);
+  assert.equal(r.months, 600);
+  assert.equal(r.nominal.capitalCents, 30_000_000);
+  // com capital inicial: inicial + 600 aportes
+  const c = simulateIndependence({ initialCents: 1_000_000, monthlyContributionCents: 10000, returnBp: 0, desiredIncomeCents: 100_000_000, incomeRateBp: 700, inflationBp: null });
+  assert.equal(c.nominal.capitalCents, 1_000_000 + 600 * 10000);
+});
+test('independência: mês de chegada e capital conhecidos (rentabilidade 0%)', () => {
+  // capital = n × R$ 1.000; renda = capital × taxa mensal equivalente a 7% a.a.; meta R$ 1.000/mês
+  const mi = Math.pow(1.07, 1 / 12) - 1;
+  const nEsperado = Math.ceil(1 / mi - 1e-12);          // primeiro n com n × 1000 × mi ≥ 1000
+  const r = simulateIndependence({ initialCents: 0, monthlyContributionCents: 100000, returnBp: 0, desiredIncomeCents: 100000, incomeRateBp: 700, inflationBp: null });
+  assert.equal(r.months, nEsperado);
+  assert.equal(nEsperado, 177);
+  assert.equal(r.nominal.capitalCents, 177 * 100000);   // exatamente 177 aportes, nem 176 nem 178
+  assert.ok(r.nominal.incomeCents >= 100000);
+  assert.ok(Math.round((176 * 100000) * mi) < 100000);  // 176 meses não bastariam
+});

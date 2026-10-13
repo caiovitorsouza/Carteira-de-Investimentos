@@ -26,11 +26,21 @@ const calc=await pg.evaluate(async (heroTxt)=>{ const m=await import('/finance-c
 const shown=await txt('#indepResult .time');
 const years=calc.months/12; const expect = calc.months<12?`${calc.months} ${calc.months===1?'mês':'meses'}`: (Math.round(years*10)/10<2?'1 ano':String(Math.round(years*10)/10).replace('.',',')+' anos');
 log(calc.reachable && shown===expect,'resultado da tela = cálculo puro (mês a mês, taxa mensal equivalente): '+shown+' / '+expect);
-log(/taxa mensal equivalente/.test(await txt('#indepResult')) && /não 0,83%|dividir por 12/.test(await txt('#indepResult')),'premissa explica conversão anual→mensal');
-log(/sem inflação informada/i.test(await txt('#indepResult')) && /valores são nominais/.test(await txt('#indepResult')),'sem inflação: nominal explícito');
+log(!await pg.evaluate(()=>document.getElementById('indepMore').open) && /Premissas e metodologia/.test(await txt('#indepMore summary')),'premissas ficam numa seção recolhida (uma explicação visível curta)');
+log(/taxa mensal equivalente/.test(await txt('#indepMore')) && /não 0,83%|dividir por 12/.test(await txt('#indepMore')),'premissa explica conversão anual→mensal');
+log(/Valores nominais, sem inflação/.test(await txt('#indepResult')) && /Sem inflação informada/.test(await txt('#indepMore')) && /não uma garantia/.test(await txt('#indepResult')),'sem inflação: nominal e ausência de garantia visíveis no resultado');
+await pg.focus('#indepMore summary'); await pg.keyboard.press('Enter');
+log(await pg.evaluate(()=>document.getElementById('indepMore').open),'seção de premissas abre pelo teclado');
+await pg.fill('#indepAporte','600'); await pg.waitForTimeout(80);
+log(await pg.evaluate(()=>document.getElementById('indepMore').open) && await pg.evaluate(()=>document.activeElement.id)==='indepAporte','editar um campo não fecha a seção aberta nem tira o foco');
+await pg.fill('#indepAporte','500');
+// regressão do limite (R$ 300.000, não 300.500): capital 0, R$ 500/mês, rentabilidade 0%, meta inalcançável
+await pg.fill('#indepInicial','0,00'); await pg.fill('#indepRent','0'); await pg.fill('#indepCusto','1.000.000'); await pg.waitForTimeout(80);
+{ const r=await txt('#indepResult'); log(/mais de 50 anos/.test(r) && /R\$\s?300\.000,00/.test(r) && !/300\.500,00/.test(r),'limite de 50 anos: capital exatamente R$ 300.000,00 (600 aportes), sem aporte extra: '+r.slice(0,150)); }
+await pg.fill('#indepInicial',''); await pg.fill('#indepRent','10'); await pg.fill('#indepCusto','3.500,00');
 await pg.fill('#indepRent','12'); await pg.fill('#indepTaxaRenda','6'); await pg.fill('#indepInflacao','4,5'); await pg.fill('#indepCusto','4.000'); await pg.fill('#indepInicial','10.000,00'); await pg.fill('#indepAporte','800');
 await pg.waitForTimeout(100);
-const t=await txt('#indepResult');
+const t=await txt('#indepBox');
 log(/Valores nominais \(no futuro\)/.test(t) && /Poder de compra de hoje/.test(t) && /Inflação de 4,50% ao ano/.test(t) && /Rentabilidade de 12,00% ao ano/.test(t) && /6,00% ao ano/.test(t) && /valor informado por você/.test(t),'inflação opcional separa nominal x poder de compra e lista premissas: '+t.slice(0,160));
 log(!/garant(e|imos) (um )?resultado|com certeza|promet(e|emos)/i.test(t) && /não é uma garantia|não uma garantia|não é promessa|estimativa, não uma garantia/.test(t),'não promete resultados');
 const ind1=await pg.evaluate(async ()=>{ const m=await import('/finance-calc.js'); const r=m.simulateIndependence({initialCents:1000000,monthlyContributionCents:80000,desiredIncomeCents:400000,returnBp:1200,incomeRateBp:600,inflationBp:450}); return {months:r.months, nomCap:r.nominal.capitalCents, realCap:r.real.capitalCents}; });

@@ -118,7 +118,7 @@ Com Node e Git no PATH, os equivalentes são `npm run auto:start`,
 for Windows e Node portátil em `../.rendum-tools/node-*-win-x64`.
 Use `npm ci` e `npx playwright install chromium` para preparar os testes.
 
-Após retomar, aguarda 60 segundos sem edições; verifica sintaxe, 12 suítes e2e e os testes unitários/API
+Após retomar, aguarda 60 segundos sem edições; verifica sintaxe, 13 suítes e2e e os testes unitários/API
 com dados fictícios e build Wrangler dry-run. Edições durante checks invalidam o
 ciclo. Pausar interrompe os checks e confirma a pausa antes de permitir trabalho.
 Um lock impede duas instâncias. Conflitos, índice previamente preparado,
@@ -225,3 +225,45 @@ antes de publicar; carteiras existentes não são tocadas.
   reversão, em banco isolado (PGlite).
 - O `DEPLOY_CLOUDFLARE.md` cita outra ref de projeto Supabase; confira qual `DATABASE_URL` está no
   secret do Worker antes de rodar migrações manualmente.
+
+## Refinamentos pós-revisão (12/10/2026)
+
+- **Limites sob concorrência (corrigido).** A contagem e a inserção de recebimentos (5.000) e metas
+  (30) eram passos separados. Reproduzido num Postgres real com 12 pedidos simultâneos: a conta em
+  29/30 metas terminou com 37, e a conta em 4.999/5.000 recebimentos com 5.011. Agora
+  `createReceipt`/`createGoal` rodam em transação com `pg_advisory_xact_lock` **por usuário e por
+  lista** (`worker/repos/finance.js`): só o mesmo usuário espera, outros não são bloqueados, a
+  idempotência por `id` e o conflito de `id` de outro usuário continuam valendo, e o bloqueio some
+  no COMMIT (compatível com o pooler de transações do Supabase). **Sem mudança de schema: nenhuma
+  migração é necessária.** Teste: `tests/unit/concurrency.pg.test.mjs` (Postgres real via
+  `embedded-postgres`, várias conexões; pulado com aviso se o módulo não estiver instalado).
+- **Simulador (corrigido).** O laço continuava aplicando crescimento e aporte depois da verificação
+  do mês 600, então o cenário inalcançável mostrava 601 aportes (capital 0, R$ 500/mês, rentabilidade
+  0% → R$ 300.500 em vez de R$ 300.000). O caminho "alcançável" não tinha o problema. Regressões com
+  resultado conhecido em `tests/unit/finance-calc.test.mjs` e t11.
+- **Interface mais enxuta.** Uma frase principal por página; metodologia e ressalvas em seções
+  `<details>` (Recebidos, Metas, Reserva, Simuladores), recolhidas por padrão, com resumo de 44 px,
+  abertura por teclado e estado preservado ao editar. Continuam visíveis: estimado × recebido
+  (título e aviso curto), origem manual, "valores nominais, sem inflação" e "não é garantia". As
+  orientações por tipo de ativo da reserva ficam numa seção só, em vez de repetidas em cada posição.
+- **Uma ação por estado vazio.** Sem ativos, recebimentos ou metas, a ação aparece só no estado
+  vazio; o botão do cabeçalho surge quando já há registros. "Atualizar cotações" só aparece onde há
+  preços (carteira e proventos estimados); não aparece em Recebidos, Metas nem Simuladores, que
+  declaram usar a carteira atual.
+- **Primeira entrada.** "Cadastre seu primeiro investimento", sem prometer Sleep Score, projeções ou
+  independência; o glossário é indicado onde realmente está (fim da página Simuladores, com link).
+- **Celular (390 px).** Navegação em uma linha (44 px; antes 92 px), trilha e subtítulo ocultos,
+  ferramentas numa linha, título a 181 px do topo (antes 293 px) e conteúdo a 225–279 px (antes
+  433–456 px). Em 320 px a navegação usa 3 colunas. O resumo "Como calculamos" do Sleep Score passou
+  a ter 44 px de altura.
+- **Máscara de moeda.** O temporizador de foco desfazia a seleção do usuário (Tab/Ctrl+A) e digitar
+  concatenava os dígitos (enviava `1234520000` em vez de `20000`). Agora respeita a seleção; o foco
+  inicial dos painéis só ocorre se nada foi escolhido e é cancelado ao fechar (t12).
+
+### Limitações deste ciclo
+- O teste de concorrência exige o binário do `embedded-postgres` (devDependency de ~100 MB, só
+  Windows/macOS/Linux x64/arm64 suportados pelo pacote). Rodou e passou no Windows; em outro ambiente
+  sem o módulo ele é pulado, e o aviso aparece na saída.
+- A auditoria visual com Playwright em Python (webapp-testing) foi executada fora do repositório; o
+  que está versionado são as suítes em Node (t10 a t13). O contraste não passou por ferramenta
+  automática. Tudo foi validado só com backend e dados fictícios, não com o banco de produção.
