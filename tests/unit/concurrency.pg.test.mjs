@@ -9,9 +9,13 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import net from 'node:net';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import { once } from 'node:events';
 import postgres from 'postgres';
 import { createReceipt, createGoal, MAX_GOALS, MAX_RECEIPTS } from '../../worker/repos/finance.js';
-import { FINANCE_BLOCK } from './helpers/pgsql.mjs';
+import { createWatch, MAX_WATCH } from '../../worker/repos/watchlist.js';
+import { FINANCE_BLOCK, WATCHLIST_BLOCK } from './helpers/pgsql.mjs';
 
 let EmbeddedPostgres = null;
 try { ({ default: EmbeddedPostgres } = await import(process.env.EMBEDDED_PG_MODULE || 'embedded-postgres')); } catch { /* opcional */ }
@@ -25,19 +29,38 @@ before(async () => {
   if (skip) return;
   dir = fs.mkdtempSync(path.join(os.tmpdir(), 'rendum-pg-'));
   port = await freePort();
-  pg = new EmbeddedPostgres({ databaseDir: path.join(dir, 'data'), user: 'postgres', password: 'teste-local', port, persistent: false, onLog: () => {}, onError: () => {} });
+  // A pasta continua temporária; sua remoção é controlada e validada abaixo.
+  pg = new EmbeddedPostgres({ databaseDir: path.join(dir, 'data'), user: 'postgres', password: 'teste-local', port, persistent: true, onLog: () => {}, onError: () => {} });
   await pg.initialise(); await pg.start(); await pg.createDatabase('rendum_test');
   const url = `postgres://postgres:teste-local@127.0.0.1:${port}/rendum_test`;
   admin = postgres(url, { max: 1, onnotice: () => {} });
   await admin.unsafe(`CREATE TABLE users (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), email text UNIQUE NOT NULL)`);
   await admin.unsafe(FINANCE_BLOCK);
+  await admin.unsafe(WATCHLIST_BLOCK);
   // pool com várias conexões, como o Worker em produção (prepare:false = pooler de transações)
   pool = postgres(url, { max: 20, prepare: false, onnotice: () => {}, types: { bigint: { to: 20, from: [20], serialize: String, parse: (v) => parseInt(v, 10) } } });
 });
 after(async () => {
   if (skip) return;
   await pool?.end({ timeout: 2 }); await admin?.end({ timeout: 2 });
-  await pg?.stop(); fs.rmSync(dir, { recursive: true, force: true });
+  if (process.platform === 'win32' && pg?.process?.pid && pg.process.exitCode === null) {
+    // pg.stop usa taskkill, que pode deixar o io_worker órfão no Windows.
+    // pg_ctl encerra o cluster deste teste e aguarda todos os seus filhos.
+    const { pg_ctl } = await import('@embedded-postgres/windows-' + process.arch);
+    const exited = once(pg.process, 'exit');
+    await promisify(execFile)(pg_ctl, ['stop', '-D', path.join(dir, 'data'), '-m', 'fast', '-w', '-t', '10'], { windowsHide: true });
+    await exited;
+    pg.process = undefined; // evita novo stop do processo já encerrado no exit hook da biblioteca
+  } else await pg?.stop();
+  if (dir) {
+    // O taskkill usado pelo embedded-postgres pode retornar antes de o Windows
+    // liberar os arquivos. Só removemos a pasta temporária criada por este teste.
+    const target = path.resolve(dir);
+    if (path.dirname(target) !== path.resolve(os.tmpdir()) || !path.basename(target).startsWith('rendum-pg-')) {
+      throw new Error('Diretório temporário de teste inesperado: ' + target);
+    }
+    fs.rmSync(target, { recursive: true, force: true, maxRetries: 20, retryDelay: 100 });
+  }
 });
 const newUser = async (n) => (await admin`INSERT INTO users (email) VALUES (${n + '.' + uuid() + '@example.test'}) RETURNING id`)[0].id;
 const receipt = (i = 0) => ({ asset: 'TEST11', receivedOn: '2026-10-01', amountCents: 100 + i, note: null });
@@ -103,6 +126,22 @@ test('usuários diferentes não se bloqueiam: um usuário cheio não atrasa os o
   await seg;
   assert.ok(rs.every((r) => r && r.created), 'todos os outros usuários criaram normalmente');
   assert.ok(dt < 1000, `outros usuários não esperaram o bloqueio de ${cheio} (${dt} ms)`);
+});
+
+const watch = (i = 0) => ({ stage: 'comprar', asset: 'W' + i, kind: 'outro', name: null, reason: null, notes: null, priority: null,
+  targetPriceCents: null, plannedAmountCents: 1000 + i, plannedQuantity: null, manualPriceCents: null, manualPriceOn: null });
+test(`lista de interesse: 12 pedidos simultâneos com a conta em ${MAX_WATCH - 1}/${MAX_WATCH} não ultrapassam o limite; reenvio não duplica`, { skip }, async () => {
+  const u = await newUser('lista');
+  await admin`INSERT INTO watchlist_items (id, user_id, stage, asset, kind)
+              SELECT gen_random_uuid(), ${u}, 'acompanhar', 'A' || g, 'outro' FROM generate_series(1, ${MAX_WATCH - 1}) g`;
+  const res = await Promise.all(Array.from({ length: 12 }, (_, i) => createWatch(pool, u, uuid(), watch(i))));
+  assert.equal((await admin`SELECT count(*)::int n FROM watchlist_items WHERE user_id = ${u}`)[0].n, MAX_WATCH);
+  assert.equal(res.filter((r) => r && r.created).length, 1);
+  assert.equal(res.filter((r) => r && r.limit).length, 11);
+  const v = await newUser('lista-dup'); const id = uuid();
+  const rs = await Promise.all(Array.from({ length: 8 }, () => createWatch(pool, v, id, watch())));
+  assert.equal((await admin`SELECT count(*)::int n FROM watchlist_items WHERE id = ${id}`)[0].n, 1);
+  assert.equal(rs.filter((r) => r && r.created).length, 1);
 });
 
 test('mesmo usuário: pedidos serializam pelo bloqueio por usuário (a operação espera, não falha)', { skip }, async () => {

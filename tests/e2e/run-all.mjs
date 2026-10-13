@@ -3,7 +3,9 @@ import { fileURLToPath } from 'node:url';
 import net from 'node:net';
 const dir = fileURLToPath(new URL('./', import.meta.url));
 const env = Object.fromEntries(Object.entries(process.env).filter(([k]) =>
-  !/TOKEN|SECRET|PASSWORD|DATABASE|RESEND|BRAPI|NODE_OPTIONS|PW_MODULE|PORT/i.test(k)));
+  !/TOKEN|SECRET|PASSWORD|DATABASE|RESEND|BRAPI|NODE_OPTIONS|PORT/i.test(k)));
+// PW_MODULE é o override já usado pelos testes: permite o runtime da skill
+// com seu navegador preparado, sem instalar outra cópia ou carregar credenciais.
 env.EMAIL_ENABLED = 'false';
 env.PORT = '8787';
 const children = new Set();
@@ -27,7 +29,7 @@ process.on('SIGTERM', () => { cleanup(); process.exit(143); });
 let failures = 0;
 try {
   await freePort();
-  for (let i = 1; i <= 13; i++) {
+  for (let i = 1; i <= 19; i++) {
     let server;
     if (i <= 5) {
       server = child('server.mjs');

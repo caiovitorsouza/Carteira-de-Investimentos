@@ -23,10 +23,10 @@ const money=async(label,digits)=>{ const l=S(label); await l.click(); await l.pr
 
 /* ================= PROVENTOS: estimados x recebidos ================= */
 await pg.click('.mainnav a[data-page=income]'); await pg.waitForTimeout(150);
-log(await txt('#pageTitle')==='Proventos estimados' && await pg.getAttribute('#incTabEst','aria-pressed')==='true','abre em "Estimados" (calendário existente preservado)');
-log(await pg.isVisible('#calendar') && /Estimado/.test(await txt('#pg-income')) && !await pg.isVisible('#incRec'),'calendário e estimativas visíveis, recebidos oculto');
+log(await txt('#pageTitle')==='Proventos' && await pg.getAttribute('#incTabEst','aria-pressed')==='true','abre no Calendário');
+log(await pg.isVisible('#calendar') && /Estimad/.test(await txt('#pg-income')) && !await pg.isVisible('#incRec'),'calendário e estimativas visíveis, recebidos oculto');
 await pg.click('#incTabRec'); await pg.waitForTimeout(150);
-log(await txt('#pageTitle')==='Proventos recebidos' && await pg.getAttribute('#incTabRec','aria-pressed')==='true','aba Recebidos muda o título');
+log(await txt('#pageTitle')==='Proventos' && /Recebimentos que você registrou/.test(await txt('#pageSubtitle')) && await pg.getAttribute('#incTabRec','aria-pressed')==='true','aba Recebidos muda o subtítulo');
 log(/Nenhum recebimento registrado/.test(await txt('#recBody')) && /informados por você/.test(await txt('#recBanner')) && /não são confirmados por corretora/.test(await txt('#recBanner')),'estado vazio útil e aviso curto de origem');
 log(!await pg.isVisible('#recAddBtn') && await pg.locator('#recBody .fin-empty button').count()===1,'estado vazio: uma única ação principal (sem botão duplicado no cabeçalho)');
 log(!await pg.evaluate(()=>document.getElementById('recMore').open) && /nunca vira recebimento sozinha/.test(await txt('#recMore')) && /não consulta corretoras/.test(await txt('#recMore')) && /não muda caixa, posições nem patrimônio/.test(await txt('#recMore')),'metodologia em seção recolhida, com o conteúdo essencial');
@@ -129,7 +129,7 @@ log((await pg.$$('.rec-bar')).length===12,'mostrar valores volta o gráfico');
 
 /* ================= METAS ================= */
 await pg.click('.mainnav a[data-page=goals]'); await pg.waitForTimeout(150);
-log(await txt('#pageTitle')==='Metas' && /Você ainda não definiu metas/.test(await txt('#goalList')) && /Defina o objetivo da sua reserva/.test(await txt('#resOut')),'estados vazios úteis (metas e reserva)');
+log(await txt('#pageTitle')==='Metas' && /Você ainda não definiu metas/.test(await txt('#goalList')) && /Informe os gastos mensais e os meses de cobertura/.test(await txt('#resOut')),'estados vazios úteis (metas e reserva)');
 log(!await pg.isVisible('#goalAddBtn') && await pg.locator('#goalList .fin-empty button').count()===1 && !await pg.isVisible('#refreshBtn') && !await pg.isVisible('.lead-actions'),'Metas vazia: ação única no estado vazio; sem "Atualizar cotações" nem barra de ações vazia');
 await pg.click('#goalList .fin-empty button'); await sheet();
 log(/ESTIMADA da carteira, que não é valor recebido/.test(await txt('.sheet')),'painel explica patrimônio x renda estimada');
@@ -158,7 +158,7 @@ log((await ctl('fin=1')).fin.goals.length===1 && await pg.locator('.goal-card').
 log(await pg.locator('#resLinkList input:checked').count()===0 && /não classifica nada como reserva sozinho/.test(await txt('#resLead')) && /liquidez/i.test(await txt('#resMore')) && !await pg.evaluate(()=>document.getElementById('resMore').open),'nada vinculado automaticamente; aviso de liquidez/adequação');
 log(/liquidez, carência, vencimento e marcação a mercado/.test(await txt('#resMore')) && /pode estar baixo quando você precisar/.test(await txt('#resMore')) && !/pode estar baixo/.test(await txt('#resLinkList')),'orientações por tipo de ativo ficam numa seção só, sem repetir em cada posição');
 await pg.fill('#resExpense','300000'); await pg.fill('#resMonths','6'); await pg.waitForTimeout(100);
-log(/Objetivo\s*R\$\s?18\.000,00/.test(await txt('#resOut')) && /Valor vinculado\s*R\$\s?0,00/.test(await txt('#resOut')) && /Falta\s*R\$\s?18\.000,00/.test(await txt('#resOut')) && /Nenhuma posição vinculada/.test(await txt('#resOut')),'objetivo = 3.000 × 6 = 18.000, vinculado 0, falta 18.000');
+log(/Objetivo\s*R\$\s?18\.000,00/.test(await txt('#resOut')) && /Valor vinculado\s*R\$\s?0,00/.test(await txt('#resOut')) && /Falta \(pela cobertura considerada\)\s*R\$\s?18\.000,00/.test(await txt('#resOut')) && /Nenhuma posição vinculada/.test(await txt('#resOut')),'objetivo = 3.000 × 6 = 18.000, vinculado 0, falta 18.000');
 await pg.locator('#resLinkList label',{hasText:'Tesouro Selic'}).locator('input').check(); await pg.waitForTimeout(100);
 const linked=await txt('#resOut');
 log(/Valor vinculado\s*R\$\s?[1-9]/.test(linked) && /\d+% concluído/.test(linked),'vincular posição atualiza valor vinculado e progresso: '+linked.slice(0,120));
@@ -179,7 +179,7 @@ await pg.click('#visBtn');
 
 // remover reserva
 await pg.click('#resRemove'); await sheet(); await pg.locator('.sheet').getByRole('button',{name:'Remover reserva'}).click(); await pg.waitForTimeout(400);
-log((await ctl('fin=1')).fin.reserve===null && /Defina o objetivo/.test(await txt('#resOut')),'remover reserva com confirmação volta ao estado vazio');
+log((await ctl('fin=1')).fin.reserve===null && /Informe os gastos mensais/.test(await txt('#resOut')),'remover reserva com confirmação volta ao estado vazio');
 
 /* ================= falha de carregamento e isolamento visual ================= */
 await ctl('failFinLoad=1');

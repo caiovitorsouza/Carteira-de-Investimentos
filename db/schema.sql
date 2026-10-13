@@ -217,3 +217,34 @@ ALTER TABLE financial_goals   ENABLE ROW LEVEL SECURITY;
 ALTER TABLE emergency_reserve ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_simulators   ENABLE ROW LEVEL SECURITY;
 -- <<< FINANCE
+
+
+-- >>> WATCHLIST (lista de interesse) -----------------------------------------
+-- Aditivo e idempotente, como o bloco FINANCE: não altera nenhuma tabela existente.
+-- Itens privados por usuário em duas etapas (acompanhar / comprar). Nada aqui é compra:
+-- não há ligação com positions. Dinheiro em centavos; quantidade com até 8 casas.
+-- O aporte pretendido é por VALOR ou por QUANTIDADE, nunca os dois (evita contar duas vezes).
+-- A cotação informada manualmente é sempre datada (identifica a origem e a idade do preço).
+CREATE TABLE IF NOT EXISTS watchlist_items (
+  id                    uuid PRIMARY KEY,                  -- gerado no cliente (idempotência)
+  user_id               uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  stage                 text NOT NULL CHECK (stage IN ('acompanhar','comprar')),
+  asset                 text NOT NULL CHECK (char_length(asset) BETWEEN 1 AND 40),
+  kind                  text NOT NULL CHECK (kind IN ('acao','fii','rf','fundo','outro')),
+  name                  text CHECK (name IS NULL OR char_length(name) <= 80),
+  reason                text CHECK (reason IS NULL OR char_length(reason) <= 200),
+  notes                 text CHECK (notes IS NULL OR char_length(notes) <= 1000),
+  priority              smallint CHECK (priority IS NULL OR priority BETWEEN 1 AND 3),
+  target_price_cents    bigint CHECK (target_price_cents IS NULL OR (target_price_cents > 0 AND target_price_cents <= 10000000000000)),
+  planned_amount_cents  bigint CHECK (planned_amount_cents IS NULL OR (planned_amount_cents > 0 AND planned_amount_cents <= 10000000000000)),
+  planned_quantity      numeric(20,8) CHECK (planned_quantity IS NULL OR (planned_quantity > 0 AND planned_quantity <= 1000000000)),
+  manual_price_cents    bigint CHECK (manual_price_cents IS NULL OR (manual_price_cents > 0 AND manual_price_cents <= 10000000000000)),
+  manual_price_on       date,
+  created_at            timestamptz NOT NULL DEFAULT now(),
+  updated_at            timestamptz NOT NULL DEFAULT now(),
+  CONSTRAINT watchlist_aporte_unico CHECK (planned_amount_cents IS NULL OR planned_quantity IS NULL),
+  CONSTRAINT watchlist_cotacao_datada CHECK ((manual_price_cents IS NULL) = (manual_price_on IS NULL))
+);
+CREATE INDEX IF NOT EXISTS watchlist_items_user_idx ON watchlist_items(user_id, stage, created_at);
+ALTER TABLE watchlist_items ENABLE ROW LEVEL SECURITY;
+-- <<< WATCHLIST

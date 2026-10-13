@@ -51,6 +51,12 @@ export const api = {
   saveSimulator:    (key, data) => api._req('PUT', '/api/finance/simulators/' + encodeURIComponent(key), data),
   deleteSimulator:  (key) => api._req('DELETE', '/api/finance/simulators/' + encodeURIComponent(key)),
 
+  // --- lista de interesse (privada; não registra compras) ---
+  getWatchlist:     () => api._req('GET', '/api/watchlist'),
+  createWatch:      (w) => api._req('POST', '/api/watchlist', w),
+  updateWatch:      (id, w) => api._req('PUT', '/api/watchlist/' + encodeURIComponent(id), w),
+  deleteWatch:      (id) => api._req('DELETE', '/api/watchlist/' + encodeURIComponent(id)),
+
   // --- conta ---
   getEmailPrefs: () => api._req('GET', '/api/user/email-prefs'),
   saveEmailPrefs: (prefs) => api._req('PUT', '/api/user/email-prefs', prefs),

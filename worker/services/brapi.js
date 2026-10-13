@@ -71,25 +71,29 @@ export async function fetchFiiIndicators(cfg, tickers) {
   }
 }
 
+// Classe do ativo no catálogo, pelo SUBTIPO informado pela Brapi (documentado: stock, unit, fii, etf,
+// fi-infra, fi-agro, fip, fidc, bdr). O tipo "fund" sozinho junta FII, ETF e outros fundos, então não
+// basta. Sem subtipo conhecido, a classe fica desconhecida ('outro'): nunca é deduzida pelo código.
+// Unit (pacote de ações da mesma empresa negociado como uma unidade, B3) entra como ação.
+const SUBTYPE_KIND = { stock: 'acao', unit: 'acao', fii: 'fii', etf: 'etf', bdr: 'bdr' };
+export function instrumentKindOf(s) {
+  const sub = String(s?.subType || '').toLowerCase();
+  if (sub) return Object.hasOwn(SUBTYPE_KIND, sub) ? SUBTYPE_KIND[sub] : 'outro';
+  // O tipo genérico fund é ambíguo. Stock e BDR continuam inequívocos no v1.
+  return s?.type === 'stock' ? 'acao' : s?.type === 'bdr' ? 'bdr' : 'outro';
+}
+
 export async function fetchInstrumentList(cfg) {
   const { baseUrl, token } = cfg.brapi;
   const headers = token ? { Authorization: `Bearer ${token}` } : {};
   const url = `${baseUrl}/api/quote/list${token ? '?token=' + encodeURIComponent(token) : ''}`;
   const data = await getJson(url, headers);
-  const kindOf = (t) => {
-    const s = (t || '').toLowerCase();
-    if (s === 'fund' || s === 'fii') return 'fii';
-    if (s === 'stock') return 'acao';
-    if (s === 'etf') return 'etf';
-    if (s === 'bdr') return 'bdr';
-    return 'outro';
-  };
   return (data.stocks || [])
     .filter((s) => s.stock)
     .map((s) => ({
       ticker: String(s.stock).toUpperCase(),
       name: s.name || s.stock,
-      kind: kindOf(s.type),
+      kind: instrumentKindOf(s),
       sector: s.sector || null,
       logo_url: s.logo || null,
       avg_volume: s.volume ?? null,

@@ -56,6 +56,7 @@ portfolioRouter.put('/', async (c) => {
     return c.json({ version: newVersion });
   } catch (err) {
     if (err.code === 'VERSION_CONFLICT') return c.json({ error: 'conflito', current: err.current }, 409);
+    if (err.code === 'POSITION_META_INVALID') return c.json({ error: err.message, field: err.field, positionId: err.positionId }, 400);
     throw err;
   }
 });

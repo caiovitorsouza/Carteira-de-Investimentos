@@ -1,5 +1,6 @@
 // Repositório da carteira — adaptado pra postgres.js (tagged templates).
 // Mesma lógica do src/repos/portfolio.js, só muda a sintaxe das queries.
+import { validatePositionMeta, stripEmptySleepMeta } from '../lib/positions.js';
 
 export async function loadSnapshot(sql, userId) {
   const [positions, docs, hist, ver] = await Promise.all([
@@ -8,7 +9,7 @@ export async function loadSnapshot(sql, userId) {
              p.invested_amount, p.meta,
              q.price, q.change_pct, q.dy_12m, q.last_dividend,
              q.last_ex_date, q.last_pay_date, q.pvp, q.fetched_at,
-             i.name AS instrument_name, i.segment, i.logo_url
+             i.name AS instrument_name, i.segment, i.logo_url, i.kind AS instrument_kind
         FROM positions p
         LEFT JOIN instruments   i ON i.ticker = p.ticker
         LEFT JOIN market_quotes q ON q.ticker = p.ticker
@@ -42,6 +43,7 @@ function shapePosition(r) {
     const hasQuote = r.price != null;
     return {
       id: r.id, kind: r.kind, ticker: r.ticker,
+      classe: ['acao', 'fii', 'etf', 'bdr'].includes(r.instrument_kind) ? r.instrument_kind : null,
       name: r.name || r.instrument_name,
       segment: meta.segment || r.segment,
       sector:  meta.sector  || null,
@@ -74,6 +76,18 @@ export async function saveSnapshot(sql, userId, incoming, expectedVersion) {
       throw err;
     }
 
+    // Valida dentro da transação e antes de apagar linhas. A compatibilidade
+    // com dados legados só vale para o mesmo id pertencente a este usuário.
+    const previous = await tx`SELECT id, meta FROM positions WHERE user_id = ${userId}`;
+    const previousById = new Map(previous.map(p => [p.id, p.meta]));
+    for (const p of incoming.positions || []) {
+      const issue = !p || typeof p !== 'object' || Array.isArray(p)
+        ? { field: 'positions', error: 'posicao_invalida' }
+        : validatePositionMeta(p, previousById.get(p.id));
+      if (issue) throw Object.assign(new Error(issue.error), {
+        code: 'POSITION_META_INVALID', field: issue.field, positionId: p?.id ?? null,
+      });
+    }
     await tx`DELETE FROM positions WHERE user_id = ${userId}`;
     for (const p of incoming.positions || []) {
       await insertPosition(tx, userId, p);
@@ -128,7 +142,7 @@ async function insertPosition(tx, userId, p) {
 
 function stripFixa(p) {
   const { id, kind, nome, ap, ...rest } = p;
-  return rest;
+  return stripEmptySleepMeta(rest);
 }
 
 export const upsertDailySnapshot = (sql, userId, day, total) =>

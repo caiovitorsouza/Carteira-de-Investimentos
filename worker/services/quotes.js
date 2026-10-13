@@ -3,16 +3,18 @@
 import { fetchQuotes, fetchFiiIndicators } from './brapi.js';
 import { allPortfolioTickers } from '../repos/portfolio.js';
 
-async function ensureInstrument(sql, ticker, kindHint) {
+// Ativo fora do catálogo: entra com classe desconhecida ('outro'). A classe nunca é deduzida pelo
+// formato do código (o final 11 serve a FII, ETF, units e outros fundos); a sincronização do catálogo a corrige.
+async function ensureInstrument(sql, ticker) {
   await sql`
     INSERT INTO instruments (ticker, name, kind)
-    VALUES (${ticker}, ${ticker}, ${kindHint || 'outro'})
+    VALUES (${ticker}, ${ticker}, 'outro')
     ON CONFLICT (ticker) DO NOTHING
   `;
 }
 
 async function saveQuote(sql, q, extra = {}) {
-  await ensureInstrument(sql, q.ticker, extra.kind);
+  await ensureInstrument(sql, q.ticker);
   const dy12 = extra.dy_12m ?? null;
   const pvp = extra.pvp ?? null;
   const nav = extra.nav_per_share ?? null;
@@ -57,11 +59,12 @@ export async function refreshTickers(sql, cfg, tickers) {
     const batch = list.slice(i, i + 20);
     try {
       const quotes = await fetchQuotes(cfg, batch);
-      const fiiTickers = batch.filter((t) => /11$/.test(t));
+      const fiiRows = await sql`SELECT ticker FROM instruments WHERE ticker = ANY(${batch}::text[]) AND kind = 'fii'`;
+      const fiiTickers = fiiRows.map(r => r.ticker);
       const indicators = await fetchFiiIndicators(cfg, fiiTickers);
       for (const q of quotes) {
         try {
-          await saveQuote(sql, q, { ...(indicators[q.ticker] || {}), kind: /11$/.test(q.ticker) ? 'fii' : 'acao' });
+          await saveQuote(sql, q, indicators[q.ticker] || {});
           ok++;
           console.log('[quotes] SAVED', q.ticker, 'price=', q.price);
         } catch (e) {

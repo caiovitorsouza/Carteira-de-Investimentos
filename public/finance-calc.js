@@ -119,6 +119,129 @@ export function summarizeReceipts(receipts, { asset = '', year = null } = {}) {
   };
 }
 
+// Dias de um mês de calendário (sem Date/fuso).
+export function daysInMonth(y, m) {
+  const leap = (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
+  return [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m - 1];
+}
+function _somaPeriodo(lista, y, m, ateDia) {
+  let cents = 0, count = 0;
+  for (const r of lista) {
+    const p = parseCalendarDate(r.receivedOn);
+    if (!p || p.y !== y || p.m !== m || p.d > ateDia) continue;
+    cents += r.amountCents; count++;
+  }
+  return { cents, count };
+}
+
+// Estatística do mês selecionado, só com os registros do usuário, e comparação com o mês anterior
+// em período COMPARÁVEL: se o mês selecionado está em andamento, os dois lados vão do dia 1 até o
+// dia de hoje (limitado ao tamanho do mês anterior). Sem registros no período anterior não há
+// percentual — não existe base para comparar. Mês futuro não tem estatística.
+// `today` = { y, m, d } no calendário local.
+export function receiptMonthStats(receipts, { year, month, asset = '', today }) {
+  const lista = (receipts || []).filter(r => !asset || r.asset === asset);
+  const pos = year * 12 + month, hoje = today.y * 12 + today.m;
+  if (pos > hoje) return { futuro: true, emAndamento: false, year, month };
+  const emAndamento = pos === hoje;
+  const diasMes = daysInMonth(year, month);
+  const ateDia = emAndamento ? Math.min(today.d, diasMes) : diasMes;
+  const atual = _somaPeriodo(lista, year, month, ateDia);
+  const py = month === 1 ? year - 1 : year, pm = month === 1 ? 12 : month - 1;
+  const diasAnt = daysInMonth(py, pm);
+  const ateDiaAnt = emAndamento ? Math.min(ateDia, diasAnt) : diasAnt;
+  const ant = _somaPeriodo(lista, py, pm, ateDiaAnt);
+  return {
+    futuro: false, emAndamento, year, month, ateDia, diasMes,
+    atual,
+    anterior: { year: py, month: pm, ateDia: ateDiaAnt, completo: ateDiaAnt === diasAnt, ...ant },
+    variacaoPct: ant.cents > 0 ? (atual.cents - ant.cents) / ant.cents * 100 : null,
+  };
+}
+
+// Divisão dos recebimentos registrados por ativo num ano (e, opcionalmente, num mês).
+// `share` é a fração do total do período (0–1). Ordena do maior para o menor.
+export function receiptsByAsset(receipts, { year, month = null }) {
+  const mapa = new Map();
+  let total = 0;
+  for (const r of receipts || []) {
+    const p = parseCalendarDate(r.receivedOn);
+    if (!p || p.y !== year || (month != null && p.m !== month)) continue;
+    const it = mapa.get(r.asset) || { asset: r.asset, cents: 0, count: 0 };
+    it.cents += r.amountCents; it.count++; total += r.amountCents;
+    mapa.set(r.asset, it);
+  }
+  return [...mapa.values()]
+    .map(it => ({ ...it, share: total > 0 ? it.cents / total : 0 }))
+    .sort((a, b) => b.cents - a.cents || a.asset.localeCompare(b.asset, 'pt-BR'));
+}
+
+/* -------------------------------------------------- simulação de aporte (lista) */
+
+// Simula um aporte SEM gravar nada: devolve a distribuição por classe antes e depois e a
+// participação do ativo. Tudo em centavos inteiros.
+//  - Ação e FII (wholeUnits): só unidades inteiras. Por valor, compra floor(valor ÷ preço) unidades
+//    e o resto vira saldo não utilizado; por quantidade, exige número inteiro.
+//  - Renda fixa, fundo e outros: aporte por valor, sem unidades e sem preço.
+//  - Sem preço quando ele é necessário → erro, nunca um preço inventado.
+//  - O ativo entra pelo custo do aporte: nenhuma valorização imediata é suposta.
+// byClassCents: { rf, acao, fii, fundo, outro } com o valor atual da carteira em centavos.
+export const SIM_CLASSES = ['rf', 'acao', 'fii', 'fundo', 'outro'];
+export function simulateContribution({ byClassCents = {}, assetCents = 0, assetClass, priceCents = null,
+  mode, amountCents = null, quantity = null, wholeUnits = false }) {
+  if (!SIM_CLASSES.includes(assetClass)) return { ok: false, error: 'classe_invalida' };
+  const temPreco = Number.isInteger(priceCents) && priceCents > 0;
+  let units = null, costCents, leftoverCents = 0;
+  if (mode === 'valor') {
+    if (!Number.isInteger(amountCents) || amountCents <= 0 || amountCents > MAX_CENTS) return { ok: false, error: 'valor_invalido' };
+    if (wholeUnits) {
+      if (!temPreco) return { ok: false, error: 'sem_preco' };
+      units = Math.floor(amountCents / priceCents);
+      if (units < 1) return { ok: false, error: 'menos_de_uma_unidade', leftoverCents: amountCents };
+      costCents = units * priceCents;
+      leftoverCents = amountCents - costCents;
+    } else {
+      costCents = amountCents;
+    }
+  } else if (mode === 'quantidade') {
+    if (typeof quantity !== 'number' || !Number.isFinite(quantity) || quantity <= 0) return { ok: false, error: 'quantidade_invalida' };
+    if (wholeUnits && !Number.isInteger(quantity)) return { ok: false, error: 'quantidade_inteira' };
+    if (!temPreco) return { ok: false, error: 'sem_preco' };
+    units = quantity;
+    costCents = Math.round(quantity * priceCents);
+    if (costCents > MAX_CENTS) return { ok: false, error: 'valor_invalido' };
+  } else return { ok: false, error: 'modo_invalido' };
+
+  const antes = {}; for (const k of SIM_CLASSES) antes[k] = Math.max(0, Math.round(byClassCents[k] || 0));
+  const depois = { ...antes, [assetClass]: antes[assetClass] + costCents };
+  const soma = (o) => SIM_CLASSES.reduce((s, k) => s + o[k], 0);
+  const totalAntes = soma(antes), totalDepois = soma(depois);
+  const ativoAntes = Math.max(0, Math.round(assetCents || 0)), ativoDepois = ativoAntes + costCents;
+  const share = (v, t) => (t > 0 ? v / t : null);
+  return {
+    ok: true, units, costCents, leftoverCents,
+    before: { totalCents: totalAntes, byClass: antes, assetCents: ativoAntes, assetShare: share(ativoAntes, totalAntes),
+      classShare: Object.fromEntries(SIM_CLASSES.map(k => [k, share(antes[k], totalAntes)])) },
+    after: { totalCents: totalDepois, byClass: depois, assetCents: ativoDepois, assetShare: share(ativoDepois, totalDepois),
+      classShare: Object.fromEntries(SIM_CLASSES.map(k => [k, share(depois[k], totalDepois)])) },
+  };
+}
+
+// Total planejado na etapa "comprar": cada item conta UMA vez, por valor ou por quantidade × preço.
+// Itens por quantidade sem preço disponível não entram na soma e são contados à parte.
+export function plannedTotal(items) {
+  let cents = 0, semPreco = 0, comPlano = 0;
+  for (const it of items || []) {
+    if (Number.isInteger(it.plannedAmountCents) && it.plannedAmountCents > 0) { cents += it.plannedAmountCents; comPlano++; }
+    else if (typeof it.plannedQuantity === 'number' && it.plannedQuantity > 0) {
+      comPlano++;
+      if (Number.isInteger(it.priceCents) && it.priceCents > 0) cents += Math.round(it.plannedQuantity * it.priceCents);
+      else semPreco++;
+    }
+  }
+  return { cents, semPreco, comPlano };
+}
+
 /* ------------------------------------------------------------------- metas */
 
 // Progresso de uma meta: atual/alvo. `restante` nunca fica negativo.

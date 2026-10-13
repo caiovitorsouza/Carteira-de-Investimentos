@@ -43,8 +43,8 @@ for (const [nome,cfg] of cfgs){
 
 // 3) Sem numeração, rótulos alinhados, destaque e foco de teclado
 { const pg=await br.newPage({viewport:{width:1440,height:900}}); await pg.goto(B+'/#carteira'); await pg.waitForSelector('#app:not(.hide)'); await pg.waitForTimeout(200);
-  const nav=await pg.evaluate(()=>[...document.querySelectorAll('.mainnav .navitem')].map(a=>({t:a.textContent.trim(), x:Math.round(a.firstChild.nodeType===3? (()=>{const r=document.createRange(); r.selectNodeContents(a); return r.getBoundingClientRect().left;})() : 0)})));
-  log(nav.every(n=>!/\d/.test(n.t)) && nav.map(n=>n.t).join('|')==='Visão geral|Minha carteira|Proventos|Metas|Simuladores','sem números: '+nav.map(n=>n.t).join(' | '));
+  const nav=await pg.evaluate(()=>[...document.querySelectorAll('.mainnav .navitem')].map(a=>({t:a.textContent.trim(), x:Math.round(a.querySelector('.nl').getBoundingClientRect().left)})));
+  log(nav.every(n=>!/\d/.test(n.t)) && nav.map(n=>n.t).join('|')==='Visão geral|Minha carteira|Proventos|Meus planos|Metas|Cenários','sem números: '+nav.map(n=>n.t).join(' | '));
   log(new Set(nav.map(n=>n.x)).size===1, 'rótulos alinhados à mesma margem: x='+[...new Set(nav.map(n=>n.x))].join(','));
   log(await pg.evaluate(()=>document.querySelector('.mainnav [aria-current=page]').dataset.page)==='holdings' && await pg.evaluate(()=>location.hash)==='#carteira','destaque da aba ativa e endereço preservados');
   await pg.focus('.mainnav a[data-page=income]'); await pg.keyboard.press('Shift+Tab'); await pg.keyboard.press('Tab');
@@ -77,11 +77,16 @@ for (const page of ['overview','holdings']){
   await pg.close();
 }
 
-// 5) Celular: navegação compacta, sem números, sem rolagem horizontal
+// 5) Celular: botão Menu abre a navegação sobre a página (sem espremê-la), sem números, sem rolagem horizontal
 for (const [nome,cfg] of [['iPhone 13',devices['iPhone 13']],['320px',{viewport:{width:320,height:700}}],['iPad Pro 11 vertical',devices['iPad Pro 11']]]){
   const ctx=await br.newContext(cfg); const pg=await ctx.newPage(); await pg.goto(B); await pg.waitForSelector('#app:not(.hide)'); await pg.waitForTimeout(200);
-  const r=await pg.evaluate(()=>{const n=[...document.querySelectorAll('.mainnav .navitem')]; return {txt:n.map(a=>a.textContent.trim()), trunc:n.filter(a=>a.scrollWidth>a.clientWidth+1).length, ov:document.documentElement.scrollWidth-innerWidth, sticky:getComputedStyle(document.querySelector('.sidebar')).position, minH:Math.min(...n.map(a=>a.getBoundingClientRect().height))};});
-  log(r.txt.every(t=>!/\d/.test(t)) && r.trunc===0 && r.ov===0 && r.sticky==='static' && r.minH>=44, `${nome}: navegação compacta (${r.txt.join(' | ')}), sem corte, sem rolagem horizontal, alvos ≥44px (${Math.round(r.minH)})`);
+  const fechado=await pg.evaluate(()=>({vis:getComputedStyle(document.getElementById('sidebar')).visibility, btn:document.getElementById('menuBtn').getBoundingClientRect().height, mainW:document.querySelector('.main').getBoundingClientRect().width, iw:innerWidth}));
+  await pg.click('#menuBtn'); await pg.waitForTimeout(350);
+  const r=await pg.evaluate(()=>{const n=[...document.querySelectorAll('.mainnav .navitem')]; return {txt:n.map(a=>a.textContent.trim()), trunc:n.filter(a=>a.scrollWidth>a.clientWidth+1).length, ov:document.documentElement.scrollWidth-innerWidth, minH:Math.min(...n.map(a=>a.getBoundingClientRect().height)), foco:document.activeElement.dataset.page, mainW:document.querySelector('.main').getBoundingClientRect().width};});
+  log(fechado.vis==='hidden' && fechado.btn>=44 && fechado.mainW===fechado.iw && r.txt.every(t=>!/\d/.test(t)) && r.trunc===0 && r.ov===0 && r.minH>=44 && r.foco==='overview' && r.mainW===fechado.mainW,
+    `${nome}: menu fechado oculto, aberto sem espremer a página (${r.txt.join(' | ')}), sem corte, sem rolagem horizontal, alvos ≥44px (${Math.round(r.minH)})`);
+  await pg.keyboard.press('Escape'); await pg.waitForTimeout(300);
+  log(await pg.evaluate(()=>document.activeElement.id==='menuBtn' && getComputedStyle(document.getElementById('sidebar')).visibility==='hidden'), `${nome}: Escape fecha o menu e devolve o foco ao botão`);
   await ctx.close();
 }
 await br.close(); srv.kill();

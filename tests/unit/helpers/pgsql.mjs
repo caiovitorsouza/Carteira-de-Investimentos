@@ -60,6 +60,8 @@ const rel = (p) => fileURLToPath(new URL(p, import.meta.url));
 export const FINANCE_BLOCK = SCHEMA.slice(SCHEMA.indexOf('-- >>> FINANCE'), SCHEMA.indexOf('-- <<< FINANCE') + '-- <<< FINANCE'.length);
 export const OLD_SCHEMA = fs.readFileSync(rel('../fixtures/schema-before-finance.sql'), 'utf8');
 export const ROLLBACK = fs.readFileSync(rel('../../../db/finance-rollback.sql'), 'utf8');
+export const WATCHLIST_BLOCK = SCHEMA.slice(SCHEMA.indexOf('-- >>> WATCHLIST'), SCHEMA.indexOf('-- <<< WATCHLIST') + '-- <<< WATCHLIST'.length);
+export const WATCHLIST_ROLLBACK = fs.readFileSync(rel('../../../db/watchlist-rollback.sql'), 'utf8');
 
 export async function makeUser(sql, email) {
   const rows = await sql`INSERT INTO users (email, password_hash) VALUES (${email}, 'x') RETURNING id`;

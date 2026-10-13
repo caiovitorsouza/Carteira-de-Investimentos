@@ -10,12 +10,9 @@ const hv=await pg.textContent('#heroValue'); log(/R\$\s?[1-9]/.test(hv),'patrim�
 // quote status
 log(/Cotação mais antiga/.test(await pg.textContent('#heroUpd'))&&/sem cotação/.test(await pg.textContent('#heroUpd')),'status cotações: '+await pg.textContent('#heroUpd'));
 log(!(await pg.textContent('body')).includes('ao vivo'),'sem "ao vivo"');
-// calendar
-const cal=await pg.textContent('#dcalBox');
-log(cal.includes('Proventos estimados')&&!cal.includes('Próximos pagamentos'),'título proventos');
-log((cal.match(/Dia 15/g)||[]).length===1 && cal.includes('TEST11') && cal.includes('DEMO11'),'agrupa dia 15 (UTC Z não desloca para 14)');
-log(cal.includes('Data não informada')&&cal.includes('SEMD11')&&cal.includes('data informada inválida')&&/último pagamento registrado em 10\/01\/2026/.test(cal),'sem data / inválida / mês passado agrupados');
-log(cal.includes('fora do total')&&cal.includes('FUTR3'),'mês seguinte separado');
+// "Seu próximo passo" substitui o bloco de proventos estimados (que seguem na página Proventos: t5 e t15)
+const prox=await pg.textContent('#nextStepBox');
+log(prox.includes('Seu próximo passo') && /Criar meu primeiro plano/.test(prox) && !await pg.locator('#dcalBox').count(),'Visão geral: Seu próximo passo sem planos mostra estado vazio com ação única');
 const tot=await pg.evaluate(()=>{const t=state.positions; let s=0; for(const p of t){ if(!['fii','acao'].includes(p.kind)) continue; if(p.ticker==='FUTR3') continue; s+=enrich(p).renda;} return s;}).catch(()=>null);
 log(tot===null || true,'(estado é módulo; total checado visualmente)');
 // hide values

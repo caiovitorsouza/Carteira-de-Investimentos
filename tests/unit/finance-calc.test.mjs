@@ -4,7 +4,107 @@ import {
   parseMoneyToCents, formatCentsInput, parsePercentToBp, formatBpInput, annualToMonthly,
   parseCalendarDate, formatDateBR, monthsBetween, summarizeReceipts, goalProgress,
   linearMonthlyNeed, reserveProgress, simulateIndependence, calcBazin, INDEPENDENCE_DEFAULTS,
+  daysInMonth, receiptMonthStats, receiptsByAsset, simulateContribution, plannedTotal,
 } from '../../public/finance-calc.js';
+
+const CART = { rf: 400000, acao: 300000, fii: 300000, fundo: 0, outro: 0 };     // R$ 10.000,00
+test('simulação por valor: só unidades inteiras, saldo não utilizado e novo total com o aporte', () => {
+  const s = simulateContribution({ byClassCents: CART, assetCents: 0, assetClass: 'fii', priceCents: 3000, mode: 'valor', amountCents: 100000, wholeUnits: true });
+  assert.equal(s.ok, true);
+  assert.equal(s.units, 33);                  // R$ 1.000 ÷ R$ 30 = 33 cotas inteiras
+  assert.equal(s.costCents, 99000);
+  assert.equal(s.leftoverCents, 1000);        // R$ 10 sem comprar
+  assert.equal(s.before.totalCents, 1000000);
+  assert.equal(s.after.totalCents, 1099000);  // novo total inclui só o que foi aplicado
+  assert.equal(s.after.byClass.fii, 399000);
+  assert.equal(s.before.assetShare, 0);
+  assert.equal(s.after.assetShare, 99000 / 1099000);
+  assert.ok(Math.abs(Object.values(s.after.classShare).reduce((a, b) => a + b, 0) - 1) < 1e-12);
+});
+test('simulação: valor que não compra uma unidade inteira é recusado, sem arredondar para cima', () => {
+  const s = simulateContribution({ byClassCents: CART, assetClass: 'acao', priceCents: 5000, mode: 'valor', amountCents: 4999, wholeUnits: true });
+  assert.deepEqual([s.ok, s.error, s.leftoverCents], [false, 'menos_de_uma_unidade', 4999]);
+});
+test('simulação por quantidade: custo = quantidade × preço; ativo que já está na carteira', () => {
+  const s = simulateContribution({ byClassCents: CART, assetCents: 100000, assetClass: 'acao', priceCents: 1234, mode: 'quantidade', quantity: 10, wholeUnits: true });
+  assert.equal(s.costCents, 12340);
+  assert.equal(s.before.assetShare, 0.1);
+  assert.equal(s.after.assetCents, 112340);   // entra pelo custo: nenhuma valorização suposta
+  assert.equal(simulateContribution({ byClassCents: CART, assetClass: 'acao', priceCents: 1234, mode: 'quantidade', quantity: 1.5, wholeUnits: true }).error, 'quantidade_inteira');
+});
+test('simulação: sem preço quando ele é necessário → erro; renda fixa por valor não precisa de preço', () => {
+  assert.equal(simulateContribution({ byClassCents: CART, assetClass: 'fii', mode: 'valor', amountCents: 100000, wholeUnits: true }).error, 'sem_preco');
+  assert.equal(simulateContribution({ byClassCents: CART, assetClass: 'acao', mode: 'quantidade', quantity: 3, wholeUnits: true }).error, 'sem_preco');
+  const rf = simulateContribution({ byClassCents: CART, assetClass: 'rf', mode: 'valor', amountCents: 50000 });
+  assert.deepEqual([rf.ok, rf.units, rf.costCents, rf.leftoverCents, rf.after.byClass.rf], [true, null, 50000, 0, 450000]);
+  assert.equal(simulateContribution({ byClassCents: CART, assetClass: 'xx', mode: 'valor', amountCents: 1 }).error, 'classe_invalida');
+  assert.equal(simulateContribution({ byClassCents: CART, assetClass: 'rf', mode: 'valor', amountCents: 0 }).error, 'valor_invalido');
+});
+test('simulação com carteira vazia: participação antes indefinida, depois 100%', () => {
+  const s = simulateContribution({ byClassCents: {}, assetClass: 'outro', mode: 'valor', amountCents: 2500 });
+  assert.equal(s.before.assetShare, null);
+  assert.equal(s.after.assetShare, 1);
+});
+test('total planejado conta cada item uma vez (valor OU quantidade × preço) e separa os sem preço', () => {
+  const t = plannedTotal([
+    { plannedAmountCents: 100000 },
+    { plannedQuantity: 10, priceCents: 2500 },
+    { plannedQuantity: 5, priceCents: null },
+    { plannedAmountCents: null, plannedQuantity: null },
+  ]);
+  assert.deepEqual(t, { cents: 125000, semPreco: 1, comPlano: 3 });
+});
+
+const R = (asset, receivedOn, amountCents) => ({ asset, receivedOn, amountCents });
+test('estatística do mês: mês em andamento compara com o mesmo período do mês anterior', () => {
+  const recs = [R('AAAA11', '2026-09-05', 1000), R('AAAA11', '2026-09-25', 9000), R('BBBB3', '2026-10-03', 1500), R('AAAA11', '2026-10-13', 500)];
+  const s = receiptMonthStats(recs, { year: 2026, month: 10, today: { y: 2026, m: 10, d: 13 } });
+  assert.equal(s.emAndamento, true);
+  assert.equal(s.ateDia, 13);
+  assert.deepEqual(s.atual, { cents: 2000, count: 2 });
+  // setembro só até o dia 13: o pagamento do dia 25 não entra (período comparável)
+  assert.equal(s.anterior.cents, 1000);
+  assert.equal(s.anterior.ateDia, 13);
+  assert.equal(s.anterior.completo, false);
+  assert.equal(s.variacaoPct, 100);
+});
+test('estatística do mês: mês completo compara com o mês anterior inteiro', () => {
+  const recs = [R('AAAA11', '2026-09-05', 1000), R('AAAA11', '2026-09-30', 9000), R('AAAA11', '2026-08-31', 5000)];
+  const s = receiptMonthStats(recs, { year: 2026, month: 9, today: { y: 2026, m: 10, d: 13 } });
+  assert.equal(s.emAndamento, false);
+  assert.deepEqual(s.atual, { cents: 10000, count: 2 });
+  assert.equal(s.anterior.completo, true);
+  assert.equal(s.anterior.cents, 5000);
+  assert.equal(s.variacaoPct, 100);
+});
+test('estatística do mês: sem registros no período anterior não gera percentual', () => {
+  const s = receiptMonthStats([R('AAAA11', '2026-03-10', 700)], { year: 2026, month: 3, today: { y: 2026, m: 10, d: 1 } });
+  assert.equal(s.anterior.cents, 0);
+  assert.equal(s.anterior.count, 0);
+  assert.equal(s.variacaoPct, null);
+});
+test('estatística do mês: janeiro compara com dezembro do ano anterior; 31 limita ao tamanho do mês anterior', () => {
+  const s = receiptMonthStats([R('A', '2025-12-31', 300), R('A', '2026-01-02', 600)], { year: 2026, month: 1, today: { y: 2026, m: 3, d: 31 } });
+  assert.deepEqual([s.anterior.year, s.anterior.month, s.anterior.cents], [2025, 12, 300]);
+  const em = receiptMonthStats([R('A', '2026-02-28', 400)], { year: 2026, month: 3, today: { y: 2026, m: 3, d: 31 } });
+  assert.equal(em.anterior.ateDia, 28);          // fevereiro de 2026 tem 28 dias
+  assert.equal(em.anterior.completo, true);
+  assert.equal(daysInMonth(2028, 2), 29);
+});
+test('estatística do mês: mês futuro não tem estatística; filtro por ativo', () => {
+  assert.equal(receiptMonthStats([], { year: 2026, month: 11, today: { y: 2026, m: 10, d: 13 } }).futuro, true);
+  const recs = [R('AAAA11', '2026-09-05', 1000), R('BBBB3', '2026-09-06', 2000)];
+  assert.equal(receiptMonthStats(recs, { year: 2026, month: 9, asset: 'BBBB3', today: { y: 2026, m: 10, d: 13 } }).atual.cents, 2000);
+});
+test('divisão por ativo: ano ou mês, participação e ordem', () => {
+  const recs = [R('AAAA11', '2026-09-05', 1000), R('BBBB3', '2026-09-06', 3000), R('AAAA11', '2026-10-01', 1000), R('CCCC11', '2025-09-01', 9999), R('XX', 'inválida', 50)];
+  const ano = receiptsByAsset(recs, { year: 2026 });
+  assert.deepEqual(ano.map(x => [x.asset, x.cents, x.count]), [['BBBB3', 3000, 1], ['AAAA11', 2000, 2]]);
+  assert.equal(ano[0].share, 0.6);
+  const mes = receiptsByAsset(recs, { year: 2026, month: 10 });
+  assert.deepEqual(mes.map(x => [x.asset, x.share]), [['AAAA11', 1]]);
+  assert.deepEqual(receiptsByAsset(recs, { year: 2024 }), []);
+});
 
 test('dinheiro vira centavos inteiros, sem erro de ponto flutuante', () => {
   assert.equal(parseMoneyToCents('R$ 1.234,56'), 123456);

@@ -260,7 +260,32 @@ antes de publicar; carteiras existentes não são tocadas.
   concatenava os dígitos (enviava `1234520000` em vez de `20000`). Agora respeita a seleção; o foco
   inicial dos painéis só ocorre se nada foi escolhido e é cancelado ao fechar (t12).
 
+## Melhorias de interface e lista de interesse (13/10/2026, local, não publicado)
+
+- **Carteira, logos e menu.**
+  - Logo do emissor apenas quando o arquivo é do **próprio ticker** no domínio de ícones da Brapi (`instruments.logo_url`); nos demais casos, monograma de tamanho fixo.
+  - Minha carteira em tabela única agrupada por classe (grupos recolhíveis e lembrados), com detalhes ao lado da tabela em área larga ou sobre a página nas demais.
+  - Menu lateral recolhível. No celular (≤ 850 px), botão **Menu** que abre a navegação por cima da página; isso substitui a navegação em uma linha descrita acima.
+- **Proventos.**
+  - Calendário com três categorias que nunca se somam: recebido (registro seu), anunciado (data e valor por cota da fonte de cotações) e estimativa sem data.
+  - Recebidos ganhou estatísticas só dos registros: mês selecionado, comparação com o **mesmo período** do mês anterior quando o mês está em andamento, gráfico que escolhe o mês e divisão por ativo.
+- **Lista de interesse.** Rotas `/api/watchlist` (exigem sessão, isolamento por usuário, criação idempotente, limite de 200 com bloqueio por usuário).
+  - Etapas *Quero acompanhar* / *Planejo comprar*.
+  - Aporte por valor **ou** quantidade.
+  - Cotação manual sempre datada.
+  - Simulação antes e depois que não grava nada e respeita unidades inteiras.
+- **Sleep Score v2.1.** Metodologia, pesos fixos, cobertura e critérios da reserva em [`docs/sleep-score.md`](docs/sleep-score.md). Perder dados nunca melhora a nota; sem as três dimensões, não há nota geral.
+  - Emissor, prazo de acesso e vencimento de renda fixa e fundos podem ser informados nos detalhes da aplicação. Ficam no JSON da posição, sem migração.
+- **Apresentação antes do login.** Três etapas com ilustrações de dados fictícios e Entrar/Criar conta na primeira tela. Quem já está autenticado vai direto à Visão geral, e com movimento reduzido nada se move.
+
+### Migração WATCHLIST: preparada, **não aplicada**
+- Bloco aditivo `-- >>> WATCHLIST` em `db/schema.sql` (tabela `watchlist_items`, RLS ligado e sem políticas). Reversão em `db/watchlist-rollback.sql`, que remove só essa tabela.
+- Testada localmente em PGlite: aditiva sobre o banco com FINANCE, idempotente, restrições de valor/quantidade e cotação datada, reversão. A concorrência foi testada em Postgres real (`embedded-postgres`).
+- **Ordem quando autorizada:** migrar antes de publicar o código. Sem a tabela, só `/api/watchlist` responde erro e a página mostra "Não foi possível carregar"; o resto do app não depende dela. Confirme o projeto Supabase usado pelo Worker antes.
+
 ### Limitações deste ciclo
+- Continuação das correções e resultados: [`docs/continuacao-correcoes.md`](docs/continuacao-correcoes.md).
+- O resumo de 77 testes somava 83 porque repetia seis testes de estatísticas já incluídos nos 49 anteriores: 49 + 10 + 6 + 11 + 1 = 77. Após esta continuação, são 88 testes unitários/API. Essa contagem não inclui as linhas PASS de e2e nem as 3.600 comparações internas do teste de monotonicidade.
 - O teste de concorrência exige o binário do `embedded-postgres` (devDependency de ~100 MB, só
   Windows/macOS/Linux x64/arm64 suportados pelo pacote). Rodou e passou no Windows; em outro ambiente
   sem o módulo ele é pulado, e o aviso aparece na saída.

@@ -13,6 +13,7 @@ import { marketRouter } from './routes/market.js';
 import { portfolioRouter } from './routes/portfolio.js';
 import { userRouter } from './routes/user.js';
 import { financeRouter } from './routes/finance.js';
+import { watchlistRouter } from './routes/watchlist.js';
 import { adminRouter } from './routes/admin.js';
 import { handleScheduled } from './jobs/scheduled.js';
 
@@ -41,6 +42,7 @@ app.route('/api/market', marketRouter);
 app.route('/api/portfolio', portfolioRouter);
 app.route('/api/user', userRouter);
 app.route('/api/finance', financeRouter);
+app.route('/api/watchlist', watchlistRouter);
 app.route('/api/admin', adminRouter);
 
 // Erros centrais → JSON 500

@@ -5,7 +5,7 @@ const br=await chromium.launch(); const pg=await br.newPage({viewport:{width:128
 const errs=[]; pg.on('pageerror',e=>errs.push(e.message)); pg.on('console',m=>{if(m.type()==='error'&&!/Failed to load resource|fonts/.test(m.text()))errs.push(m.text())});
 await ctl('seed=1&logged=0&failLoad=0&failSave=0&delay=0&empty=0&reset=1');
 await pg.goto(B); await pg.waitForSelector('#authWelcome');
-log(await pg.textContent('#welcomeTitle')==='Vamos começar.' && await pg.isVisible('#startLogin') && !(await pg.isVisible('#authForm')),'entrada "Vamos começar" antes do formulário');
+log(await pg.textContent('#welcomeTitle')==='Sua carteira, com mais clareza.' && await pg.isVisible('#startLogin') && !(await pg.isVisible('#authForm')),'apresentação com entrada antes do formulário');
 log((await pg.$$('text=Explorar a carteira de exemplo')).length===0 && (await pg.$$('text=Esqueci minha senha')).length===0,'sem modo demonstração nem recuperação de senha');
 await pg.click('#startLogin');
 log(await pg.isVisible('#authForm') && await pg.evaluate(()=>document.activeElement.id)==='authTitle' && await pg.textContent('#authTitle')==='Bom ter você aqui.','abre o formulário e move o foco para o título');
